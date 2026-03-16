@@ -20,10 +20,11 @@ concurrency:
 
 jobs:
   scan-and-publish:
+    # For workflow_dispatch, only run when an issue_url was supplied.
     # For issue events, only run when the title starts with "SCAN:"
     if: >
-      github.event_name == 'workflow_dispatch' ||
-      startsWith(github.event.issue.title, 'SCAN:')
+      (github.event_name == 'workflow_dispatch' && inputs.issue_url != '') ||
+      (github.event_name == 'issues' && startsWith(github.event.issue.title, 'SCAN:'))
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -64,7 +65,7 @@ jobs:
           fi
 
       - name: Run scan
-        if: steps.ctx.outputs.issue_url != ''
+        if: steps.ctx.outputs.issue_url
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -75,7 +76,7 @@ jobs:
             --output ./.tmp/current-report
 
       - name: Prepare pages site
-        if: steps.ctx.outputs.issue_url != ''
+        if: steps.ctx.outputs.issue_url
         env:
           REPO: ${{ github.repository }}
           RUN_ID: ${{ github.run_id }}
@@ -96,7 +97,7 @@ jobs:
             --metadata-out ./.tmp/report-metadata.json
 
       - name: Commit published pages content to main
-        if: steps.ctx.outputs.issue_url != ''
+        if: steps.ctx.outputs.issue_url
         run: |
           rm -rf ./reports
           mkdir -p ./reports
@@ -117,7 +118,7 @@ jobs:
           fi
 
       - name: Post issue comment with report links
-        if: ${{ steps.ctx.outputs.issue_number != '' }}
+        if: steps.ctx.outputs.issue_number
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
