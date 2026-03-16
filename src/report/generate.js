@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { analyzeDeadCodeFromLighthouse, analyzeModularizationFromLighthouse, analyzeRedundancyFromLighthouse, prioritizedFindingsFromLighthouse } from "../wsg/mapping.js";
+import { analyzeDeadCodeFromLighthouse, analyzeModularizationFromLighthouse, analyzeNonCriticalResourcesFromLighthouse, analyzeRedundancyFromLighthouse, prioritizedFindingsFromLighthouse } from "../wsg/mapping.js";
 
 const WSG_PERFORMANCE_ENERGY_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact";
 const WSG_THIRD_PARTY_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#give-third-parties-the-same-priority-as-first-parties-during-assessment";
@@ -33,6 +33,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
     const redundancy = analyzeRedundancyFromLighthouse({ audits: result.lighthouse.audits }, wsgIndex);
     const modularization = analyzeModularizationFromLighthouse({ audits: result.lighthouse.audits }, wsgIndex);
     const deadCode = analyzeDeadCodeFromLighthouse({ audits: result.lighthouse.audits }, wsgIndex);
+    const nonCriticalResources = analyzeNonCriticalResourcesFromLighthouse({ audits: result.lighthouse.audits }, wsgIndex);
     const thirdPartyJs = analyzeThirdPartyJs({
       finalUrl: result.lighthouse.finalUrl,
       greenWeb: result.sustainability.greenWeb
@@ -47,6 +48,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
       co2Grams: result.sustainability.co2Grams,
       greenWeb: result.sustainability.greenWeb,
       deadCode,
+      nonCriticalResources,
       thirdPartyJs,
       redundancy,
       modularization,
@@ -91,6 +93,8 @@ function buildSummary(perUrl) {
   const highUrgencyModularizationCount = ok.filter((item) => item.modularization?.urgency === "high").length;
   const averageDeadCodeScore = average(ok.map((item) => item.deadCode?.score));
   const highUrgencyDeadCodeCount = ok.filter((item) => item.deadCode?.urgency === "high").length;
+  const averageNonCriticalResourcesScore = average(ok.map((item) => item.nonCriticalResources?.score));
+  const highUrgencyNonCriticalResourcesCount = ok.filter((item) => item.nonCriticalResources?.urgency === "high").length;
   const greenWeb = buildGreenWebSummary(ok);
 
   return {
@@ -108,6 +112,8 @@ function buildSummary(perUrl) {
     highUrgencyModularizationCount,
     averageDeadCodeScore,
     highUrgencyDeadCodeCount,
+    averageNonCriticalResourcesScore,
+    highUrgencyNonCriticalResourcesCount,
     greenWeb
   };
 }
@@ -618,6 +624,8 @@ export function renderMarkdown(report) {
   lines.push(`- Pages with high modularization urgency: ${report.summary.highUrgencyModularizationCount}`);
   lines.push(`- Average dead-code score: ${formatPercentScore(report.summary.averageDeadCodeScore)}`);
   lines.push(`- Pages with high dead-code urgency: ${report.summary.highUrgencyDeadCodeCount}`);
+  lines.push(`- Average non-critical resources score: ${formatPercentScore(report.summary.averageNonCriticalResourcesScore)}`);
+  lines.push(`- Pages with high non-critical resource urgency: ${report.summary.highUrgencyNonCriticalResourcesCount}`);
   lines.push("");
   lines.push("## WSG Third-Party JavaScript Assessment");
   lines.push("");
@@ -711,6 +719,12 @@ export function renderMarkdown(report) {
   lines.push("- Dead-code score: 0 (low unnecessary code) to 100 (high unnecessary code)");
   lines.push("- Includes unused CSS/JS, duplicated JS, and HTML complexity heuristics");
   lines.push("");
+  lines.push("## WSG Defer Non-Critical Resources Analysis");
+  lines.push("");
+  lines.push("- WSG reference: Defer the loading of non-critical resources (https://www.w3.org/TR/web-sustainability-guidelines/#defer-the-loading-of-non-critical-resources)");
+  lines.push("- Non-critical score: 0 (few defer opportunities) to 100 (many deferrable resources)");
+  lines.push("- Uses offscreen image savings, unused CSS/JS, render-blocking delay, and heavy likely-non-critical assets");
+  lines.push("");
   lines.push("## WSG Modularization Analysis");
   lines.push("");
   lines.push("- WSG reference: Modularize bandwidth-heavy components (https://www.w3.org/TR/web-sustainability-guidelines/#modularize-bandwidth-heavy-components)");
@@ -776,6 +790,8 @@ export function renderMarkdown(report) {
     lines.push(`- Modularization urgency: ${(entry.modularization?.urgency || "n/a").toUpperCase()}`);
     lines.push(`- Dead-code score: ${formatPercentScore(entry.deadCode?.score)}`);
     lines.push(`- Dead-code urgency: ${(entry.deadCode?.urgency || "n/a").toUpperCase()}`);
+    lines.push(`- Non-critical resources score: ${formatPercentScore(entry.nonCriticalResources?.score)}`);
+    lines.push(`- Non-critical resources urgency: ${(entry.nonCriticalResources?.urgency || "n/a").toUpperCase()}`);
     lines.push(`- Third-party JS risk score: ${formatPercentScore(entry.thirdPartyJs?.score)}`);
     lines.push(`- Third-party JS urgency: ${(entry.thirdPartyJs?.urgency || "n/a").toUpperCase()}`);
 
@@ -822,6 +838,14 @@ export function renderMarkdown(report) {
       for (const recommendation of entry.deadCode.recommendations.slice(0, 4)) {
         lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}${recommendation.estimatedSavingsBytes > 0 ? ` (est. ${formatBytes(recommendation.estimatedSavingsBytes)} savings)` : ""}`);
         lines.push(`    - ${recommendation.strategy}`);
+      }
+    }
+
+    if ((entry.nonCriticalResources?.candidates || []).length > 0) {
+      lines.push("- Non-critical loading candidates:");
+      for (const candidate of entry.nonCriticalResources.candidates.slice(0, 5)) {
+        lines.push(`  - [${candidate.urgency.toUpperCase()}] ${candidate.title}${candidate.estimatedSavingsBytes > 0 ? ` (est. ${formatBytes(candidate.estimatedSavingsBytes)} deferrable)` : ""}${candidate.estimatedBlockingMs ? ` (est. ${Math.round(candidate.estimatedBlockingMs)} ms unblock)` : ""}`);
+        lines.push(`    - ${candidate.strategy}`);
       }
     }
 
@@ -937,6 +961,7 @@ export function renderHtml(report, markdownText) {
         <li><strong>Average redundancy score:</strong> ${formatPercentScore(report.summary.averageRedundancyScore)}</li>
         <li><strong>Average modularization score:</strong> ${formatPercentScore(report.summary.averageModularizationScore)}</li>
         <li><strong>Average dead-code score:</strong> ${formatPercentScore(report.summary.averageDeadCodeScore)}</li>
+        <li><strong>Average non-critical resources score:</strong> ${formatPercentScore(report.summary.averageNonCriticalResourcesScore)}</li>
       </ul>
     </header>
 
@@ -1001,6 +1026,16 @@ export function renderHtml(report, markdownText) {
         <li><strong>WSG criterion:</strong> <a href="https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-code">Remove unnecessary code</a></li>
         <li><strong>Average dead-code score:</strong> ${formatPercentScore(report.summary.averageDeadCodeScore)} (0 low, 100 high)</li>
         <li><strong>High urgency pages:</strong> ${report.summary.highUrgencyDeadCodeCount}</li>
+      </ul>
+    </section>
+
+    <section class="card" aria-labelledby="non-critical-heading">
+      <h2 id="non-critical-heading">WSG Defer Non-Critical Resources Overview</h2>
+      <p class="muted">Identifies assets likely not required for first paint and recommends deferring them.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="https://www.w3.org/TR/web-sustainability-guidelines/#defer-the-loading-of-non-critical-resources">Defer the loading of non-critical resources</a></li>
+        <li><strong>Average non-critical score:</strong> ${formatPercentScore(report.summary.averageNonCriticalResourcesScore)} (0 low, 100 high)</li>
+        <li><strong>High urgency pages:</strong> ${report.summary.highUrgencyNonCriticalResourcesCount}</li>
       </ul>
     </section>
 

@@ -22,6 +22,7 @@ const REDUNDANCY_AUDITS = [
 
 const MODULARIZATION_WSG_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#modularize-bandwidth-heavy-components";
 const DEAD_CODE_WSG_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-code";
+const NON_CRITICAL_WSG_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#defer-the-loading-of-non-critical-resources";
 
 const REDUNDANCY_RELATED_AUDITS = [
   ...REDUNDANCY_AUDITS,
@@ -213,6 +214,51 @@ export function analyzeDeadCodeFromLighthouse(lhr, wsgIndex) {
   };
 }
 
+export function analyzeNonCriticalResourcesFromLighthouse(lhr, wsgIndex) {
+  const audits = lhr.audits || {};
+  const transferBytes = extractTransferBytes(audits);
+  const networkItems = audits["network-requests"]?.details?.items || [];
+
+  const offscreenImageSavings = getSavingsBytes(audits["offscreen-images"]);
+  const unusedJavascriptSavings = getSavingsBytes(audits["unused-javascript"]);
+  const unusedCssSavings = getSavingsBytes(audits["unused-css-rules"]);
+  const renderBlockingMs = typeof audits["render-blocking-resources"]?.numericValue === "number"
+    ? Math.max(0, audits["render-blocking-resources"].numericValue)
+    : 0;
+
+  const imageRatio = transferBytes > 0 ? Math.min(offscreenImageSavings / transferBytes, 1) : 0;
+  const jsRatio = transferBytes > 0 ? Math.min(unusedJavascriptSavings / transferBytes, 1) : 0;
+  const cssRatio = transferBytes > 0 ? Math.min(unusedCssSavings / transferBytes, 1) : 0;
+  const renderBlockingPenalty = Math.min(renderBlockingMs / 1500, 1);
+
+  const weighted = (0.35 * imageRatio) + (0.3 * jsRatio) + (0.2 * cssRatio) + (0.15 * renderBlockingPenalty);
+  const score = Math.round(weighted * 100);
+  const urgency = nonCriticalUrgency({ score, deferrableBytes: offscreenImageSavings + unusedJavascriptSavings + unusedCssSavings, renderBlockingMs });
+  const wsg = wsgIndex.get(NON_CRITICAL_WSG_URL) || null;
+
+  return {
+    score,
+    urgency,
+    transferBytes,
+    estimatedDeferrableBytes: offscreenImageSavings + unusedJavascriptSavings + unusedCssSavings,
+    renderBlockingMs,
+    breakdown: {
+      offscreenImageSavings,
+      unusedJavascriptSavings,
+      unusedCssSavings
+    },
+    candidates: buildNonCriticalCandidates({
+      networkItems,
+      offscreenImageSavings,
+      unusedJavascriptSavings,
+      unusedCssSavings,
+      renderBlockingMs,
+      wsg
+    }),
+    wsg
+  };
+}
+
 function severityRank(value) {
   if (value === "high") return 0;
   if (value === "medium") return 1;
@@ -310,6 +356,81 @@ function buildDeadCodeRecommendations({ cssUnusedBytes, jsUnusedBytes, duplicate
   }
 
   return recommendations.slice(0, 6);
+}
+
+function nonCriticalUrgency({ score, deferrableBytes, renderBlockingMs }) {
+  if (score >= 60 || deferrableBytes >= 400 * 1024 || renderBlockingMs >= 1000) return "high";
+  if (score >= 30 || deferrableBytes >= 120 * 1024 || renderBlockingMs >= 250) return "medium";
+  return "low";
+}
+
+function buildNonCriticalCandidates({ networkItems, offscreenImageSavings, unusedJavascriptSavings, unusedCssSavings, renderBlockingMs, wsg }) {
+  const candidates = [];
+
+  if (offscreenImageSavings > 0) {
+    candidates.push({
+      title: "Lazy-load offscreen images",
+      area: "image",
+      urgency: offscreenImageSavings >= 250 * 1024 ? "high" : "medium",
+      estimatedSavingsBytes: offscreenImageSavings,
+      strategy: "Load below-the-fold images only when they approach the viewport.",
+      wsg
+    });
+  }
+
+  if (unusedJavascriptSavings > 0) {
+    candidates.push({
+      title: "Defer non-critical JavaScript",
+      area: "javascript",
+      urgency: unusedJavascriptSavings >= 120 * 1024 ? "high" : "medium",
+      estimatedSavingsBytes: unusedJavascriptSavings,
+      strategy: "Split bundles and load feature code on interaction or route transition.",
+      wsg
+    });
+  }
+
+  if (unusedCssSavings > 0) {
+    candidates.push({
+      title: "Inline critical CSS and defer remainder",
+      area: "stylesheet",
+      urgency: unusedCssSavings >= 80 * 1024 ? "high" : "medium",
+      estimatedSavingsBytes: unusedCssSavings,
+      strategy: "Ship only above-the-fold CSS in initial render path and defer non-critical styles.",
+      wsg
+    });
+  }
+
+  if (renderBlockingMs > 0) {
+    candidates.push({
+      title: "Eliminate render-blocking resources",
+      area: "render-path",
+      urgency: renderBlockingMs >= 1000 ? "high" : "medium",
+      estimatedSavingsBytes: 0,
+      estimatedBlockingMs: renderBlockingMs,
+      strategy: "Defer scripts/styles not required for first paint and preload only truly critical assets.",
+      wsg
+    });
+  }
+
+  const heavyDeferrableRequests = (networkItems || [])
+    .map((item) => normalizeRequest(item))
+    .filter((item) => ["script", "stylesheet", "font", "image"].includes(item.resourceType) && item.transferSize >= 60 * 1024)
+    .sort((a, b) => b.transferSize - a.transferSize)
+    .slice(0, 4);
+
+  for (const request of heavyDeferrableRequests) {
+    candidates.push({
+      title: `Evaluate deferred loading for heavy ${request.resourceType} from ${request.domain}`,
+      area: request.resourceType,
+      urgency: request.transferSize >= 180 * 1024 ? "high" : "medium",
+      estimatedSavingsBytes: request.transferSize,
+      url: request.url,
+      strategy: "Confirm this asset is required for first paint; defer or lazy-load if not critical.",
+      wsg
+    });
+  }
+
+  return dedupeCandidates(candidates).slice(0, 8);
 }
 
 function normalizeRequest(item) {

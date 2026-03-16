@@ -115,6 +115,11 @@ Reports also include dead-code analysis aligned with WSG guidance:
 - Per-page dead-code score and urgency
 - Recommendations covering unused CSS, unused/duplicated JavaScript, and excessive HTML complexity
 
+Reports also include non-critical resource defer-loading analysis aligned with WSG guidance:
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#defer-the-loading-of-non-critical-resources
+- Per-page non-critical resource score and urgency
+- Candidate resources to defer (offscreen media, non-critical scripts/styles, render-blocking assets, and heavy likely-deferrable requests)
+
 ## Actionable Triage Flow
 
 1. Open report.html.
