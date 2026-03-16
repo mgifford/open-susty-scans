@@ -6,11 +6,11 @@ on:
   workflow_dispatch:
     inputs:
       issue_url:
-        description: GitHub issue URL to scan
-        required: true
+        description: GitHub issue URL to scan, or plain issue number (e.g. 42)
+        required: false
         type: string
       issue_number:
-        description: Issue number (optional override)
+        description: Issue number (used when issue_url is not provided)
         required: false
         type: string
 
@@ -44,12 +44,25 @@ jobs:
           else
             INPUT_ISSUE_NUMBER="${{ inputs.issue_number }}"
             INPUT_ISSUE_URL="${{ inputs.issue_url }}"
-            if [ -n "$INPUT_ISSUE_NUMBER" ]; then
-              echo "issue_number=$INPUT_ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
-            else
-              PARSED_NUMBER=$(echo "$INPUT_ISSUE_URL" | sed -E 's|.*/issues/([0-9]+).*|\1|')
-              echo "issue_number=$PARSED_NUMBER" >> "$GITHUB_OUTPUT"
+
+            # If issue_url is a plain number, expand it to a full URL using a temporary variable
+            if [[ "$INPUT_ISSUE_URL" =~ ^[0-9]+$ ]]; then
+              PLAIN_NUM="$INPUT_ISSUE_URL"
+              INPUT_ISSUE_URL="https://github.com/${{ github.repository }}/issues/$PLAIN_NUM"
+              INPUT_ISSUE_NUMBER="${INPUT_ISSUE_NUMBER:-$PLAIN_NUM}"
             fi
+
+            # If still no valid URL (e.g. only issue_number was provided), construct it
+            if [ -n "$INPUT_ISSUE_NUMBER" ] && ! [[ "$INPUT_ISSUE_URL" =~ ^https://github\.com/ ]]; then
+              INPUT_ISSUE_URL="https://github.com/${{ github.repository }}/issues/$INPUT_ISSUE_NUMBER"
+            fi
+
+            # If issue_number is still empty, parse it from the URL
+            if [ -z "$INPUT_ISSUE_NUMBER" ]; then
+              INPUT_ISSUE_NUMBER=$(echo "$INPUT_ISSUE_URL" | sed -E 's|.*/issues/([0-9]+).*|\1|')
+            fi
+
+            echo "issue_number=$INPUT_ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
             echo "issue_url=$INPUT_ISSUE_URL" >> "$GITHUB_OUTPUT"
           fi
 
