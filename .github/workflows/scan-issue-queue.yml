@@ -1,0 +1,141 @@
+name: Scan Issue Queue
+
+# Processes ALL open issues whose titles start with "SCAN:".
+# Runs on a daily schedule and can also be triggered manually.
+# No inputs are required — the workflow discovers and scans every open SCAN issue automatically.
+
+on:
+  schedule:
+    # Run daily at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: scan-repository
+  cancel-in-progress: false
+
+jobs:
+  scan-open-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch open SCAN issues
+        id: fetch-issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100
+            });
+
+            const scanIssues = issues.filter(issue =>
+              issue.title.startsWith('SCAN:') && !issue.pull_request
+            );
+
+            console.log(`Found ${scanIssues.length} open SCAN issues`);
+            return scanIssues.map(issue => issue.number);
+          result-encoding: json
+
+      - name: Process each SCAN issue
+        if: steps.fetch-issues.outputs.result != '[]'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          ISSUE_NUMBERS_JSON: ${{ steps.fetch-issues.outputs.result }}
+        run: |
+          ISSUE_NUMBERS=$(node -e "console.log(JSON.parse(process.env.ISSUE_NUMBERS_JSON).join(' '))")
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for issue_num in $ISSUE_NUMBERS; do
+            echo "=== Processing issue #$issue_num ==="
+            ISSUE_URL="https://github.com/$REPO/issues/$issue_num"
+
+            # Reset staging dirs for this iteration
+            rm -rf "./.tmp/current-report-${issue_num}" ./.tmp/site
+            mkdir -p "./.tmp/current-report-${issue_num}" ./.tmp/site
+
+            # Copy existing committed reports into staging area
+            cp -R ./reports ./.tmp/site/ 2>/dev/null || true
+            cp ./reports.html ./.tmp/site/reports.html 2>/dev/null || true
+            cp ./.nojekyll ./.tmp/site/.nojekyll 2>/dev/null || true
+
+            if npm run scan -- \
+              --issue-url "$ISSUE_URL" \
+              --output "./.tmp/current-report-${issue_num}"; then
+
+              if node src/report/build-pages-site.js \
+                --site-dir ./.tmp/site \
+                --report-dir "./.tmp/current-report-${issue_num}" \
+                --issue-number "$issue_num" \
+                --run-id "$RUN_ID" \
+                --repo "$REPO" \
+                --metadata-out "./.tmp/report-metadata-${issue_num}.json"; then
+
+                rm -rf ./reports
+                mkdir -p ./reports
+                cp -R ./.tmp/site/reports/. ./reports/
+                cp ./.tmp/site/reports.html ./reports.html
+                cp ./.tmp/site/.nojekyll ./.nojekyll
+
+                git add reports reports.html .nojekyll
+
+                if git diff --cached --quiet; then
+                  echo "No pages changes to commit for issue #$issue_num"
+                else
+                  git commit -m "Publish sustainability reports for issue #$issue_num"
+
+                  PUSH_SUCCESS=false
+                  for attempt in 1 2 3; do
+                    echo "Push attempt $attempt for issue #$issue_num..."
+                    if git pull --rebase origin main && git push origin main; then
+                      PUSH_SUCCESS=true
+                      break
+                    fi
+                    sleep $((attempt * 2))
+                  done
+
+                  if [ "$PUSH_SUCCESS" = false ]; then
+                    echo "WARNING: Failed to push after 3 attempts for issue #$issue_num"
+                  fi
+                fi
+
+                # Post report links back to the issue; close only on success
+                if ISSUE_NUMBER="$issue_num" \
+                   REPORT_METADATA_PATH="./.tmp/report-metadata-${issue_num}.json" \
+                   node src/report/post-issue-comment.js; then
+                  # Close the issue so it is not re-scanned on the next queue run
+                  gh issue close "$issue_num" -R "$REPO" \
+                    || echo "WARNING: Failed to close issue #$issue_num"
+                else
+                  echo "WARNING: Failed to post comment for issue #$issue_num — issue left open"
+                fi
+
+              else
+                echo "WARNING: Failed to build pages for issue #$issue_num"
+              fi
+            else
+              echo "WARNING: Scan failed for issue #$issue_num"
+            fi
+          done

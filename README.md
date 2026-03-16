@@ -55,7 +55,7 @@ npm run scan -- --urls-file ./urls.txt --title "SCAN: My Sustainability Batch"
 From an issue body markdown file:
 
 ```bash
-npm run scan -- --issue-file ./issue-body.md --issue-number 42 --title "SCAN: Government Services"
+npm run scan -- --issue-file ./issue-body.md --title "SCAN: Government Services"
 ```
 
 Directly from a GitHub issue URL:
@@ -201,18 +201,35 @@ Reports also include offline access and caching support guidance aligned with WS
 
 ## GitHub Automation
 
+### On-demand scan (`scan-and-publish.yml`)
+
 Workflow path:
 - `.github/workflows/scan-and-publish.yml`
 
 Triggers:
-- `issues` events (`opened`, `edited`, `reopened`) for issue-driven scans
-- `workflow_dispatch` with an `issue_url` input for manual runs
+- `issues` events (`opened`, `edited`, `reopened`) **when the title starts with `SCAN:`**
+- `workflow_dispatch` with an optional `issue_url` input (accepts a full GitHub issue URL or a plain issue number such as `42`) — no issue number input is required
 
 What it does:
+- Derives the issue number automatically from the issue URL
 - Runs the scanner using the GitHub issue URL intake
 - Commits published report pages back to `main` so GitHub Pages (configured to main) can serve them
 - Generates/updates `reports.html` index on GitHub Pages
 - Upserts a single report comment on the issue with direct links
+
+### Queue scan (`scan-issue-queue.yml`)
+
+Workflow path:
+- `.github/workflows/scan-issue-queue.yml`
+
+Triggers:
+- Scheduled daily at midnight UTC
+- `workflow_dispatch` (no inputs required)
+
+What it does:
+- Fetches **all open issues** whose title starts with `SCAN:`
+- Processes each issue in sequence using the same scan pipeline as the on-demand workflow
+- Posts a report comment and closes each successfully scanned issue so it is not re-scanned on the next run
 
 GitHub Pages URL pattern:
 - `https://<owner>.github.io/<repo>/reports/`
