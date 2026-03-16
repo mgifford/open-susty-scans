@@ -4,6 +4,14 @@ import { analyzeDeadCodeFromLighthouse, analyzeModularizationFromLighthouse, ana
 
 const WSG_PERFORMANCE_ENERGY_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact";
 const WSG_THIRD_PARTY_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#give-third-parties-the-same-priority-as-first-parties-during-assessment";
+const WSG_LAYOUT_SUPPORT_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-layouts-work-for-different-devices-and-requirements";
+const WSG_SECURITY_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-that-your-code-is-secure";
+const WSG_DEPENDENCY_MAINTENANCE_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#use-dependencies-appropriately-and-ensure-maintenance";
+const WSG_EXPECTED_FILES_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#include-expected-and-beneficial-files";
+const WSG_EFFICIENT_SOLUTION_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#use-the-most-efficient-solution-for-your-service";
+const WSG_REDUCE_DATA_TRANSFER_COMPRESSION_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#reduce-data-transfer-with-compression";
+const WSG_LATEST_STABLE_LANGUAGE_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#use-the-latest-stable-language-version";
+const WSG_OFFLINE_ACCESS_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#optimize-caching-and-support-offline-access";
 const SWD_RATING_SOURCE_URL = "https://sustainablewebdesign.org/digital-carbon-ratings/";
 
 const SWD_RATINGS = [
@@ -38,6 +46,14 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
       finalUrl: result.lighthouse.finalUrl,
       greenWeb: result.sustainability.greenWeb
     });
+    const compressionOpportunities = analyzeCompressionOpportunities({ audits: result.lighthouse.audits });
+    const optimizationOpportunities = analyzeOptimizationOpportunities({ audits: result.lighthouse.audits });
+    const dependencyMaintenance = analyzeDependencyMaintenance(result.sustainability.securityLight);
+    const offlineSupport = analyzeOfflineSupport({ audits: result.lighthouse.audits });
+    const languageVersionGuidance = analyzeLanguageVersionGuidance({
+      securityLight: result.sustainability.securityLight,
+      dependencyMaintenance
+    });
     return {
       url: result.url,
       status: "ok",
@@ -47,6 +63,16 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
       transferBytes: result.sustainability.transferBytes,
       co2Grams: result.sustainability.co2Grams,
       greenWeb: result.sustainability.greenWeb,
+      formValidation: result.sustainability.formValidation,
+      metadata: result.sustainability.metadata,
+      layoutAdaptation: result.sustainability.layoutAdaptation,
+      securityLight: result.sustainability.securityLight,
+      expectedFiles: result.sustainability.expectedFiles,
+      compressionOpportunities,
+      optimizationOpportunities,
+      dependencyMaintenance,
+      offlineSupport,
+      languageVersionGuidance,
       deadCode,
       nonCriticalResources,
       thirdPartyJs,
@@ -61,6 +87,17 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
   const crossPagePatterns = buildCrossPagePatterns(perUrl);
   const thirdPartyJsSummary = buildThirdPartyJsSummary(perUrl);
   const externalProviderRiskSummary = buildExternalProviderRiskSummary(perUrl);
+  const formValidationSummary = buildFormValidationSummary(perUrl);
+  const metadataSummary = buildMetadataSummary(perUrl);
+  const layoutSupportSummary = buildLayoutSupportSummary(perUrl);
+  const securityLightSummary = buildSecurityLightSummary(perUrl);
+  const dependencyMaintenanceSummary = buildDependencyMaintenanceSummary(perUrl);
+  const expectedFilesSummary = buildExpectedFilesSummary(perUrl);
+  const compressionSummary = buildCompressionSummary(perUrl);
+  const optimizationSummary = buildOptimizationSummary(perUrl);
+  const offlineSupportSummary = buildOfflineSupportSummary(perUrl);
+  const languageVersionSummary = buildLanguageVersionSummary(perUrl);
+  const siteGuidance = buildSiteGuidance(perUrl);
 
   return {
     version: "0.1.0",
@@ -72,6 +109,17 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
     budgetGuidance,
     thirdPartyJsSummary,
     externalProviderRiskSummary,
+    formValidationSummary,
+    metadataSummary,
+    layoutSupportSummary,
+    securityLightSummary,
+    dependencyMaintenanceSummary,
+    expectedFilesSummary,
+    compressionSummary,
+    optimizationSummary,
+    offlineSupportSummary,
+    languageVersionSummary,
+    siteGuidance,
     crossPagePatterns,
     results: perUrl
   };
@@ -95,6 +143,27 @@ function buildSummary(perUrl) {
   const highUrgencyDeadCodeCount = ok.filter((item) => item.deadCode?.urgency === "high").length;
   const averageNonCriticalResourcesScore = average(ok.map((item) => item.nonCriticalResources?.score));
   const highUrgencyNonCriticalResourcesCount = ok.filter((item) => item.nonCriticalResources?.urgency === "high").length;
+  const averageFormValidationScore = average(ok.map((item) => item.formValidation?.score));
+  const highUrgencyFormValidationCount = ok.filter((item) => item.formValidation?.urgency === "high").length;
+  const averageMetadataScore = average(ok.map((item) => item.metadata?.score));
+  const highUrgencyMetadataCount = ok.filter((item) => item.metadata?.urgency === "high").length;
+  const averageLayoutAdaptationScore = average(ok.map((item) => item.layoutAdaptation?.score));
+  const highUrgencyLayoutAdaptationCount = ok.filter((item) => item.layoutAdaptation?.urgency === "high").length;
+  const averageSecurityLightScore = average(ok.map((item) => item.securityLight?.score));
+  const highUrgencySecurityLightCount = ok.filter((item) => item.securityLight?.urgency === "high").length;
+  const averageDependencyMaintenanceScore = average(ok.map((item) => item.dependencyMaintenance?.score));
+  const highUrgencyDependencyMaintenanceCount = ok.filter((item) => item.dependencyMaintenance?.urgency === "high").length;
+  const averageExpectedFilesScore = average(ok.map((item) => item.expectedFiles?.score));
+  const highUrgencyExpectedFilesCount = ok.filter((item) => item.expectedFiles?.urgency === "high").length;
+  const averageCompressionScore = average(ok.map((item) => item.compressionOpportunities?.score));
+  const highUrgencyCompressionCount = ok.filter((item) => item.compressionOpportunities?.urgency === "high").length;
+  const averageOptimizationScore = average(ok.map((item) => item.optimizationOpportunities?.score));
+  const highUrgencyOptimizationCount = ok.filter((item) => item.optimizationOpportunities?.urgency === "high").length;
+  const averageOfflineSupportScore = average(ok.map((item) => item.offlineSupport?.score));
+  const highUrgencyOfflineSupportCount = ok.filter((item) => item.offlineSupport?.urgency === "high").length;
+  const averageLanguageVersionScore = average(ok.map((item) => item.languageVersionGuidance?.score));
+  const highUrgencyLanguageVersionCount = ok.filter((item) => item.languageVersionGuidance?.urgency === "high").length;
+  const siteOrigins = Array.from(new Set(ok.map((item) => safeOrigin(item.finalUrl || item.url)).filter(Boolean)));
   const greenWeb = buildGreenWebSummary(ok);
 
   return {
@@ -114,8 +183,1375 @@ function buildSummary(perUrl) {
     highUrgencyDeadCodeCount,
     averageNonCriticalResourcesScore,
     highUrgencyNonCriticalResourcesCount,
+    averageFormValidationScore,
+    highUrgencyFormValidationCount,
+    averageMetadataScore,
+    highUrgencyMetadataCount,
+    averageLayoutAdaptationScore,
+    highUrgencyLayoutAdaptationCount,
+    averageSecurityLightScore,
+    highUrgencySecurityLightCount,
+    averageDependencyMaintenanceScore,
+    highUrgencyDependencyMaintenanceCount,
+    averageExpectedFilesScore,
+    highUrgencyExpectedFilesCount,
+    averageCompressionScore,
+    highUrgencyCompressionCount,
+    averageOptimizationScore,
+    highUrgencyOptimizationCount,
+    averageOfflineSupportScore,
+    highUrgencyOfflineSupportCount,
+    averageLanguageVersionScore,
+    highUrgencyLanguageVersionCount,
+    distinctSiteCount: siteOrigins.length,
+    singleSiteScan: siteOrigins.length <= 1,
     greenWeb
   };
+}
+
+function buildSiteGuidance(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  const byOrigin = new Map();
+
+  for (const entry of okEntries) {
+    const origin = safeOrigin(entry.finalUrl || entry.url);
+    if (!origin) continue;
+    const group = byOrigin.get(origin) || [];
+    group.push(entry);
+    byOrigin.set(origin, group);
+  }
+
+  const sites = Array.from(byOrigin.entries()).map(([origin, entries]) => {
+    const sharedRecommendations = [];
+    const pageCount = entries.length;
+
+    const expectedMissingCount = (path) => entries.filter((entry) => !entry.expectedFiles?.checks?.find((item) => item.path === path)?.found).length;
+
+    const robotsMissing = expectedMissingCount("/robots.txt");
+    if (robotsMissing === pageCount && pageCount > 0) {
+      sharedRecommendations.push({
+        area: "expected-files",
+        urgency: "high",
+        title: "Add robots.txt at site origin",
+        detail: `robots.txt is missing for all sampled pages on ${origin}.`
+      });
+    }
+
+    const sitemapMissing = expectedMissingCount("/sitemap.xml");
+    if (sitemapMissing === pageCount && pageCount > 0) {
+      sharedRecommendations.push({
+        area: "expected-files",
+        urgency: "medium",
+        title: "Add sitemap.xml at site origin",
+        detail: `sitemap.xml is missing for all sampled pages on ${origin}.`
+      });
+    }
+
+    const securityTxtMissing = expectedMissingCount("/.well-known/security.txt");
+    if (securityTxtMissing === pageCount && pageCount > 0) {
+      sharedRecommendations.push({
+        area: "expected-files",
+        urgency: "low",
+        title: "Publish .well-known/security.txt",
+        detail: `.well-known/security.txt is missing for all sampled pages on ${origin}.`
+      });
+    }
+
+    const pagesWithoutCsp = entries.filter((entry) => !entry.securityLight?.checks?.hasCsp).length;
+    if (pagesWithoutCsp === pageCount && pageCount > 0) {
+      sharedRecommendations.push({
+        area: "security-headers",
+        urgency: "high",
+        title: "Apply Content-Security-Policy site-wide",
+        detail: `CSP is absent across all sampled pages on ${origin}.`
+      });
+    }
+
+    const pagesWithoutHsts = entries.filter((entry) => entry.securityLight?.checks?.isHttps && !entry.securityLight?.checks?.hasHsts).length;
+    if (pagesWithoutHsts === pageCount && pageCount > 0) {
+      sharedRecommendations.push({
+        area: "security-headers",
+        urgency: "medium",
+        title: "Enable Strict-Transport-Security site-wide",
+        detail: `HSTS is missing across all sampled HTTPS pages on ${origin}.`
+      });
+    }
+
+    const pagesWithoutServiceWorker = entries.filter((entry) => !entry.offlineSupport?.checks?.hasServiceWorker).length;
+    if (pagesWithoutServiceWorker === pageCount && pageCount > 0) {
+      sharedRecommendations.push({
+        area: "offline-support",
+        urgency: "high",
+        title: "Introduce service worker support",
+        detail: `No sampled pages on ${origin} indicate service worker support for offline resilience.`
+      });
+    }
+
+    const pagesWithoutOfflineSupport = entries.filter((entry) => !entry.offlineSupport?.checks?.worksOffline).length;
+    if (pagesWithoutOfflineSupport === pageCount && pageCount > 0) {
+      sharedRecommendations.push({
+        area: "offline-support",
+        urgency: "high",
+        title: "Support offline fallback behavior",
+        detail: `Offline page behavior was not detected across sampled pages on ${origin}.`
+      });
+    }
+
+    const recurringOptimization = new Map();
+    for (const entry of entries) {
+      for (const opportunity of entry.optimizationOpportunities?.opportunities || []) {
+        const key = opportunity.id;
+        const current = recurringOptimization.get(key) || {
+          id: opportunity.id,
+          title: opportunity.title,
+          pageCount: 0,
+          totalEstimatedSavingsBytes: 0,
+          totalEstimatedBlockingMs: 0,
+          pages: new Set()
+        };
+        if (!current.pages.has(entry.url)) {
+          current.pages.add(entry.url);
+          current.pageCount += 1;
+        }
+        current.totalEstimatedSavingsBytes += opportunity.estimatedSavingsBytes || 0;
+        current.totalEstimatedBlockingMs += opportunity.estimatedBlockingMs || 0;
+        recurringOptimization.set(key, current);
+      }
+    }
+
+    const recurringOptimizationItems = Array.from(recurringOptimization.values())
+      .filter((item) => item.pageCount > 1)
+      .map(({ pages, ...rest }) => rest)
+      .sort((a, b) => b.pageCount - a.pageCount || b.totalEstimatedSavingsBytes - a.totalEstimatedSavingsBytes);
+
+    if (recurringOptimizationItems.length > 0) {
+      const top = recurringOptimizationItems[0];
+      sharedRecommendations.push({
+        area: "optimization",
+        urgency: "medium",
+        title: "Fix recurring optimization bloat at shared layer",
+        detail: `${top.title} recurs across ${top.pageCount} pages on ${origin}${top.totalEstimatedSavingsBytes > 0 ? ` (est. ${formatBytes(top.totalEstimatedSavingsBytes)} aggregate savings)` : ""}.`
+      });
+    }
+
+    const recurringCompressionMap = new Map();
+    for (const entry of entries) {
+      for (const opportunity of entry.compressionOpportunities?.opportunities || []) {
+        const key = opportunity.id;
+        const current = recurringCompressionMap.get(key) || {
+          id: opportunity.id,
+          title: opportunity.title,
+          urgency: opportunity.urgency || "medium",
+          pageCount: 0,
+          totalEstimatedSavingsBytes: 0,
+          pages: new Set()
+        };
+
+        if (!current.pages.has(entry.url)) {
+          current.pages.add(entry.url);
+          current.pageCount += 1;
+        }
+
+        current.totalEstimatedSavingsBytes += opportunity.estimatedSavingsBytes || 0;
+        current.urgency = maxUrgency(current.urgency, opportunity.urgency || "medium");
+        recurringCompressionMap.set(key, current);
+      }
+    }
+
+    const recurringCompression = Array.from(recurringCompressionMap.values())
+      .filter((item) => item.pageCount > 1)
+      .map(({ pages, ...rest }) => rest)
+      .sort((a, b) => b.pageCount - a.pageCount || b.totalEstimatedSavingsBytes - a.totalEstimatedSavingsBytes);
+
+    if (recurringCompression.length > 0) {
+      const top = recurringCompression[0];
+      sharedRecommendations.push({
+        area: "compression",
+        urgency: top.urgency,
+        title: "Prioritize recurring compression fixes",
+        detail: `${top.title} recurs across ${top.pageCount} pages on ${origin}${top.totalEstimatedSavingsBytes > 0 ? ` (est. ${formatBytes(top.totalEstimatedSavingsBytes)} aggregate savings)` : ""}.`
+      });
+    }
+
+    const recurringOfflineMap = new Map();
+    for (const entry of entries) {
+      for (const opportunity of entry.offlineSupport?.opportunities || []) {
+        const key = opportunity.id;
+        const current = recurringOfflineMap.get(key) || {
+          id: opportunity.id,
+          title: opportunity.title,
+          urgency: opportunity.urgency || "medium",
+          pageCount: 0,
+          pages: new Set()
+        };
+
+        if (!current.pages.has(entry.url)) {
+          current.pages.add(entry.url);
+          current.pageCount += 1;
+        }
+
+        current.urgency = maxUrgency(current.urgency, opportunity.urgency || "medium");
+        recurringOfflineMap.set(key, current);
+      }
+    }
+
+    const recurringOfflineOpportunities = Array.from(recurringOfflineMap.values())
+      .filter((item) => item.pageCount > 1)
+      .map(({ pages, ...rest }) => rest)
+      .sort((a, b) => b.pageCount - a.pageCount || String(a.title).localeCompare(String(b.title)));
+
+    if (recurringOfflineOpportunities.length > 0) {
+      const top = recurringOfflineOpportunities[0];
+      sharedRecommendations.push({
+        area: "offline-support",
+        urgency: top.urgency,
+        title: "Prioritize recurring offline/caching improvements",
+        detail: `${top.title} is needed across ${top.pageCount} pages on ${origin}.`
+      });
+    }
+
+    const recurringDependencyMap = new Map();
+    for (const entry of entries) {
+      for (const dependency of entry.dependencyMaintenance?.vulnerableLibraries || []) {
+        const key = `${dependency.library}|${dependency.version || "unknown"}`;
+        const current = recurringDependencyMap.get(key) || {
+          library: dependency.library,
+          version: dependency.version || null,
+          pageCount: 0,
+          pages: new Set(),
+          severity: dependency.severity || null
+        };
+        if (!current.pages.has(entry.url)) {
+          current.pages.add(entry.url);
+          current.pageCount += 1;
+        }
+        recurringDependencyMap.set(key, current);
+      }
+    }
+
+    const recurringDependencies = Array.from(recurringDependencyMap.values())
+      .filter((item) => item.pageCount > 1)
+      .map(({ pages, ...rest }) => rest)
+      .sort((a, b) => b.pageCount - a.pageCount || String(a.library).localeCompare(String(b.library)));
+
+    if (recurringDependencies.length > 0) {
+      const top = recurringDependencies[0];
+      sharedRecommendations.push({
+        area: "dependency-maintenance",
+        urgency: "high",
+        title: "Prioritize recurring vulnerable dependencies",
+        detail: `${top.library}${top.version ? `@${top.version}` : ""} appears as vulnerable across ${top.pageCount} pages on ${origin}.`
+      });
+    }
+
+    const recurringRuntimeMap = new Map();
+    for (const entry of entries) {
+      for (const signal of entry.languageVersionGuidance?.outdatedTechnologies || []) {
+        const key = `${signal.family}|${signal.version || "unknown"}|${signal.recommendedBaseline || ""}`;
+        const current = recurringRuntimeMap.get(key) || {
+          family: signal.family,
+          version: signal.version || null,
+          recommendedBaseline: signal.recommendedBaseline || null,
+          urgency: signal.urgency || "medium",
+          pageCount: 0,
+          pages: new Set()
+        };
+
+        if (!current.pages.has(entry.url)) {
+          current.pages.add(entry.url);
+          current.pageCount += 1;
+        }
+
+        current.urgency = maxUrgency(current.urgency, signal.urgency || "medium");
+        recurringRuntimeMap.set(key, current);
+      }
+    }
+
+    const recurringRuntimeSignals = Array.from(recurringRuntimeMap.values())
+      .filter((item) => item.pageCount > 1)
+      .map(({ pages, ...rest }) => rest)
+      .sort((a, b) => b.pageCount - a.pageCount || String(a.family).localeCompare(String(b.family)));
+
+    if (recurringRuntimeSignals.length > 0) {
+      const top = recurringRuntimeSignals[0];
+      sharedRecommendations.push({
+        area: "language-version",
+        urgency: top.urgency || "medium",
+        title: "Modernize recurring runtime/language versions",
+        detail: `${top.family}${top.version ? ` ${top.version}` : ""} appears outdated across ${top.pageCount} pages on ${origin}${top.recommendedBaseline ? ` (baseline ${top.recommendedBaseline}+).` : "."}`
+      });
+    }
+
+    const pageSpecific = entries
+      .map((entry) => ({
+        url: entry.url,
+        securityScore: entry.securityLight?.score || 0,
+        dependencyScore: entry.dependencyMaintenance?.score || 0,
+        expectedFilesScore: entry.expectedFiles?.score || 0,
+        compressionScore: entry.compressionOpportunities?.score || 0,
+        optimizationScore: entry.optimizationOpportunities?.score || 0,
+        offlineScore: entry.offlineSupport?.score || 0,
+        languageScore: entry.languageVersionGuidance?.score || 0,
+        urgency: highestUrgency([
+          entry.securityLight?.urgency,
+          entry.dependencyMaintenance?.urgency,
+          entry.expectedFiles?.urgency,
+          entry.compressionOpportunities?.urgency,
+          entry.optimizationOpportunities?.urgency,
+          entry.offlineSupport?.urgency,
+          entry.languageVersionGuidance?.urgency
+        ]),
+        topRecommendations: [
+          ...(entry.compressionOpportunities?.recommendations || []),
+          ...(entry.optimizationOpportunities?.recommendations || []),
+          ...(entry.offlineSupport?.recommendations || []),
+          ...(entry.dependencyMaintenance?.recommendations || []),
+          ...(entry.languageVersionGuidance?.recommendations || []),
+          ...(entry.securityLight?.recommendations || []),
+          ...(entry.expectedFiles?.recommendations || [])
+        ].slice(0, 4)
+      }))
+      .sort((a, b) => (b.compressionScore + b.optimizationScore + b.offlineScore + b.dependencyScore + b.languageScore + b.securityScore + b.expectedFilesScore) - (a.compressionScore + a.optimizationScore + a.offlineScore + a.dependencyScore + a.languageScore + a.securityScore + a.expectedFilesScore));
+
+    return {
+      origin,
+      pageCount,
+      sharedRecommendations,
+      recurringCompression: recurringCompression.slice(0, 10),
+      recurringOptimization: recurringOptimizationItems.slice(0, 10),
+      recurringOfflineOpportunities: recurringOfflineOpportunities.slice(0, 10),
+      recurringDependencies: recurringDependencies.slice(0, 10),
+      recurringRuntimeSignals: recurringRuntimeSignals.slice(0, 10),
+      pageSpecific
+    };
+  }).sort((a, b) => b.pageCount - a.pageCount || String(a.origin).localeCompare(String(b.origin)));
+
+  return {
+    siteCount: sites.length,
+    singleSiteScan: sites.length <= 1,
+    sites
+  };
+}
+
+function buildExpectedFilesSummary(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  const missing = {
+    robotsTxt: 0,
+    sitemapXml: 0,
+    securityTxt: 0,
+    webManifest: 0,
+    favicon: 0
+  };
+
+  for (const entry of okEntries) {
+    const checks = entry.expectedFiles?.checks || [];
+    if (!checks.find((item) => item.path === "/robots.txt")?.found) missing.robotsTxt += 1;
+    if (!checks.find((item) => item.path === "/sitemap.xml")?.found) missing.sitemapXml += 1;
+    if (!checks.find((item) => item.path === "/.well-known/security.txt")?.found) missing.securityTxt += 1;
+    if (!checks.find((item) => item.path === "/manifest.webmanifest")?.found) missing.webManifest += 1;
+    if (!checks.find((item) => item.path === "/favicon.ico")?.found) missing.favicon += 1;
+  }
+
+  return {
+    wsgReference: {
+      title: "Include expected and beneficial files",
+      url: WSG_EXPECTED_FILES_URL
+    },
+    assessedPages: okEntries.length,
+    averageScore: average(okEntries.map((item) => item.expectedFiles?.score)),
+    highUrgencyPages: okEntries.filter((item) => item.expectedFiles?.urgency === "high").length,
+    missing
+  };
+}
+
+function buildOptimizationSummary(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  const recurringMap = new Map();
+  let totalEstimatedSavingsBytes = 0;
+  let totalEstimatedBlockingMs = 0;
+
+  for (const entry of okEntries) {
+    const opportunities = entry.optimizationOpportunities?.opportunities || [];
+    for (const opportunity of opportunities) {
+      const current = recurringMap.get(opportunity.id) || {
+        id: opportunity.id,
+        title: opportunity.title,
+        pageCount: 0,
+        totalEstimatedSavingsBytes: 0,
+        totalEstimatedBlockingMs: 0,
+        pages: new Set()
+      };
+
+      if (!current.pages.has(entry.url)) {
+        current.pages.add(entry.url);
+        current.pageCount += 1;
+      }
+
+      current.totalEstimatedSavingsBytes += opportunity.estimatedSavingsBytes || 0;
+      current.totalEstimatedBlockingMs += opportunity.estimatedBlockingMs || 0;
+      totalEstimatedSavingsBytes += opportunity.estimatedSavingsBytes || 0;
+      totalEstimatedBlockingMs += opportunity.estimatedBlockingMs || 0;
+
+      recurringMap.set(opportunity.id, current);
+    }
+  }
+
+  const recurringOpportunities = Array.from(recurringMap.values())
+    .filter((item) => item.pageCount > 1)
+    .map(({ pages, ...rest }) => rest)
+    .sort((a, b) => b.pageCount - a.pageCount || b.totalEstimatedSavingsBytes - a.totalEstimatedSavingsBytes)
+    .slice(0, 12);
+
+  return {
+    wsgReference: {
+      title: "Use the most efficient solution for your service",
+      url: WSG_EFFICIENT_SOLUTION_URL
+    },
+    assessedPages: okEntries.length,
+    averageScore: average(okEntries.map((item) => item.optimizationOpportunities?.score)),
+    highUrgencyPages: okEntries.filter((item) => item.optimizationOpportunities?.urgency === "high").length,
+    totalEstimatedSavingsBytes,
+    totalEstimatedBlockingMs,
+    recurringOpportunities
+  };
+}
+
+function buildCompressionSummary(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  const recurringMap = new Map();
+  let totalEstimatedSavingsBytes = 0;
+  let pagesMissingTextCompression = 0;
+
+  for (const entry of okEntries) {
+    const checks = entry.compressionOpportunities?.checks || {};
+    if (!checks.hasEffectiveTextCompression) {
+      pagesMissingTextCompression += 1;
+    }
+
+    for (const opportunity of entry.compressionOpportunities?.opportunities || []) {
+      const current = recurringMap.get(opportunity.id) || {
+        id: opportunity.id,
+        title: opportunity.title,
+        urgency: opportunity.urgency || "medium",
+        pageCount: 0,
+        totalEstimatedSavingsBytes: 0,
+        pages: new Set()
+      };
+
+      if (!current.pages.has(entry.url)) {
+        current.pages.add(entry.url);
+        current.pageCount += 1;
+      }
+
+      current.totalEstimatedSavingsBytes += opportunity.estimatedSavingsBytes || 0;
+      current.urgency = maxUrgency(current.urgency, opportunity.urgency || "medium");
+      recurringMap.set(opportunity.id, current);
+      totalEstimatedSavingsBytes += opportunity.estimatedSavingsBytes || 0;
+    }
+  }
+
+  const recurringOpportunities = Array.from(recurringMap.values())
+    .filter((item) => item.pageCount > 1)
+    .map(({ pages, ...rest }) => rest)
+    .sort((a, b) => b.pageCount - a.pageCount || b.totalEstimatedSavingsBytes - a.totalEstimatedSavingsBytes)
+    .slice(0, 12);
+
+  return {
+    wsgReference: {
+      title: "Reduce data transfer with compression",
+      url: WSG_REDUCE_DATA_TRANSFER_COMPRESSION_URL
+    },
+    assessedPages: okEntries.length,
+    averageScore: average(okEntries.map((item) => item.compressionOpportunities?.score)),
+    highUrgencyPages: okEntries.filter((item) => item.compressionOpportunities?.urgency === "high").length,
+    pagesMissingTextCompression,
+    totalEstimatedSavingsBytes,
+    recurringOpportunities
+  };
+}
+
+function analyzeCompressionOpportunities({ audits }) {
+  const transferBytes = extractTransferBytesFromNetworkRequests(audits);
+  const opportunities = [];
+
+  const textCompressionAudit = audits?.["uses-text-compression"];
+  const textCompressionSavings = getSavingsBytes(textCompressionAudit);
+  if (textCompressionSavings > 0) {
+    opportunities.push({
+      id: "uses-text-compression",
+      title: "Enable Brotli/gzip for text assets",
+      urgency: textCompressionSavings >= 120 * 1024 ? "high" : textCompressionSavings >= 30 * 1024 ? "medium" : "low",
+      estimatedSavingsBytes: textCompressionSavings,
+      detail: "Compress HTML, CSS, JS, JSON, SVG, and XML responses with Brotli or gzip."
+    });
+  }
+
+  const imageFormatSavings = getSavingsBytes(audits?.["modern-image-formats"]);
+  if (imageFormatSavings > 0) {
+    opportunities.push({
+      id: "modern-image-formats",
+      title: "Use modern image compression formats",
+      urgency: imageFormatSavings >= 200 * 1024 ? "high" : imageFormatSavings >= 50 * 1024 ? "medium" : "low",
+      estimatedSavingsBytes: imageFormatSavings,
+      detail: "Prefer AVIF/WebP over legacy formats where possible to reduce transfer size."
+    });
+  }
+
+  const imageEncodingSavings = getSavingsBytes(audits?.["uses-optimized-images"]);
+  if (imageEncodingSavings > 0) {
+    opportunities.push({
+      id: "uses-optimized-images",
+      title: "Improve image encoding quality/size",
+      urgency: imageEncodingSavings >= 160 * 1024 ? "high" : imageEncodingSavings >= 40 * 1024 ? "medium" : "low",
+      estimatedSavingsBytes: imageEncodingSavings,
+      detail: "Re-encode oversized images and tune compression quality for significant byte savings."
+    });
+  }
+
+  const cssMinSavings = getSavingsBytes(audits?.["unminified-css"]);
+  if (cssMinSavings > 0) {
+    opportunities.push({
+      id: "unminified-css",
+      title: "Minify CSS before transfer",
+      urgency: cssMinSavings >= 80 * 1024 ? "high" : cssMinSavings >= 20 * 1024 ? "medium" : "low",
+      estimatedSavingsBytes: cssMinSavings,
+      detail: "Minification amplifies compression efficiency and reduces payload size."
+    });
+  }
+
+  const jsMinSavings = getSavingsBytes(audits?.["unminified-javascript"]);
+  if (jsMinSavings > 0) {
+    opportunities.push({
+      id: "unminified-javascript",
+      title: "Minify JavaScript before transfer",
+      urgency: jsMinSavings >= 80 * 1024 ? "high" : jsMinSavings >= 20 * 1024 ? "medium" : "low",
+      estimatedSavingsBytes: jsMinSavings,
+      detail: "Minify JS bundles so transport compression produces better results with fewer bytes."
+    });
+  }
+
+  const totalEstimatedSavingsBytes = opportunities.reduce((sum, item) => sum + (item.estimatedSavingsBytes || 0), 0);
+  const savingsRatio = transferBytes > 0 ? Math.min(1, totalEstimatedSavingsBytes / transferBytes) : 0;
+  const score = Math.min(100, Math.round(savingsRatio * 100));
+  const urgency = score >= 60 ? "high" : score >= 30 ? "medium" : "low";
+
+  const sorted = opportunities.sort((a, b) => {
+    const rank = { high: 2, medium: 1, low: 0 };
+    const delta = (rank[b.urgency] || 0) - (rank[a.urgency] || 0);
+    if (delta !== 0) return delta;
+    return (b.estimatedSavingsBytes || 0) - (a.estimatedSavingsBytes || 0);
+  });
+
+  const recommendations = sorted.slice(0, 6).map((item) => ({
+    title: item.title,
+    urgency: item.urgency,
+    detail: `${item.detail}${item.estimatedSavingsBytes > 0 ? ` Estimated savings: ${formatBytes(item.estimatedSavingsBytes)}.` : ""}`
+  }));
+
+  if (recommendations.length === 0) {
+    recommendations.push({
+      title: "No major compression opportunity detected",
+      urgency: "low",
+      detail: "Compression signals look healthy in current Lighthouse audits; continue enforcing compression and asset encoding in CI/CD."
+    });
+  }
+
+  return {
+    wsgReference: {
+      title: "Reduce data transfer with compression",
+      url: WSG_REDUCE_DATA_TRANSFER_COMPRESSION_URL
+    },
+    score,
+    urgency,
+    totalEstimatedSavingsBytes,
+    checks: {
+      hasEffectiveTextCompression: textCompressionSavings <= 0
+    },
+    opportunities: sorted,
+    recommendations
+  };
+}
+
+function buildOfflineSupportSummary(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  const recurringMap = new Map();
+  let pagesWithoutServiceWorker = 0;
+  let pagesWithoutOfflineSupport = 0;
+  let pagesWithWeakCacheTtl = 0;
+
+  for (const entry of okEntries) {
+    const checks = entry.offlineSupport?.checks || {};
+    if (!checks.hasServiceWorker) pagesWithoutServiceWorker += 1;
+    if (!checks.worksOffline) pagesWithoutOfflineSupport += 1;
+    if ((checks.longCacheTtlScore ?? 1) < 0.9) pagesWithWeakCacheTtl += 1;
+
+    for (const opportunity of entry.offlineSupport?.opportunities || []) {
+      const current = recurringMap.get(opportunity.id) || {
+        id: opportunity.id,
+        title: opportunity.title,
+        urgency: opportunity.urgency || "medium",
+        pageCount: 0,
+        pages: new Set()
+      };
+
+      if (!current.pages.has(entry.url)) {
+        current.pages.add(entry.url);
+        current.pageCount += 1;
+      }
+
+      current.urgency = maxUrgency(current.urgency, opportunity.urgency || "medium");
+      recurringMap.set(opportunity.id, current);
+    }
+  }
+
+  const recurringOpportunities = Array.from(recurringMap.values())
+    .filter((item) => item.pageCount > 1)
+    .map(({ pages, ...rest }) => rest)
+    .sort((a, b) => b.pageCount - a.pageCount || String(a.title).localeCompare(String(b.title)))
+    .slice(0, 12);
+
+  return {
+    wsgReference: {
+      title: "Optimize caching and support offline access",
+      url: WSG_OFFLINE_ACCESS_URL
+    },
+    assessedPages: okEntries.length,
+    averageScore: average(okEntries.map((item) => item.offlineSupport?.score)),
+    highUrgencyPages: okEntries.filter((item) => item.offlineSupport?.urgency === "high").length,
+    pagesWithoutServiceWorker,
+    pagesWithoutOfflineSupport,
+    pagesWithWeakCacheTtl,
+    recurringOpportunities
+  };
+}
+
+function analyzeOfflineSupport({ audits }) {
+  const serviceWorkerAudit = audits?.["service-worker"];
+  const worksOfflineAudit = audits?.["works-offline"];
+  const installableManifestAudit = audits?.["installable-manifest"];
+  const offlineStartUrlAudit = audits?.["offline-start-url"];
+  const longCacheTtlAudit = audits?.["uses-long-cache-ttl"];
+
+  const checks = {
+    hasServiceWorker: isPassingAudit(serviceWorkerAudit),
+    worksOffline: isPassingAudit(worksOfflineAudit),
+    hasInstallableManifest: isPassingAudit(installableManifestAudit),
+    hasOfflineStartUrl: isPassingAudit(offlineStartUrlAudit),
+    longCacheTtlScore: normalizeAuditScore(longCacheTtlAudit),
+    cacheSavingsBytes: getSavingsBytes(longCacheTtlAudit)
+  };
+
+  let score = 0;
+  if (!checks.hasServiceWorker) score += 40;
+  if (!checks.worksOffline) score += 30;
+  if (!checks.hasInstallableManifest) score += 10;
+  if (!checks.hasOfflineStartUrl) score += 10;
+  score += Math.round((1 - checks.longCacheTtlScore) * 20);
+  score = Math.min(100, Math.max(0, score));
+
+  const urgency = score >= 60 ? "high" : score >= 30 ? "medium" : "low";
+  const opportunities = [];
+
+  if (!checks.hasServiceWorker) {
+    opportunities.push({
+      id: "service-worker",
+      title: "Add service worker support",
+      urgency: "high",
+      detail: "Register a service worker to support resilient caching and offline behavior for key routes."
+    });
+  }
+
+  if (!checks.worksOffline) {
+    opportunities.push({
+      id: "works-offline",
+      title: "Ensure critical routes work offline",
+      urgency: "high",
+      detail: "Provide an offline fallback strategy for key pages and shell assets."
+    });
+  }
+
+  if (!checks.hasInstallableManifest) {
+    opportunities.push({
+      id: "installable-manifest",
+      title: "Improve web app manifest support",
+      urgency: "medium",
+      detail: "Complete manifest fields so clients can install and run an app-like experience."
+    });
+  }
+
+  if (!checks.hasOfflineStartUrl) {
+    opportunities.push({
+      id: "offline-start-url",
+      title: "Support offline start URL behavior",
+      urgency: "medium",
+      detail: "Ensure start URL and shell routing can load in disconnected conditions."
+    });
+  }
+
+  if (checks.longCacheTtlScore < 0.9) {
+    opportunities.push({
+      id: "uses-long-cache-ttl",
+      title: "Strengthen static asset cache TTL",
+      urgency: checks.longCacheTtlScore < 0.5 ? "high" : "medium",
+      detail: `Improve long-lived cache headers for immutable static assets${checks.cacheSavingsBytes > 0 ? ` (estimated savings opportunity: ${formatBytes(checks.cacheSavingsBytes)})` : ""}.`
+    });
+  }
+
+  const recommendations = opportunities.map((item) => ({
+    title: item.title,
+    urgency: item.urgency,
+    detail: item.detail
+  }));
+
+  if (recommendations.length === 0) {
+    recommendations.push({
+      title: "Offline and caching support looks healthy",
+      urgency: "low",
+      detail: "Current Lighthouse signals indicate good support for caching and offline access in the sampled page."
+    });
+  }
+
+  return {
+    wsgReference: {
+      title: "Optimize caching and support offline access",
+      url: WSG_OFFLINE_ACCESS_URL
+    },
+    score,
+    urgency,
+    checks,
+    opportunities,
+    recommendations
+  };
+}
+
+function isPassingAudit(audit) {
+  return normalizeAuditScore(audit) >= 0.9;
+}
+
+function normalizeAuditScore(audit) {
+  if (!audit || typeof audit !== "object") return 0;
+  if (typeof audit.score === "number" && Number.isFinite(audit.score)) {
+    return Math.max(0, Math.min(1, audit.score));
+  }
+  return 0;
+}
+
+function analyzeOptimizationOpportunities({ audits }) {
+  const transferBytes = extractTransferBytesFromNetworkRequests(audits);
+  const opportunities = [];
+
+  const candidateConfigs = [
+    {
+      id: "modern-image-formats",
+      title: "Serve images in next-gen formats",
+      detail: "Convert high-byte images to more efficient formats such as AVIF or WebP.",
+      sourceAuditId: "modern-image-formats",
+      urgencyThresholds: { high: 200 * 1024, medium: 50 * 1024 }
+    },
+    {
+      id: "uses-optimized-images",
+      title: "Compress oversized image assets",
+      detail: "Re-encode large images to reduce transfer weight without visible quality loss.",
+      sourceAuditId: "uses-optimized-images",
+      urgencyThresholds: { high: 200 * 1024, medium: 50 * 1024 }
+    },
+    {
+      id: "uses-responsive-images",
+      title: "Right-size images for viewport",
+      detail: "Avoid sending larger images than the rendered size needs.",
+      sourceAuditId: "uses-responsive-images",
+      urgencyThresholds: { high: 150 * 1024, medium: 40 * 1024 }
+    },
+    {
+      id: "offscreen-images",
+      title: "Lazy-load offscreen images",
+      detail: "Defer below-the-fold imagery until it is likely to be viewed.",
+      sourceAuditId: "offscreen-images",
+      urgencyThresholds: { high: 200 * 1024, medium: 40 * 1024 }
+    },
+    {
+      id: "uses-text-compression",
+      title: "Enable text compression",
+      detail: "Serve text assets with Brotli or gzip to remove avoidable transfer bloat.",
+      sourceAuditId: "uses-text-compression",
+      urgencyThresholds: { high: 120 * 1024, medium: 30 * 1024 }
+    },
+    {
+      id: "unused-css-rules",
+      title: "Remove unused CSS",
+      detail: "Trim unused selectors and split CSS so only needed styles are shipped.",
+      sourceAuditId: "unused-css-rules",
+      urgencyThresholds: { high: 120 * 1024, medium: 30 * 1024 }
+    },
+    {
+      id: "unused-javascript",
+      title: "Remove unused JavaScript",
+      detail: "Reduce dead JS and split bundles to avoid shipping non-critical code.",
+      sourceAuditId: "unused-javascript",
+      urgencyThresholds: { high: 180 * 1024, medium: 40 * 1024 }
+    },
+    {
+      id: "unminified-css",
+      title: "Minify CSS",
+      detail: "Use minified production CSS output to reduce bytes in transit.",
+      sourceAuditId: "unminified-css",
+      urgencyThresholds: { high: 80 * 1024, medium: 20 * 1024 }
+    },
+    {
+      id: "unminified-javascript",
+      title: "Minify JavaScript",
+      detail: "Use minified production JS output to reduce payload size.",
+      sourceAuditId: "unminified-javascript",
+      urgencyThresholds: { high: 80 * 1024, medium: 20 * 1024 }
+    }
+  ];
+
+  for (const config of candidateConfigs) {
+    const audit = audits?.[config.sourceAuditId];
+    const estimatedSavingsBytes = getSavingsBytes(audit);
+    if (estimatedSavingsBytes <= 0) {
+      continue;
+    }
+
+    const urgency = estimatedSavingsBytes >= config.urgencyThresholds.high
+      ? "high"
+      : estimatedSavingsBytes >= config.urgencyThresholds.medium
+        ? "medium"
+        : "low";
+
+    opportunities.push({
+      id: config.id,
+      title: config.title,
+      detail: config.detail,
+      estimatedSavingsBytes,
+      estimatedBlockingMs: 0,
+      displayValue: audit?.displayValue || null,
+      urgency,
+      sourceAuditId: config.sourceAuditId
+    });
+  }
+
+  const renderBlockingAudit = audits?.["render-blocking-resources"];
+  const renderBlockingMs = typeof renderBlockingAudit?.numericValue === "number"
+    ? Math.max(0, renderBlockingAudit.numericValue)
+    : 0;
+  if (renderBlockingMs > 0) {
+    opportunities.push({
+      id: "render-blocking-resources",
+      title: "Eliminate render-blocking resources",
+      detail: "Inline critical assets and defer non-critical scripts/styles for faster rendering.",
+      estimatedSavingsBytes: 0,
+      estimatedBlockingMs: renderBlockingMs,
+      displayValue: renderBlockingAudit?.displayValue || null,
+      urgency: renderBlockingMs >= 1000 ? "high" : renderBlockingMs >= 300 ? "medium" : "low",
+      sourceAuditId: "render-blocking-resources"
+    });
+  }
+
+  const totalEstimatedSavingsBytes = opportunities.reduce((sum, item) => sum + (item.estimatedSavingsBytes || 0), 0);
+  const totalEstimatedBlockingMs = opportunities.reduce((sum, item) => sum + (item.estimatedBlockingMs || 0), 0);
+
+  const bytesPenalty = transferBytes > 0 ? Math.min(1, totalEstimatedSavingsBytes / transferBytes) : 0;
+  const blockingPenalty = Math.min(1, totalEstimatedBlockingMs / 1500);
+  const score = Math.min(100, Math.round((bytesPenalty * 80 + blockingPenalty * 20) * 100));
+  const urgency = score >= 60 ? "high" : score >= 30 ? "medium" : "low";
+
+  const sorted = opportunities.sort((a, b) => {
+    const severityRank = { high: 2, medium: 1, low: 0 };
+    const urgencyDelta = (severityRank[b.urgency] || 0) - (severityRank[a.urgency] || 0);
+    if (urgencyDelta !== 0) return urgencyDelta;
+    return (b.estimatedSavingsBytes || 0) - (a.estimatedSavingsBytes || 0);
+  });
+
+  const recommendations = sorted.slice(0, 6).map((item) => ({
+    title: item.title,
+    urgency: item.urgency,
+    detail: `${item.detail}${item.estimatedSavingsBytes > 0 ? ` Estimated byte savings: ${formatBytes(item.estimatedSavingsBytes)}.` : ""}${item.estimatedBlockingMs > 0 ? ` Estimated render unblocking: ${Math.round(item.estimatedBlockingMs)} ms.` : ""}`
+  }));
+
+  if (recommendations.length === 0) {
+    recommendations.push({
+      title: "No obvious optimization bloat signals",
+      urgency: "low",
+      detail: "No major easy-win optimization opportunities were detected from current Lighthouse signals."
+    });
+  }
+
+  return {
+    wsgReference: {
+      title: "Use the most efficient solution for your service",
+      url: WSG_EFFICIENT_SOLUTION_URL
+    },
+    score,
+    urgency,
+    totalEstimatedSavingsBytes,
+    totalEstimatedBlockingMs,
+    opportunities: sorted,
+    recommendations
+  };
+}
+
+function getSavingsBytes(audit) {
+  if (!audit || typeof audit !== "object") return 0;
+  const direct = audit.details?.overallSavingsBytes;
+  if (typeof direct === "number" && Number.isFinite(direct)) {
+    return Math.max(0, direct);
+  }
+
+  const detailsItems = Array.isArray(audit.details?.items) ? audit.details.items : [];
+  const itemSavings = detailsItems.reduce((sum, item) => {
+    const value = item?.wastedBytes || item?.totalBytes || item?.resourceSize || 0;
+    return sum + (typeof value === "number" ? Math.max(0, value) : 0);
+  }, 0);
+
+  if (itemSavings > 0) return itemSavings;
+
+  const numeric = audit.numericValue;
+  if (typeof numeric === "number" && Number.isFinite(numeric)) {
+    return Math.max(0, numeric);
+  }
+
+  return 0;
+}
+
+function extractTransferBytesFromNetworkRequests(audits) {
+  const items = audits?.["network-requests"]?.details?.items || [];
+  return items.reduce((sum, item) => sum + (item.transferSize || 0), 0);
+}
+
+function analyzeDependencyMaintenance(securityLight) {
+  const vulnerableLibraries = securityLight?.observed?.vulnerableLibraries || [];
+  const externalScriptsWithoutIntegrity = securityLight?.checks?.externalScriptsWithoutIntegrity || 0;
+
+  let score = 0;
+  if (vulnerableLibraries.length > 0) {
+    score += Math.min(90, vulnerableLibraries.length * 35);
+  }
+  if (externalScriptsWithoutIntegrity > 0) {
+    score += Math.min(10, externalScriptsWithoutIntegrity * 2);
+  }
+  score = Math.min(100, score);
+
+  const urgency = vulnerableLibraries.length > 0
+    ? "high"
+    : externalScriptsWithoutIntegrity > 0
+      ? "medium"
+      : "low";
+
+  const recommendations = [];
+  if (vulnerableLibraries.length > 0) {
+    recommendations.push({
+      title: "Upgrade vulnerable dependencies",
+      urgency: "high",
+      detail: `${vulnerableLibraries.length} vulnerable library finding(s) detected by Lighthouse.`
+    });
+  }
+
+  if (externalScriptsWithoutIntegrity > 0) {
+    recommendations.push({
+      title: "Add integrity attributes for external dependencies",
+      urgency: "medium",
+      detail: `${externalScriptsWithoutIntegrity} external script dependency URL(s) are missing SRI integrity attributes.`
+    });
+  }
+
+  if (recommendations.length === 0) {
+    recommendations.push({
+      title: "No dependency maintenance warnings detected",
+      urgency: "low",
+      detail: "No vulnerable dependency flags were found for this page in the current lightweight checks."
+    });
+  }
+
+  return {
+    wsgReference: {
+      title: "Use dependencies appropriately and ensure maintenance",
+      url: WSG_DEPENDENCY_MAINTENANCE_URL
+    },
+    score,
+    urgency,
+    vulnerableLibraryCount: vulnerableLibraries.length,
+    vulnerableLibraries,
+    externalScriptsWithoutIntegrity,
+    recommendations
+  };
+}
+
+function buildDependencyMaintenanceSummary(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  const recurringLibraries = new Map();
+
+  for (const entry of okEntries) {
+    const libs = entry.dependencyMaintenance?.vulnerableLibraries || [];
+    for (const lib of libs) {
+      const key = `${lib.library}|${lib.version || "unknown"}`;
+      const current = recurringLibraries.get(key) || {
+        library: lib.library,
+        version: lib.version || null,
+        severity: lib.severity || null,
+        vulnerabilities: lib.vulnerabilities,
+        pageCount: 0,
+        pages: new Set()
+      };
+
+      if (!current.pages.has(entry.url)) {
+        current.pages.add(entry.url);
+        current.pageCount += 1;
+      }
+
+      recurringLibraries.set(key, current);
+    }
+  }
+
+  const topRecurringLibraries = Array.from(recurringLibraries.values())
+    .map(({ pages, ...rest }) => rest)
+    .sort((a, b) => b.pageCount - a.pageCount || String(a.library).localeCompare(String(b.library)))
+    .slice(0, 12);
+
+  return {
+    wsgReference: {
+      title: "Use dependencies appropriately and ensure maintenance",
+      url: WSG_DEPENDENCY_MAINTENANCE_URL
+    },
+    assessedPages: okEntries.length,
+    averageScore: average(okEntries.map((item) => item.dependencyMaintenance?.score)),
+    highUrgencyPages: okEntries.filter((item) => item.dependencyMaintenance?.urgency === "high").length,
+    pagesWithVulnerableDependencies: okEntries.filter((item) => (item.dependencyMaintenance?.vulnerableLibraryCount || 0) > 0).length,
+    totalVulnerableDependencies: okEntries.reduce((sum, item) => sum + (item.dependencyMaintenance?.vulnerableLibraryCount || 0), 0),
+    topRecurringLibraries
+  };
+}
+
+function buildLanguageVersionSummary(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  const recurringSignals = new Map();
+  let pagesWithOutdatedRuntimeSignals = 0;
+  let pagesWithVersionDisclosure = 0;
+
+  for (const entry of okEntries) {
+    const guidance = entry.languageVersionGuidance || {};
+    const outdated = guidance.outdatedTechnologies || [];
+    const observed = guidance.observedTechnologies || [];
+
+    if (outdated.length > 0) {
+      pagesWithOutdatedRuntimeSignals += 1;
+    }
+    if (observed.length > 0) {
+      pagesWithVersionDisclosure += 1;
+    }
+
+    for (const item of outdated) {
+      const key = `${item.family}|${item.version || "unknown"}|${item.recommendedBaseline || ""}`;
+      const current = recurringSignals.get(key) || {
+        family: item.family,
+        version: item.version || null,
+        recommendedBaseline: item.recommendedBaseline || null,
+        urgency: item.urgency || "medium",
+        pageCount: 0,
+        pages: new Set()
+      };
+
+      if (!current.pages.has(entry.url)) {
+        current.pages.add(entry.url);
+        current.pageCount += 1;
+      }
+
+      current.urgency = maxUrgency(current.urgency, item.urgency || "medium");
+      recurringSignals.set(key, current);
+    }
+  }
+
+  const topOutdatedSignals = Array.from(recurringSignals.values())
+    .map(({ pages, ...rest }) => rest)
+    .sort((a, b) => b.pageCount - a.pageCount || String(a.family).localeCompare(String(b.family)))
+    .slice(0, 12);
+
+  return {
+    wsgReference: {
+      title: "Use the latest stable language version",
+      url: WSG_LATEST_STABLE_LANGUAGE_URL
+    },
+    assessedPages: okEntries.length,
+    averageScore: average(okEntries.map((item) => item.languageVersionGuidance?.score)),
+    highUrgencyPages: okEntries.filter((item) => item.languageVersionGuidance?.urgency === "high").length,
+    pagesWithOutdatedRuntimeSignals,
+    pagesWithVersionDisclosure,
+    topOutdatedSignals
+  };
+}
+
+function analyzeLanguageVersionGuidance({ securityLight, dependencyMaintenance }) {
+  const headers = securityLight?.observed?.headers || {};
+  const observedTechnologies = detectRuntimeTechnologies(headers);
+  const outdatedTechnologies = observedTechnologies.filter((item) => item.outdated);
+  const vulnerableLibraries = dependencyMaintenance?.vulnerableLibraries || [];
+
+  let score = 0;
+  for (const signal of outdatedTechnologies) {
+    score += signal.urgency === "high" ? 30 : signal.urgency === "medium" ? 18 : 10;
+  }
+  if (vulnerableLibraries.length > 0) {
+    score += Math.min(40, vulnerableLibraries.length * 8);
+  }
+  score = Math.min(100, score);
+
+  const urgency = score >= 60 ? "high" : score >= 30 ? "medium" : "low";
+  const recommendations = [];
+
+  for (const signal of outdatedTechnologies.slice(0, 4)) {
+    recommendations.push({
+      title: `Upgrade ${signal.family} runtime baseline`,
+      urgency: signal.urgency,
+      detail: `Observed ${signal.family}${signal.version ? ` ${signal.version}` : ""} in ${signal.sourceHeader}. Align with a recent stable baseline${signal.recommendedBaseline ? ` (target ${signal.recommendedBaseline}+)` : ""}.`
+    });
+  }
+
+  if (vulnerableLibraries.length > 0) {
+    recommendations.push({
+      title: "Pair dependency upgrades with runtime/language baseline updates",
+      urgency: "medium",
+      detail: `${vulnerableLibraries.length} vulnerable library finding(s) suggest dependency drift. Confirm the runtime/language baseline in CI and upgrade dependencies against the latest stable language ecosystem.`
+    });
+  }
+
+  if (recommendations.length === 0) {
+    recommendations.push({
+      title: "No obvious outdated runtime version disclosed",
+      urgency: "low",
+      detail: "No clearly outdated runtime version signals were exposed in sampled HTTP headers. Verify language/runtime versions in source and CI since backend versions are not always externally visible."
+    });
+  }
+
+  return {
+    wsgReference: {
+      title: "Use the latest stable language version",
+      url: WSG_LATEST_STABLE_LANGUAGE_URL
+    },
+    score,
+    urgency,
+    observedTechnologies,
+    outdatedTechnologies,
+    vulnerableLibraryCount: vulnerableLibraries.length,
+    recommendations
+  };
+}
+
+function detectRuntimeTechnologies(headers) {
+  const values = [
+    { sourceHeader: "x-powered-by", value: headers["x-powered-by"] },
+    { sourceHeader: "server", value: headers.server }
+  ].filter((item) => typeof item.value === "string" && item.value.trim().length > 0);
+
+  const signals = [];
+
+  for (const entry of values) {
+    const raw = entry.value;
+
+    const patterns = [
+      { family: "Node.js", regex: /node(?:\.js)?\/?\s*v?(\d+(?:\.\d+){0,2})?/i, baseline: 20 },
+      { family: "PHP", regex: /php\/?\s*(\d+(?:\.\d+){0,2})?/i, baseline: 8 },
+      { family: "ASP.NET", regex: /asp\.net\/?\s*(\d+(?:\.\d+){0,2})?/i, baseline: 8 },
+      { family: "Ruby", regex: /ruby\/?\s*(\d+(?:\.\d+){0,2})?/i, baseline: 3 },
+      { family: "Python", regex: /python\/?\s*(\d+(?:\.\d+){0,2})?/i, baseline: 3 }
+    ];
+
+    for (const pattern of patterns) {
+      const match = raw.match(pattern.regex);
+      if (!match) continue;
+
+      const version = match[1] || null;
+      const major = version ? parseMajor(version) : null;
+      const outdated = typeof major === "number" && major < pattern.baseline;
+      const urgency = outdated
+        ? major <= pattern.baseline - 2
+          ? "high"
+          : "medium"
+        : "low";
+
+      signals.push({
+        family: pattern.family,
+        version,
+        sourceHeader: entry.sourceHeader,
+        observedValue: raw,
+        major,
+        recommendedBaseline: String(pattern.baseline),
+        outdated,
+        urgency
+      });
+    }
+  }
+
+  const deduped = new Map();
+  for (const signal of signals) {
+    const key = `${signal.family}|${signal.version || "unknown"}|${signal.sourceHeader}`;
+    if (!deduped.has(key)) {
+      deduped.set(key, signal);
+    }
+  }
+
+  return Array.from(deduped.values());
+}
+
+function parseMajor(version) {
+  const value = Number.parseInt(String(version).split(".")[0], 10);
+  return Number.isFinite(value) ? value : null;
+}
+
+function buildSecurityLightSummary(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  let pagesWithoutCsp = 0;
+  let pagesWithoutHsts = 0;
+  let pagesWithVulnerableLibraries = 0;
+  let totalExternalScriptsWithoutIntegrity = 0;
+
+  for (const entry of okEntries) {
+    const checks = entry.securityLight?.checks || {};
+    if (!checks.hasCsp) pagesWithoutCsp += 1;
+    if (checks.isHttps && !checks.hasHsts) pagesWithoutHsts += 1;
+    if ((checks.vulnerableLibraryCount || 0) > 0) pagesWithVulnerableLibraries += 1;
+    totalExternalScriptsWithoutIntegrity += checks.externalScriptsWithoutIntegrity || 0;
+  }
+
+  return {
+    wsgReference: {
+      title: "Ensure that your code is secure",
+      url: WSG_SECURITY_URL
+    },
+    assessedPages: okEntries.length,
+    averageScore: average(okEntries.map((item) => item.securityLight?.score)),
+    highUrgencyPages: okEntries.filter((item) => item.securityLight?.urgency === "high").length,
+    pagesWithoutCsp,
+    pagesWithoutHsts,
+    pagesWithVulnerableLibraries,
+    totalExternalScriptsWithoutIntegrity
+  };
+}
+
+function buildLayoutSupportSummary(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  let mobileOverflowPages = 0;
+  let tabletOverflowPages = 0;
+  let totalMobileSmallTapTargets = 0;
+  let totalTabletSmallTapTargets = 0;
+  let totalFixedWidthOffenders = 0;
+
+  for (const entry of okEntries) {
+    const checks = entry.layoutAdaptation?.checks || {};
+    if (checks.horizontalOverflowOnMobile) mobileOverflowPages += 1;
+    if (checks.horizontalOverflowOnTablet) tabletOverflowPages += 1;
+    totalMobileSmallTapTargets += checks.mobileSmallTapTargets || 0;
+    totalTabletSmallTapTargets += checks.tabletSmallTapTargets || 0;
+    totalFixedWidthOffenders += checks.fixedWidthOffenders || 0;
+  }
+
+  return {
+    wsgReference: {
+      title: "Ensure layouts work for different devices and requirements",
+      url: WSG_LAYOUT_SUPPORT_URL
+    },
+    assessedPages: okEntries.length,
+    averageScore: average(okEntries.map((item) => item.layoutAdaptation?.score)),
+    highUrgencyPages: okEntries.filter((item) => item.layoutAdaptation?.urgency === "high").length,
+    mobileOverflowPages,
+    tabletOverflowPages,
+    totalMobileSmallTapTargets,
+    totalTabletSmallTapTargets,
+    totalFixedWidthOffenders
+  };
+}
+
+function buildMetadataSummary(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  const missing = {
+    missingLang: 0,
+    missingDescription: 0,
+    missingCanonical: 0,
+    missingOpenGraphCore: 0,
+    missingTwitterCard: 0,
+    invalidStructuredData: 0
+  };
+
+  for (const entry of okEntries) {
+    const checks = entry.metadata?.checks || {};
+    if (!checks.hasLang) missing.missingLang += 1;
+    if (!checks.hasDescription) missing.missingDescription += 1;
+    if (!checks.hasCanonical) missing.missingCanonical += 1;
+    if (!checks.hasOpenGraphCore) missing.missingOpenGraphCore += 1;
+    if (!checks.hasTwitterCard) missing.missingTwitterCard += 1;
+    if (checks.hasInvalidStructuredData || !checks.hasValidStructuredData) missing.invalidStructuredData += 1;
+  }
+
+  return {
+    wsgReference: {
+      title: "Structure metadata for machine readability",
+      url: "https://www.w3.org/TR/web-sustainability-guidelines/#structure-metadata-for-machine-readability"
+    },
+    assessedPages: okEntries.length,
+    averageScore: average(okEntries.map((item) => item.metadata?.score)),
+    highUrgencyPages: okEntries.filter((item) => item.metadata?.urgency === "high").length,
+    missing
+  };
+}
+
+function buildFormValidationSummary(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  const signatures = new Map();
+  let totalOccurrences = 0;
+  let totalReusedFromCache = 0;
+
+  for (const entry of okEntries) {
+    totalOccurrences += entry.formValidation?.pageElementOccurrences || 0;
+    totalReusedFromCache += entry.formValidation?.reusedFromCacheCount || 0;
+
+    for (const component of entry.formValidation?.components || []) {
+      const current = signatures.get(component.signature) || {
+        signature: component.signature,
+        role: component.role,
+        controlType: component.controlType,
+        fieldName: component.fieldName,
+        score: component.assessment?.score || 0,
+        urgency: component.assessment?.urgency || "low",
+        pageCount: 0,
+        occurrenceCount: 0,
+        pages: new Set()
+      };
+
+      current.score = Math.max(current.score, component.assessment?.score || 0);
+      current.urgency = higherUrgency(current.urgency, component.assessment?.urgency || "low");
+      current.occurrenceCount += 1;
+
+      if (!current.pages.has(entry.url)) {
+        current.pages.add(entry.url);
+        current.pageCount += 1;
+      }
+
+      signatures.set(component.signature, current);
+    }
+  }
+
+  const allElements = Array.from(signatures.values())
+    .map(({ pages, ...rest }) => rest)
+    .sort((a, b) => b.pageCount - a.pageCount || b.score - a.score);
+
+  const recurringElements = allElements.filter((item) => item.pageCount > 1).slice(0, 15);
+  const recurringSearchElements = recurringElements.filter((item) => item.role === "search").slice(0, 8);
+
+  return {
+    wsgReference: {
+      title: "Validate form errors and account for tooling requirements",
+      url: "https://www.w3.org/TR/web-sustainability-guidelines/#validate-form-errors-and-account-for-tooling-requirements"
+    },
+    uniqueElementSignaturesAssessed: allElements.length,
+    totalOccurrences,
+    reusedFromCacheCount: totalReusedFromCache,
+    recurringElements,
+    recurringSearchElements
+  };
+}
+
+function higherUrgency(left, right) {
+  const rank = { low: 0, medium: 1, high: 2 };
+  return (rank[right] || 0) > (rank[left] || 0) ? right : left;
 }
 
 function buildExternalProviderRiskSummary(perUrl) {
@@ -311,6 +1747,18 @@ function safeHostname(value) {
   } catch {
     return null;
   }
+}
+
+function safeOrigin(value) {
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+}
+
+function highestUrgency(values) {
+  return (values || []).filter(Boolean).reduce((current, value) => maxUrgency(current, value), "low");
 }
 
 function buildGreenWebSummary(okEntries) {
@@ -612,6 +2060,7 @@ export function renderMarkdown(report) {
   lines.push(`- Generated at: ${report.generatedAt}`);
   lines.push(`- URLs requested: ${report.requestedUrls.length}`);
   lines.push(`- URLs scanned: ${report.summary.okCount}`);
+  lines.push(`- Distinct sites scanned: ${report.summary.distinctSiteCount}`);
   lines.push(`- Scan errors: ${report.summary.errorCount}`);
   lines.push(`- Average performance score: ${formatScore(report.summary.averagePerformanceScore)}`);
   lines.push(`- Total transfer: ${formatBytes(report.summary.totalTransferBytes)}`);
@@ -626,6 +2075,193 @@ export function renderMarkdown(report) {
   lines.push(`- Pages with high dead-code urgency: ${report.summary.highUrgencyDeadCodeCount}`);
   lines.push(`- Average non-critical resources score: ${formatPercentScore(report.summary.averageNonCriticalResourcesScore)}`);
   lines.push(`- Pages with high non-critical resource urgency: ${report.summary.highUrgencyNonCriticalResourcesCount}`);
+  lines.push(`- Average form validation score: ${formatPercentScore(report.summary.averageFormValidationScore)}`);
+  lines.push(`- Pages with high form validation urgency: ${report.summary.highUrgencyFormValidationCount}`);
+  lines.push(`- Average metadata score: ${formatPercentScore(report.summary.averageMetadataScore)}`);
+  lines.push(`- Pages with high metadata urgency: ${report.summary.highUrgencyMetadataCount}`);
+  lines.push(`- Average layout adaptation score: ${formatPercentScore(report.summary.averageLayoutAdaptationScore)}`);
+  lines.push(`- Pages with high layout urgency: ${report.summary.highUrgencyLayoutAdaptationCount}`);
+  lines.push(`- Average lightweight security score: ${formatPercentScore(report.summary.averageSecurityLightScore)}`);
+  lines.push(`- Pages with high security urgency: ${report.summary.highUrgencySecurityLightCount}`);
+  lines.push(`- Average dependency maintenance score: ${formatPercentScore(report.summary.averageDependencyMaintenanceScore)}`);
+  lines.push(`- Pages with high dependency maintenance urgency: ${report.summary.highUrgencyDependencyMaintenanceCount}`);
+  lines.push(`- Average expected-files score: ${formatPercentScore(report.summary.averageExpectedFilesScore)}`);
+  lines.push(`- Pages with high expected-files urgency: ${report.summary.highUrgencyExpectedFilesCount}`);
+  lines.push(`- Average compression score: ${formatPercentScore(report.summary.averageCompressionScore)}`);
+  lines.push(`- Pages with high compression urgency: ${report.summary.highUrgencyCompressionCount}`);
+  lines.push(`- Average optimization score: ${formatPercentScore(report.summary.averageOptimizationScore)}`);
+  lines.push(`- Pages with high optimization urgency: ${report.summary.highUrgencyOptimizationCount}`);
+  lines.push(`- Average offline support score: ${formatPercentScore(report.summary.averageOfflineSupportScore)}`);
+  lines.push(`- Pages with high offline support urgency: ${report.summary.highUrgencyOfflineSupportCount}`);
+  lines.push(`- Average language version score: ${formatPercentScore(report.summary.averageLanguageVersionScore)}`);
+  lines.push(`- Pages with high language version urgency: ${report.summary.highUrgencyLanguageVersionCount}`);
+  lines.push("");
+  lines.push("## WSG Form Validation and Tooling");
+  lines.push("");
+  lines.push(`- WSG reference: ${report.formValidationSummary.wsgReference.title} (${report.formValidationSummary.wsgReference.url})`);
+  lines.push(`- Unique form element signatures assessed: ${report.formValidationSummary.uniqueElementSignaturesAssessed}`);
+  lines.push(`- Total form element occurrences observed: ${report.formValidationSummary.totalOccurrences}`);
+  lines.push(`- Reused assessments (not re-scanned repeats): ${report.formValidationSummary.reusedFromCacheCount}`);
+
+  if (report.formValidationSummary.recurringElements.length > 0) {
+    lines.push("");
+    lines.push("### Recurring Form Elements (Assessed Once, Reused Across Pages)");
+    lines.push("");
+    for (const element of report.formValidationSummary.recurringElements.slice(0, 8)) {
+      lines.push(`- ${element.controlType}${element.fieldName ? ` (${element.fieldName})` : ""}: appears on ${element.pageCount} page(s), risk ${formatPercentScore(element.score)}, urgency ${element.urgency.toUpperCase()}`);
+    }
+  }
+
+  if (report.formValidationSummary.recurringSearchElements.length > 0) {
+    lines.push("");
+    lines.push("### Recurring Search Controls");
+    lines.push("");
+    lines.push("- Search controls often appear on every page. These signatures are assessed once and reused:");
+    for (const element of report.formValidationSummary.recurringSearchElements.slice(0, 5)) {
+      lines.push(`  - ${element.controlType}${element.fieldName ? ` (${element.fieldName})` : ""}: ${element.pageCount} page(s), urgency ${element.urgency.toUpperCase()}`);
+    }
+  }
+
+  lines.push("");
+  lines.push("## WSG Metadata for Machine Readability");
+  lines.push("");
+  lines.push(`- WSG reference: ${report.metadataSummary.wsgReference.title} (${report.metadataSummary.wsgReference.url})`);
+  lines.push(`- Assessed pages: ${report.metadataSummary.assessedPages}`);
+  lines.push(`- Average metadata score: ${formatPercentScore(report.metadataSummary.averageScore)}`);
+  lines.push(`- Pages with high urgency: ${report.metadataSummary.highUrgencyPages}`);
+  lines.push("- Missing metadata across pages:");
+  lines.push(`  - Missing html lang: ${report.metadataSummary.missing.missingLang}`);
+  lines.push(`  - Missing meta description: ${report.metadataSummary.missing.missingDescription}`);
+  lines.push(`  - Missing canonical URL: ${report.metadataSummary.missing.missingCanonical}`);
+  lines.push(`  - Missing Open Graph core tags: ${report.metadataSummary.missing.missingOpenGraphCore}`);
+  lines.push(`  - Missing twitter:card: ${report.metadataSummary.missing.missingTwitterCard}`);
+  lines.push(`  - Invalid or missing JSON-LD: ${report.metadataSummary.missing.invalidStructuredData}`);
+
+  lines.push("");
+  lines.push("## WSG Multi-Device Layout Support");
+  lines.push("");
+  lines.push(`- WSG reference: ${report.layoutSupportSummary.wsgReference.title} (${report.layoutSupportSummary.wsgReference.url})`);
+  lines.push(`- Assessed pages: ${report.layoutSupportSummary.assessedPages}`);
+  lines.push(`- Average layout adaptation score: ${formatPercentScore(report.layoutSupportSummary.averageScore)}`);
+  lines.push(`- High urgency pages: ${report.layoutSupportSummary.highUrgencyPages}`);
+  lines.push(`- Pages with mobile overflow: ${report.layoutSupportSummary.mobileOverflowPages}`);
+  lines.push(`- Pages with tablet overflow: ${report.layoutSupportSummary.tabletOverflowPages}`);
+  lines.push(`- Total small tap targets on mobile: ${report.layoutSupportSummary.totalMobileSmallTapTargets}`);
+  lines.push(`- Total small tap targets on tablet: ${report.layoutSupportSummary.totalTabletSmallTapTargets}`);
+  lines.push(`- Total fixed-width offenders: ${report.layoutSupportSummary.totalFixedWidthOffenders}`);
+
+  lines.push("");
+  lines.push("## WSG Lightweight Security Review");
+  lines.push("");
+  lines.push(`- WSG reference: ${report.securityLightSummary.wsgReference.title} (${report.securityLightSummary.wsgReference.url})`);
+  lines.push(`- Assessed pages: ${report.securityLightSummary.assessedPages}`);
+  lines.push(`- Average lightweight security score: ${formatPercentScore(report.securityLightSummary.averageScore)}`);
+  lines.push(`- High urgency pages: ${report.securityLightSummary.highUrgencyPages}`);
+  lines.push(`- Pages missing Content-Security-Policy: ${report.securityLightSummary.pagesWithoutCsp}`);
+  lines.push(`- HTTPS pages missing Strict-Transport-Security: ${report.securityLightSummary.pagesWithoutHsts}`);
+  lines.push(`- Pages with vulnerable JS library findings: ${report.securityLightSummary.pagesWithVulnerableLibraries}`);
+  lines.push(`- External scripts missing SRI (total): ${report.securityLightSummary.totalExternalScriptsWithoutIntegrity}`);
+
+  lines.push("");
+  lines.push("## WSG Dependency Maintenance Review");
+  lines.push("");
+  lines.push(`- WSG reference: ${report.dependencyMaintenanceSummary.wsgReference.title} (${report.dependencyMaintenanceSummary.wsgReference.url})`);
+  lines.push(`- Assessed pages: ${report.dependencyMaintenanceSummary.assessedPages}`);
+  lines.push(`- Average dependency maintenance score: ${formatPercentScore(report.dependencyMaintenanceSummary.averageScore)}`);
+  lines.push(`- High urgency pages: ${report.dependencyMaintenanceSummary.highUrgencyPages}`);
+  lines.push(`- Pages with vulnerable dependencies: ${report.dependencyMaintenanceSummary.pagesWithVulnerableDependencies}`);
+  lines.push(`- Total vulnerable dependency findings: ${report.dependencyMaintenanceSummary.totalVulnerableDependencies}`);
+
+  if ((report.dependencyMaintenanceSummary.topRecurringLibraries || []).length > 0) {
+    lines.push("- Recurring vulnerable dependencies:");
+    for (const item of report.dependencyMaintenanceSummary.topRecurringLibraries.slice(0, 10)) {
+      lines.push(`  - ${item.library}${item.version ? `@${item.version}` : ""}: seen on ${item.pageCount} page(s)${item.severity ? `, severity ${String(item.severity).toUpperCase()}` : ""}`);
+    }
+  }
+
+  lines.push("");
+  lines.push("## WSG Expected and Beneficial Files");
+  lines.push("");
+  lines.push(`- WSG reference: ${report.expectedFilesSummary.wsgReference.title} (${report.expectedFilesSummary.wsgReference.url})`);
+  lines.push(`- Assessed pages: ${report.expectedFilesSummary.assessedPages}`);
+  lines.push(`- Average expected-files score: ${formatPercentScore(report.expectedFilesSummary.averageScore)}`);
+  lines.push(`- High urgency pages: ${report.expectedFilesSummary.highUrgencyPages}`);
+  lines.push("- Missing files across pages:");
+  lines.push(`  - robots.txt missing: ${report.expectedFilesSummary.missing.robotsTxt}`);
+  lines.push(`  - sitemap.xml missing: ${report.expectedFilesSummary.missing.sitemapXml}`);
+  lines.push(`  - .well-known/security.txt missing: ${report.expectedFilesSummary.missing.securityTxt}`);
+  lines.push(`  - manifest.webmanifest missing: ${report.expectedFilesSummary.missing.webManifest}`);
+  lines.push(`  - favicon.ico missing: ${report.expectedFilesSummary.missing.favicon}`);
+
+  lines.push("");
+  lines.push("## WSG Reduce Data Transfer With Compression");
+  lines.push("");
+  lines.push(`- WSG reference: ${report.compressionSummary.wsgReference.title} (${report.compressionSummary.wsgReference.url})`);
+  lines.push(`- Assessed pages: ${report.compressionSummary.assessedPages}`);
+  lines.push(`- Average compression score: ${formatPercentScore(report.compressionSummary.averageScore)}`);
+  lines.push(`- High urgency pages: ${report.compressionSummary.highUrgencyPages}`);
+  lines.push(`- Pages missing effective text compression: ${report.compressionSummary.pagesMissingTextCompression}`);
+  lines.push(`- Aggregate potential compression savings: ${formatBytes(report.compressionSummary.totalEstimatedSavingsBytes)}`);
+
+  if ((report.compressionSummary.recurringOpportunities || []).length > 0) {
+    lines.push("- Recurring compression opportunities:");
+    for (const item of report.compressionSummary.recurringOpportunities.slice(0, 10)) {
+      lines.push(`  - ${item.title}: appears on ${item.pageCount} page(s)${item.totalEstimatedSavingsBytes > 0 ? `, est. ${formatBytes(item.totalEstimatedSavingsBytes)} total savings` : ""}, urgency ${String(item.urgency || "medium").toUpperCase()}`);
+    }
+  }
+
+  lines.push("");
+  lines.push("## WSG Efficient Solution Optimization Opportunities");
+  lines.push("");
+  lines.push(`- WSG reference: ${report.optimizationSummary.wsgReference.title} (${report.optimizationSummary.wsgReference.url})`);
+  lines.push(`- Assessed pages: ${report.optimizationSummary.assessedPages}`);
+  lines.push(`- Average optimization score: ${formatPercentScore(report.optimizationSummary.averageScore)}`);
+  lines.push(`- High urgency pages: ${report.optimizationSummary.highUrgencyPages}`);
+  lines.push(`- Aggregate potential byte savings: ${formatBytes(report.optimizationSummary.totalEstimatedSavingsBytes)}`);
+  lines.push(`- Aggregate render-blocking reduction potential: ${Math.round(report.optimizationSummary.totalEstimatedBlockingMs)} ms`);
+
+  if ((report.optimizationSummary.recurringOpportunities || []).length > 0) {
+    lines.push("- Recurring optimization opportunities:");
+    for (const item of report.optimizationSummary.recurringOpportunities.slice(0, 10)) {
+      lines.push(`  - ${item.title}: appears on ${item.pageCount} page(s)${item.totalEstimatedSavingsBytes > 0 ? `, est. ${formatBytes(item.totalEstimatedSavingsBytes)} total savings` : ""}${item.totalEstimatedBlockingMs > 0 ? `, est. ${Math.round(item.totalEstimatedBlockingMs)} ms unblock` : ""}`);
+    }
+  }
+
+  lines.push("");
+  lines.push("## WSG Offline Access and Caching Support");
+  lines.push("");
+  lines.push(`- WSG reference: ${report.offlineSupportSummary.wsgReference.title} (${report.offlineSupportSummary.wsgReference.url})`);
+  lines.push(`- Assessed pages: ${report.offlineSupportSummary.assessedPages}`);
+  lines.push(`- Average offline support score: ${formatPercentScore(report.offlineSupportSummary.averageScore)}`);
+  lines.push(`- High urgency pages: ${report.offlineSupportSummary.highUrgencyPages}`);
+  lines.push(`- Pages without service worker support: ${report.offlineSupportSummary.pagesWithoutServiceWorker}`);
+  lines.push(`- Pages without offline support: ${report.offlineSupportSummary.pagesWithoutOfflineSupport}`);
+  lines.push(`- Pages with weak cache TTL signals: ${report.offlineSupportSummary.pagesWithWeakCacheTtl}`);
+
+  if ((report.offlineSupportSummary.recurringOpportunities || []).length > 0) {
+    lines.push("- Recurring offline/caching opportunities:");
+    for (const item of report.offlineSupportSummary.recurringOpportunities.slice(0, 10)) {
+      lines.push(`  - ${item.title}: appears on ${item.pageCount} page(s), urgency ${String(item.urgency || "medium").toUpperCase()}`);
+    }
+  }
+
+  lines.push("");
+  lines.push("## WSG Latest Stable Language Version");
+  lines.push("");
+  lines.push(`- WSG reference: ${report.languageVersionSummary.wsgReference.title} (${report.languageVersionSummary.wsgReference.url})`);
+  lines.push(`- Assessed pages: ${report.languageVersionSummary.assessedPages}`);
+  lines.push(`- Average language-version score: ${formatPercentScore(report.languageVersionSummary.averageScore)}`);
+  lines.push(`- High urgency pages: ${report.languageVersionSummary.highUrgencyPages}`);
+  lines.push(`- Pages exposing runtime/language version signals: ${report.languageVersionSummary.pagesWithVersionDisclosure}`);
+  lines.push(`- Pages with outdated runtime/language signals: ${report.languageVersionSummary.pagesWithOutdatedRuntimeSignals}`);
+
+  if ((report.languageVersionSummary.topOutdatedSignals || []).length > 0) {
+    lines.push("- Recurring outdated runtime/language signals:");
+    for (const item of report.languageVersionSummary.topOutdatedSignals.slice(0, 10)) {
+      lines.push(`  - ${item.family}${item.version ? ` ${item.version}` : ""}: seen on ${item.pageCount} page(s)${item.recommendedBaseline ? `, baseline ${item.recommendedBaseline}+` : ""}, urgency ${String(item.urgency || "medium").toUpperCase()}`);
+    }
+  }
+
   lines.push("");
   lines.push("## WSG Third-Party JavaScript Assessment");
   lines.push("");
@@ -765,6 +2401,85 @@ export function renderMarkdown(report) {
   }
 
   lines.push("");
+  lines.push("## Site-Wide Guidance");
+  lines.push("");
+
+  if (report.siteGuidance.singleSiteScan) {
+    lines.push("- This scan appears to target a single site. Shared recommendations below should typically be fixed once at platform/template level.");
+  } else {
+    lines.push("- This scan includes multiple sites. Shared recommendations are grouped per origin.");
+  }
+
+  for (const site of report.siteGuidance.sites) {
+    lines.push("");
+    lines.push(`### ${site.origin}`);
+    lines.push(`- Sampled pages: ${site.pageCount}`);
+
+    if (site.sharedRecommendations.length === 0) {
+      lines.push("- No clear site-wide issues detected from the sampled pages.");
+    } else {
+      lines.push("- Shared recommendations:");
+      for (const recommendation of site.sharedRecommendations.slice(0, 8)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+        lines.push(`    - ${recommendation.detail}`);
+      }
+    }
+
+    if (site.recurringDependencies.length > 0) {
+      lines.push("- Recurring vulnerable dependencies:");
+      for (const dependency of site.recurringDependencies.slice(0, 6)) {
+        lines.push(`  - ${dependency.library}${dependency.version ? `@${dependency.version}` : ""}: ${dependency.pageCount} page(s)${dependency.severity ? `, severity ${String(dependency.severity).toUpperCase()}` : ""}`);
+      }
+    }
+
+    if ((site.recurringRuntimeSignals || []).length > 0) {
+      lines.push("- Recurring runtime/language version signals:");
+      for (const signal of site.recurringRuntimeSignals.slice(0, 6)) {
+        lines.push(`  - ${signal.family}${signal.version ? ` ${signal.version}` : ""}: ${signal.pageCount} page(s)${signal.recommendedBaseline ? `, baseline ${signal.recommendedBaseline}+` : ""}, urgency ${String(signal.urgency || "medium").toUpperCase()}`);
+      }
+    }
+
+    if ((site.recurringOfflineOpportunities || []).length > 0) {
+      lines.push("- Recurring offline/caching opportunities:");
+      for (const item of site.recurringOfflineOpportunities.slice(0, 6)) {
+        lines.push(`  - ${item.title}: ${item.pageCount} page(s), urgency ${String(item.urgency || "medium").toUpperCase()}`);
+      }
+    }
+
+    if ((site.recurringCompression || []).length > 0) {
+      lines.push("- Recurring compression opportunities:");
+      for (const item of site.recurringCompression.slice(0, 6)) {
+        lines.push(`  - ${item.title}: ${item.pageCount} page(s)${item.totalEstimatedSavingsBytes > 0 ? `, est. ${formatBytes(item.totalEstimatedSavingsBytes)} total savings` : ""}, urgency ${String(item.urgency || "medium").toUpperCase()}`);
+      }
+    }
+
+    if ((site.recurringOptimization || []).length > 0) {
+      lines.push("- Recurring optimization opportunities:");
+      for (const opportunity of site.recurringOptimization.slice(0, 6)) {
+        lines.push(`  - ${opportunity.title}: ${opportunity.pageCount} page(s)${opportunity.totalEstimatedSavingsBytes > 0 ? `, est. ${formatBytes(opportunity.totalEstimatedSavingsBytes)} total savings` : ""}${opportunity.totalEstimatedBlockingMs > 0 ? `, est. ${Math.round(opportunity.totalEstimatedBlockingMs)} ms unblock` : ""}`);
+      }
+    }
+  }
+
+  lines.push("");
+  lines.push("## Page-Specific Guidance");
+  lines.push("");
+  lines.push("- Use this section for page-level exceptions after site-wide/platform fixes are planned.");
+
+  for (const site of report.siteGuidance.sites) {
+    lines.push("");
+    lines.push(`### ${site.origin}`);
+    for (const page of site.pageSpecific.slice(0, 6)) {
+      lines.push(`- ${page.url}`);
+      lines.push(`  - Combined urgency: ${String(page.urgency || "low").toUpperCase()}`);
+      lines.push(`  - Compression score: ${formatPercentScore(page.compressionScore)}, optimization score: ${formatPercentScore(page.optimizationScore)}, offline score: ${formatPercentScore(page.offlineScore)}, dependency score: ${formatPercentScore(page.dependencyScore)}, language score: ${formatPercentScore(page.languageScore)}, security score: ${formatPercentScore(page.securityScore)}, expected-files score: ${formatPercentScore(page.expectedFilesScore)}`);
+      for (const recommendation of page.topRecommendations.slice(0, 3)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+      }
+    }
+  }
+
+  lines.push("");
   lines.push("## Priority Improvements");
   lines.push("");
 
@@ -792,6 +2507,24 @@ export function renderMarkdown(report) {
     lines.push(`- Dead-code urgency: ${(entry.deadCode?.urgency || "n/a").toUpperCase()}`);
     lines.push(`- Non-critical resources score: ${formatPercentScore(entry.nonCriticalResources?.score)}`);
     lines.push(`- Non-critical resources urgency: ${(entry.nonCriticalResources?.urgency || "n/a").toUpperCase()}`);
+    lines.push(`- Form validation score: ${formatPercentScore(entry.formValidation?.score)}`);
+    lines.push(`- Form validation urgency: ${(entry.formValidation?.urgency || "n/a").toUpperCase()}`);
+    lines.push(`- Metadata score: ${formatPercentScore(entry.metadata?.score)}`);
+    lines.push(`- Metadata urgency: ${(entry.metadata?.urgency || "n/a").toUpperCase()}`);
+    lines.push(`- Layout adaptation score: ${formatPercentScore(entry.layoutAdaptation?.score)}`);
+    lines.push(`- Layout adaptation urgency: ${(entry.layoutAdaptation?.urgency || "n/a").toUpperCase()}`);
+    lines.push(`- Lightweight security score: ${formatPercentScore(entry.securityLight?.score)}`);
+    lines.push(`- Lightweight security urgency: ${(entry.securityLight?.urgency || "n/a").toUpperCase()}`);
+    lines.push(`- Dependency maintenance score: ${formatPercentScore(entry.dependencyMaintenance?.score)}`);
+    lines.push(`- Dependency maintenance urgency: ${(entry.dependencyMaintenance?.urgency || "n/a").toUpperCase()}`);
+    lines.push(`- Expected-files score: ${formatPercentScore(entry.expectedFiles?.score)}`);
+    lines.push(`- Expected-files urgency: ${(entry.expectedFiles?.urgency || "n/a").toUpperCase()}`);
+    lines.push(`- Compression score: ${formatPercentScore(entry.compressionOpportunities?.score)}`);
+    lines.push(`- Compression urgency: ${(entry.compressionOpportunities?.urgency || "n/a").toUpperCase()}`);
+    lines.push(`- Optimization score: ${formatPercentScore(entry.optimizationOpportunities?.score)}`);
+    lines.push(`- Optimization urgency: ${(entry.optimizationOpportunities?.urgency || "n/a").toUpperCase()}`);
+    lines.push(`- Offline support score: ${formatPercentScore(entry.offlineSupport?.score)}`);
+    lines.push(`- Offline support urgency: ${(entry.offlineSupport?.urgency || "n/a").toUpperCase()}`);
     lines.push(`- Third-party JS risk score: ${formatPercentScore(entry.thirdPartyJs?.score)}`);
     lines.push(`- Third-party JS urgency: ${(entry.thirdPartyJs?.urgency || "n/a").toUpperCase()}`);
 
@@ -846,6 +2579,100 @@ export function renderMarkdown(report) {
       for (const candidate of entry.nonCriticalResources.candidates.slice(0, 5)) {
         lines.push(`  - [${candidate.urgency.toUpperCase()}] ${candidate.title}${candidate.estimatedSavingsBytes > 0 ? ` (est. ${formatBytes(candidate.estimatedSavingsBytes)} deferrable)` : ""}${candidate.estimatedBlockingMs ? ` (est. ${Math.round(candidate.estimatedBlockingMs)} ms unblock)` : ""}`);
         lines.push(`    - ${candidate.strategy}`);
+      }
+    }
+
+    if ((entry.formValidation?.recommendations || []).length > 0) {
+      lines.push("- Form validation recommendations:");
+      for (const recommendation of entry.formValidation.recommendations.slice(0, 4)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+        lines.push(`    - ${recommendation.detail}`);
+      }
+    }
+
+    if ((entry.metadata?.recommendations || []).length > 0) {
+      lines.push("- Metadata recommendations:");
+      for (const recommendation of entry.metadata.recommendations.slice(0, 5)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+        lines.push(`    - ${recommendation.detail}`);
+      }
+    }
+
+    if ((entry.layoutAdaptation?.recommendations || []).length > 0) {
+      lines.push("- Layout adaptation recommendations:");
+      for (const recommendation of entry.layoutAdaptation.recommendations.slice(0, 5)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+        lines.push(`    - ${recommendation.detail}`);
+      }
+    }
+
+    if ((entry.securityLight?.recommendations || []).length > 0) {
+      lines.push("- Lightweight security recommendations:");
+      for (const recommendation of entry.securityLight.recommendations.slice(0, 6)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+        lines.push(`    - ${recommendation.detail}`);
+      }
+    }
+
+    if ((entry.dependencyMaintenance?.recommendations || []).length > 0) {
+      lines.push("- Dependency maintenance recommendations:");
+      for (const recommendation of entry.dependencyMaintenance.recommendations.slice(0, 4)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+        lines.push(`    - ${recommendation.detail}`);
+      }
+    }
+
+    if ((entry.languageVersionGuidance?.recommendations || []).length > 0) {
+      lines.push("- Language/runtime version recommendations:");
+      for (const recommendation of entry.languageVersionGuidance.recommendations.slice(0, 4)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+        lines.push(`    - ${recommendation.detail}`);
+      }
+    }
+
+    if ((entry.languageVersionGuidance?.outdatedTechnologies || []).length > 0) {
+      lines.push("- Outdated runtime/language signals:");
+      for (const signal of entry.languageVersionGuidance.outdatedTechnologies.slice(0, 6)) {
+        lines.push(`  - ${signal.family}${signal.version ? ` ${signal.version}` : ""}${signal.recommendedBaseline ? ` (baseline ${signal.recommendedBaseline}+)` : ""} via ${signal.sourceHeader}`);
+      }
+    }
+
+    if ((entry.dependencyMaintenance?.vulnerableLibraries || []).length > 0) {
+      lines.push("- Vulnerable dependency findings:");
+      for (const dependency of entry.dependencyMaintenance.vulnerableLibraries.slice(0, 8)) {
+        lines.push(`  - ${dependency.library}${dependency.version ? `@${dependency.version}` : ""}${dependency.severity ? ` [${String(dependency.severity).toUpperCase()}]` : ""}${typeof dependency.vulnerabilities === "number" ? ` (${dependency.vulnerabilities} vulnerability entries)` : ""}`);
+      }
+    }
+
+    if ((entry.expectedFiles?.recommendations || []).length > 0) {
+      lines.push("- Expected-files recommendations:");
+      for (const recommendation of entry.expectedFiles.recommendations.slice(0, 4)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+        lines.push(`    - ${recommendation.detail}`);
+      }
+    }
+
+    if ((entry.compressionOpportunities?.recommendations || []).length > 0) {
+      lines.push("- Compression recommendations:");
+      for (const recommendation of entry.compressionOpportunities.recommendations.slice(0, 6)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+        lines.push(`    - ${recommendation.detail}`);
+      }
+    }
+
+    if ((entry.optimizationOpportunities?.recommendations || []).length > 0) {
+      lines.push("- Optimization recommendations:");
+      for (const recommendation of entry.optimizationOpportunities.recommendations.slice(0, 6)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+        lines.push(`    - ${recommendation.detail}`);
+      }
+    }
+
+    if ((entry.offlineSupport?.recommendations || []).length > 0) {
+      lines.push("- Offline/caching recommendations:");
+      for (const recommendation of entry.offlineSupport.recommendations.slice(0, 5)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+        lines.push(`    - ${recommendation.detail}`);
       }
     }
 
@@ -962,8 +2789,140 @@ export function renderHtml(report, markdownText) {
         <li><strong>Average modularization score:</strong> ${formatPercentScore(report.summary.averageModularizationScore)}</li>
         <li><strong>Average dead-code score:</strong> ${formatPercentScore(report.summary.averageDeadCodeScore)}</li>
         <li><strong>Average non-critical resources score:</strong> ${formatPercentScore(report.summary.averageNonCriticalResourcesScore)}</li>
+        <li><strong>Average form validation score:</strong> ${formatPercentScore(report.summary.averageFormValidationScore)}</li>
+        <li><strong>Average metadata score:</strong> ${formatPercentScore(report.summary.averageMetadataScore)}</li>
+        <li><strong>Average layout adaptation score:</strong> ${formatPercentScore(report.summary.averageLayoutAdaptationScore)}</li>
+        <li><strong>Average lightweight security score:</strong> ${formatPercentScore(report.summary.averageSecurityLightScore)}</li>
+        <li><strong>Average dependency maintenance score:</strong> ${formatPercentScore(report.summary.averageDependencyMaintenanceScore)}</li>
+        <li><strong>Average expected-files score:</strong> ${formatPercentScore(report.summary.averageExpectedFilesScore)}</li>
+        <li><strong>Average compression score:</strong> ${formatPercentScore(report.summary.averageCompressionScore)}</li>
+        <li><strong>Average optimization score:</strong> ${formatPercentScore(report.summary.averageOptimizationScore)}</li>
+        <li><strong>Average offline support score:</strong> ${formatPercentScore(report.summary.averageOfflineSupportScore)}</li>
+        <li><strong>Average language version score:</strong> ${formatPercentScore(report.summary.averageLanguageVersionScore)}</li>
       </ul>
     </header>
+
+    <section class="card" aria-labelledby="form-validation-heading">
+      <h2 id="form-validation-heading">WSG Form Validation and Tooling</h2>
+      <p class="muted">Assesses form error validation practices and tooling support while avoiding re-scans of repeated controls across pages.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.formValidationSummary.wsgReference.url)}">${escapeHtml(report.formValidationSummary.wsgReference.title)}</a></li>
+        <li><strong>Average form validation score:</strong> ${formatPercentScore(report.summary.averageFormValidationScore)} (0 low risk, 100 high risk)</li>
+        <li><strong>High urgency pages:</strong> ${report.summary.highUrgencyFormValidationCount}</li>
+        <li><strong>Unique signatures assessed:</strong> ${report.formValidationSummary.uniqueElementSignaturesAssessed}</li>
+        <li><strong>Total occurrences:</strong> ${report.formValidationSummary.totalOccurrences}</li>
+        <li><strong>Reused assessments:</strong> ${report.formValidationSummary.reusedFromCacheCount}</li>
+      </ul>
+      ${renderFormValidationSummary(report.formValidationSummary)}
+    </section>
+
+    <section class="card" aria-labelledby="metadata-heading">
+      <h2 id="metadata-heading">WSG Metadata for Machine Readability</h2>
+      <p class="muted">Checks page metadata against machine-readable best practices including canonical URL, social metadata, and structured data validity.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.metadataSummary.wsgReference.url)}">${escapeHtml(report.metadataSummary.wsgReference.title)}</a></li>
+        <li><strong>Assessed pages:</strong> ${report.metadataSummary.assessedPages}</li>
+        <li><strong>Average metadata score:</strong> ${formatPercentScore(report.metadataSummary.averageScore)} (0 low risk, 100 high risk)</li>
+        <li><strong>High urgency pages:</strong> ${report.metadataSummary.highUrgencyPages}</li>
+      </ul>
+      ${renderMetadataSummary(report.metadataSummary)}
+    </section>
+
+    <section class="card" aria-labelledby="layout-support-heading">
+      <h2 id="layout-support-heading">WSG Multi-Device Layout Support</h2>
+      <p class="muted">Assesses whether page layouts adapt cleanly on mobile and tablet viewports, with emphasis on overflow and touch target usability.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.layoutSupportSummary.wsgReference.url)}">${escapeHtml(report.layoutSupportSummary.wsgReference.title)}</a></li>
+        <li><strong>Assessed pages:</strong> ${report.layoutSupportSummary.assessedPages}</li>
+        <li><strong>Average layout adaptation score:</strong> ${formatPercentScore(report.layoutSupportSummary.averageScore)} (0 low risk, 100 high risk)</li>
+        <li><strong>High urgency pages:</strong> ${report.layoutSupportSummary.highUrgencyPages}</li>
+      </ul>
+      ${renderLayoutSupportSummary(report.layoutSupportSummary)}
+    </section>
+
+    <section class="card" aria-labelledby="security-light-heading">
+      <h2 id="security-light-heading">WSG Lightweight Security Review</h2>
+      <p class="muted">Non-invasive checks for common, easy-to-find security issues such as missing headers and vulnerable JavaScript library flags.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.securityLightSummary.wsgReference.url)}">${escapeHtml(report.securityLightSummary.wsgReference.title)}</a></li>
+        <li><strong>Assessed pages:</strong> ${report.securityLightSummary.assessedPages}</li>
+        <li><strong>Average lightweight security score:</strong> ${formatPercentScore(report.securityLightSummary.averageScore)} (0 low risk, 100 high risk)</li>
+        <li><strong>High urgency pages:</strong> ${report.securityLightSummary.highUrgencyPages}</li>
+      </ul>
+      ${renderSecurityLightSummary(report.securityLightSummary)}
+    </section>
+
+    <section class="card" aria-labelledby="dependency-maintenance-heading">
+      <h2 id="dependency-maintenance-heading">WSG Dependency Maintenance Review</h2>
+      <p class="muted">Shows where dependencies appear unmaintained using known vulnerable library signals and dependency integrity hints.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.dependencyMaintenanceSummary.wsgReference.url)}">${escapeHtml(report.dependencyMaintenanceSummary.wsgReference.title)}</a></li>
+        <li><strong>Assessed pages:</strong> ${report.dependencyMaintenanceSummary.assessedPages}</li>
+        <li><strong>Average dependency maintenance score:</strong> ${formatPercentScore(report.dependencyMaintenanceSummary.averageScore)} (0 low risk, 100 high risk)</li>
+        <li><strong>High urgency pages:</strong> ${report.dependencyMaintenanceSummary.highUrgencyPages}</li>
+      </ul>
+      ${renderDependencyMaintenanceSummary(report.dependencyMaintenanceSummary)}
+    </section>
+
+    <section class="card" aria-labelledby="expected-files-heading">
+      <h2 id="expected-files-heading">WSG Expected and Beneficial Files</h2>
+      <p class="muted">Checks for common root-level files that improve crawlability, maintenance transparency, and operational clarity.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.expectedFilesSummary.wsgReference.url)}">${escapeHtml(report.expectedFilesSummary.wsgReference.title)}</a></li>
+        <li><strong>Assessed pages:</strong> ${report.expectedFilesSummary.assessedPages}</li>
+        <li><strong>Average expected-files score:</strong> ${formatPercentScore(report.expectedFilesSummary.averageScore)} (0 low risk, 100 high risk)</li>
+        <li><strong>High urgency pages:</strong> ${report.expectedFilesSummary.highUrgencyPages}</li>
+      </ul>
+      ${renderExpectedFilesSummary(report.expectedFilesSummary)}
+    </section>
+
+    <section class="card" aria-labelledby="optimization-heading">
+      <h2 id="optimization-heading">WSG Efficient Solution Optimization Opportunities</h2>
+      <p class="muted">Highlights easy bloat-removal wins like oversized images, missing compression, and render-blocking resources.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.optimizationSummary.wsgReference.url)}">${escapeHtml(report.optimizationSummary.wsgReference.title)}</a></li>
+        <li><strong>Assessed pages:</strong> ${report.optimizationSummary.assessedPages}</li>
+        <li><strong>Average optimization score:</strong> ${formatPercentScore(report.optimizationSummary.averageScore)} (0 low opportunity, 100 high opportunity)</li>
+        <li><strong>High urgency pages:</strong> ${report.optimizationSummary.highUrgencyPages}</li>
+      </ul>
+      ${renderOptimizationSummary(report.optimizationSummary)}
+    </section>
+
+    <section class="card" aria-labelledby="compression-heading">
+      <h2 id="compression-heading">WSG Reduce Data Transfer With Compression</h2>
+      <p class="muted">Highlights transfer reduction opportunities via text compression, media encoding, and compression-friendly asset preparation.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.compressionSummary.wsgReference.url)}">${escapeHtml(report.compressionSummary.wsgReference.title)}</a></li>
+        <li><strong>Assessed pages:</strong> ${report.compressionSummary.assessedPages}</li>
+        <li><strong>Average compression score:</strong> ${formatPercentScore(report.compressionSummary.averageScore)} (0 low risk, 100 high risk)</li>
+        <li><strong>High urgency pages:</strong> ${report.compressionSummary.highUrgencyPages}</li>
+      </ul>
+      ${renderCompressionSummary(report.compressionSummary)}
+    </section>
+
+    <section class="card" aria-labelledby="offline-support-heading">
+      <h2 id="offline-support-heading">WSG Offline Access and Caching Support</h2>
+      <p class="muted">Evaluates support for offline use and web application behavior using service worker, offline routing, manifest, and cache policy signals.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.offlineSupportSummary.wsgReference.url)}">${escapeHtml(report.offlineSupportSummary.wsgReference.title)}</a></li>
+        <li><strong>Assessed pages:</strong> ${report.offlineSupportSummary.assessedPages}</li>
+        <li><strong>Average offline support score:</strong> ${formatPercentScore(report.offlineSupportSummary.averageScore)} (0 low risk, 100 high risk)</li>
+        <li><strong>High urgency pages:</strong> ${report.offlineSupportSummary.highUrgencyPages}</li>
+      </ul>
+      ${renderOfflineSupportSummary(report.offlineSupportSummary)}
+    </section>
+
+    <section class="card" aria-labelledby="language-version-heading">
+      <h2 id="language-version-heading">WSG Latest Stable Language Version</h2>
+      <p class="muted">Flags externally visible runtime/language version drift and recurring opportunities to align with modern stable baselines.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.languageVersionSummary.wsgReference.url)}">${escapeHtml(report.languageVersionSummary.wsgReference.title)}</a></li>
+        <li><strong>Assessed pages:</strong> ${report.languageVersionSummary.assessedPages}</li>
+        <li><strong>Average language-version score:</strong> ${formatPercentScore(report.languageVersionSummary.averageScore)} (0 low risk, 100 high risk)</li>
+        <li><strong>High urgency pages:</strong> ${report.languageVersionSummary.highUrgencyPages}</li>
+      </ul>
+      ${renderLanguageVersionSummary(report.languageVersionSummary)}
+    </section>
 
     <section class="card" aria-labelledby="green-hosting-heading">
       <h2 id="green-hosting-heading">Green Hosting Checks</h2>
@@ -1063,6 +3022,18 @@ export function renderHtml(report, markdownText) {
         ${report.crossPagePatterns.designSystemGuidance.map((message) => `<li>${escapeHtml(message)}</li>`).join("")}
       </ul>
       ${renderCrossPagePatternBlocks(report.crossPagePatterns)}
+    </section>
+
+    <section class="card" aria-labelledby="site-wide-guidance-heading">
+      <h2 id="site-wide-guidance-heading">Site-Wide Guidance</h2>
+      <p class="muted">Shared recommendations grouped by site origin so platform-level fixes can be prioritized before page-by-page cleanup.</p>
+      ${renderSiteWideGuidance(report.siteGuidance)}
+    </section>
+
+    <section class="card" aria-labelledby="page-specific-guidance-heading">
+      <h2 id="page-specific-guidance-heading">Page-Specific Guidance</h2>
+      <p class="muted">Page-level exceptions and targeted follow-ups after site-wide recommendations are addressed.</p>
+      ${renderPageSpecificGuidance(report.siteGuidance)}
     </section>
 
     <section class="card" aria-labelledby="overview-heading">
@@ -1238,6 +3209,180 @@ function renderThirdPartyProviders(providers) {
   `;
 }
 
+function renderFormValidationSummary(summary) {
+  const recurring = summary?.recurringElements || [];
+  const recurringSearch = summary?.recurringSearchElements || [];
+
+  if (recurring.length === 0) {
+    return "<p>No recurring form control signatures were detected across pages.</p>";
+  }
+
+  const sections = [];
+  sections.push(`
+    <h3>Recurring Form Elements</h3>
+    <p class="muted">These signatures were assessed once and reused across pages to avoid duplicate scanning.</p>
+    <ul>
+      ${recurring.slice(0, 8).map((item) => `<li><strong>${escapeHtml(item.controlType)}</strong>${item.fieldName ? ` (${escapeHtml(item.fieldName)})` : ""}: ${item.pageCount} page(s), risk ${escapeHtml(formatPercentScore(item.score))}, urgency ${escapeHtml(item.urgency.toUpperCase())}</li>`).join("")}
+    </ul>
+  `);
+
+  if (recurringSearch.length > 0) {
+    sections.push(`
+      <h3>Recurring Search Controls</h3>
+      <p class="muted">Search inputs often appear site-wide. These were deduplicated and not re-scanned on every page.</p>
+      <ul>
+        ${recurringSearch.slice(0, 6).map((item) => `<li><strong>${escapeHtml(item.controlType)}</strong>${item.fieldName ? ` (${escapeHtml(item.fieldName)})` : ""}: ${item.pageCount} page(s), urgency ${escapeHtml(item.urgency.toUpperCase())}</li>`).join("")}
+      </ul>
+    `);
+  }
+
+  return sections.join("");
+}
+
+function renderMetadataSummary(summary) {
+  const missing = summary?.missing || {};
+  return `
+    <h3>Cross-Page Metadata Gaps</h3>
+    <ul>
+      <li><strong>Missing html lang:</strong> ${missing.missingLang || 0}</li>
+      <li><strong>Missing meta description:</strong> ${missing.missingDescription || 0}</li>
+      <li><strong>Missing canonical URL:</strong> ${missing.missingCanonical || 0}</li>
+      <li><strong>Missing Open Graph core tags:</strong> ${missing.missingOpenGraphCore || 0}</li>
+      <li><strong>Missing twitter:card:</strong> ${missing.missingTwitterCard || 0}</li>
+      <li><strong>Invalid or missing JSON-LD:</strong> ${missing.invalidStructuredData || 0}</li>
+    </ul>
+  `;
+}
+
+function renderLayoutSupportSummary(summary) {
+  return `
+    <h3>Cross-Page Layout Adaptation Signals</h3>
+    <ul>
+      <li><strong>Pages with mobile overflow:</strong> ${summary?.mobileOverflowPages || 0}</li>
+      <li><strong>Pages with tablet overflow:</strong> ${summary?.tabletOverflowPages || 0}</li>
+      <li><strong>Total small tap targets on mobile:</strong> ${summary?.totalMobileSmallTapTargets || 0}</li>
+      <li><strong>Total small tap targets on tablet:</strong> ${summary?.totalTabletSmallTapTargets || 0}</li>
+      <li><strong>Total fixed-width offenders:</strong> ${summary?.totalFixedWidthOffenders || 0}</li>
+    </ul>
+  `;
+}
+
+function renderSecurityLightSummary(summary) {
+  return `
+    <h3>Cross-Page Security Signals</h3>
+    <ul>
+      <li><strong>Pages missing Content-Security-Policy:</strong> ${summary?.pagesWithoutCsp || 0}</li>
+      <li><strong>HTTPS pages missing Strict-Transport-Security:</strong> ${summary?.pagesWithoutHsts || 0}</li>
+      <li><strong>Pages with vulnerable JS library findings:</strong> ${summary?.pagesWithVulnerableLibraries || 0}</li>
+      <li><strong>External scripts missing SRI (total):</strong> ${summary?.totalExternalScriptsWithoutIntegrity || 0}</li>
+    </ul>
+  `;
+}
+
+function renderDependencyMaintenanceSummary(summary) {
+  const recurring = summary?.topRecurringLibraries || [];
+  const recurringHtml = recurring.length > 0
+    ? `
+      <h3>Recurring Vulnerable Dependencies</h3>
+      <ul>
+        ${recurring.slice(0, 10).map((item) => `<li><strong>${escapeHtml(item.library)}</strong>${item.version ? `@${escapeHtml(item.version)}` : ""}: ${item.pageCount} page(s)${item.severity ? `, severity ${escapeHtml(String(item.severity).toUpperCase())}` : ""}${typeof item.vulnerabilities === "number" ? `, ${item.vulnerabilities} vulnerability entries` : ""}</li>`).join("")}
+      </ul>
+    `
+    : "<p>No recurring vulnerable dependency signatures were detected.</p>";
+
+  return `
+    <h3>Cross-Page Dependency Signals</h3>
+    <ul>
+      <li><strong>Pages with vulnerable dependencies:</strong> ${summary?.pagesWithVulnerableDependencies || 0}</li>
+      <li><strong>Total vulnerable dependency findings:</strong> ${summary?.totalVulnerableDependencies || 0}</li>
+    </ul>
+    ${recurringHtml}
+  `;
+}
+
+function renderExpectedFilesSummary(summary) {
+  const missing = summary?.missing || {};
+  return `
+    <h3>Cross-Page Expected File Gaps</h3>
+    <ul>
+      <li><strong>robots.txt missing:</strong> ${missing.robotsTxt || 0}</li>
+      <li><strong>sitemap.xml missing:</strong> ${missing.sitemapXml || 0}</li>
+      <li><strong>.well-known/security.txt missing:</strong> ${missing.securityTxt || 0}</li>
+      <li><strong>manifest.webmanifest missing:</strong> ${missing.webManifest || 0}</li>
+      <li><strong>favicon.ico missing:</strong> ${missing.favicon || 0}</li>
+    </ul>
+  `;
+}
+
+function renderOptimizationSummary(summary) {
+  const recurring = summary?.recurringOpportunities || [];
+  return `
+    <h3>Cross-Page Optimization Signals</h3>
+    <ul>
+      <li><strong>Aggregate potential byte savings:</strong> ${escapeHtml(formatBytes(summary?.totalEstimatedSavingsBytes || 0))}</li>
+      <li><strong>Aggregate render-blocking reduction potential:</strong> ${Math.round(summary?.totalEstimatedBlockingMs || 0)} ms</li>
+    </ul>
+    ${recurring.length > 0 ? `
+      <h3>Recurring Optimization Opportunities</h3>
+      <ul>
+        ${recurring.slice(0, 10).map((item) => `<li><strong>${escapeHtml(item.title)}</strong>: ${item.pageCount} page(s)${item.totalEstimatedSavingsBytes > 0 ? `, est. ${escapeHtml(formatBytes(item.totalEstimatedSavingsBytes))} total savings` : ""}${item.totalEstimatedBlockingMs > 0 ? `, est. ${Math.round(item.totalEstimatedBlockingMs)} ms unblock` : ""}</li>`).join("")}
+      </ul>
+    ` : "<p>No recurring optimization opportunities were detected.</p>"}
+  `;
+}
+
+function renderCompressionSummary(summary) {
+  const recurring = summary?.recurringOpportunities || [];
+  return `
+    <h3>Cross-Page Compression Signals</h3>
+    <ul>
+      <li><strong>Pages missing effective text compression:</strong> ${summary?.pagesMissingTextCompression || 0}</li>
+      <li><strong>Aggregate potential compression savings:</strong> ${escapeHtml(formatBytes(summary?.totalEstimatedSavingsBytes || 0))}</li>
+    </ul>
+    ${recurring.length > 0 ? `
+      <h3>Recurring Compression Opportunities</h3>
+      <ul>
+        ${recurring.slice(0, 10).map((item) => `<li><strong>${escapeHtml(item.title)}</strong>: ${item.pageCount} page(s)${item.totalEstimatedSavingsBytes > 0 ? `, est. ${escapeHtml(formatBytes(item.totalEstimatedSavingsBytes))} total savings` : ""}, urgency ${escapeHtml(String(item.urgency || "medium").toUpperCase())}</li>`).join("")}
+      </ul>
+    ` : "<p>No recurring compression opportunities were detected.</p>"}
+  `;
+}
+
+function renderOfflineSupportSummary(summary) {
+  const recurring = summary?.recurringOpportunities || [];
+  return `
+    <h3>Cross-Page Offline and Caching Signals</h3>
+    <ul>
+      <li><strong>Pages without service worker support:</strong> ${summary?.pagesWithoutServiceWorker || 0}</li>
+      <li><strong>Pages without offline support:</strong> ${summary?.pagesWithoutOfflineSupport || 0}</li>
+      <li><strong>Pages with weak cache TTL signals:</strong> ${summary?.pagesWithWeakCacheTtl || 0}</li>
+    </ul>
+    ${recurring.length > 0 ? `
+      <h3>Recurring Offline/Caching Opportunities</h3>
+      <ul>
+        ${recurring.slice(0, 10).map((item) => `<li><strong>${escapeHtml(item.title)}</strong>: ${item.pageCount} page(s), urgency ${escapeHtml(String(item.urgency || "medium").toUpperCase())}</li>`).join("")}
+      </ul>
+    ` : "<p>No recurring offline or caching opportunities were detected.</p>"}
+  `;
+}
+
+function renderLanguageVersionSummary(summary) {
+  const outdated = summary?.topOutdatedSignals || [];
+  return `
+    <h3>Cross-Page Runtime/Language Version Signals</h3>
+    <ul>
+      <li><strong>Pages exposing runtime/language version signals:</strong> ${summary?.pagesWithVersionDisclosure || 0}</li>
+      <li><strong>Pages with outdated runtime/language signals:</strong> ${summary?.pagesWithOutdatedRuntimeSignals || 0}</li>
+    </ul>
+    ${outdated.length > 0 ? `
+      <h3>Recurring Outdated Signals</h3>
+      <ul>
+        ${outdated.slice(0, 10).map((item) => `<li><strong>${escapeHtml(item.family)}</strong>${item.version ? ` ${escapeHtml(item.version)}` : ""}: ${item.pageCount} page(s)${item.recommendedBaseline ? `, baseline ${escapeHtml(item.recommendedBaseline)}+` : ""}, urgency ${escapeHtml(String(item.urgency || "medium").toUpperCase())}</li>`).join("")}
+      </ul>
+    ` : "<p>No recurring outdated runtime/language signatures were detected from exposed headers.</p>"}
+  `;
+}
+
 function renderExternalProviderRiskSummary(summary) {
   const recurringNonGreen = summary?.recurringNonGreenProviders || [];
   const recurringUnknown = summary?.recurringUnknownProviders || [];
@@ -1270,6 +3415,97 @@ function renderExternalProviderRiskSummary(summary) {
   }
 
   return blocks.join("");
+}
+
+function renderSiteWideGuidance(siteGuidance) {
+  if (!siteGuidance?.sites?.length) {
+    return "<p>No site-level grouping could be determined from scan results.</p>";
+  }
+
+  const intro = siteGuidance.singleSiteScan
+    ? "<p>This scan appears to target a single site. Shared issues are usually best fixed once at template/platform level.</p>"
+    : "<p>This scan covers multiple origins. Shared guidance is grouped per site.</p>";
+
+  const blocks = siteGuidance.sites.map((site) => {
+    const shared = site.sharedRecommendations || [];
+    const compression = site.recurringCompression || [];
+    const deps = site.recurringDependencies || [];
+    const runtimes = site.recurringRuntimeSignals || [];
+    const offline = site.recurringOfflineOpportunities || [];
+    const recurringOptimization = site.recurringOptimization || [];
+    return `
+      <section>
+        <h3>${escapeHtml(site.origin)}</h3>
+        <p><strong>Sampled pages:</strong> ${site.pageCount}</p>
+        ${shared.length > 0 ? `
+          <ul>
+            ${shared.slice(0, 8).map((item) => `<li><strong>[${escapeHtml(String(item.urgency || "low").toUpperCase())}] ${escapeHtml(item.title)}</strong><br>${escapeHtml(item.detail)}</li>`).join("")}
+          </ul>
+        ` : "<p>No clear site-wide issues detected from sampled pages.</p>"}
+        ${deps.length > 0 ? `
+          <p><strong>Recurring vulnerable dependencies:</strong></p>
+          <ul>
+            ${deps.slice(0, 6).map((dep) => `<li>${escapeHtml(dep.library)}${dep.version ? `@${escapeHtml(dep.version)}` : ""}: ${dep.pageCount} page(s)${dep.severity ? `, severity ${escapeHtml(String(dep.severity).toUpperCase())}` : ""}</li>`).join("")}
+          </ul>
+        ` : ""}
+        ${compression.length > 0 ? `
+          <p><strong>Recurring compression opportunities:</strong></p>
+          <ul>
+            ${compression.slice(0, 6).map((item) => `<li>${escapeHtml(item.title)}: ${item.pageCount} page(s)${item.totalEstimatedSavingsBytes > 0 ? `, est. ${escapeHtml(formatBytes(item.totalEstimatedSavingsBytes))} total savings` : ""}, urgency ${escapeHtml(String(item.urgency || "medium").toUpperCase())}</li>`).join("")}
+          </ul>
+        ` : ""}
+        ${runtimes.length > 0 ? `
+          <p><strong>Recurring runtime/language version signals:</strong></p>
+          <ul>
+            ${runtimes.slice(0, 6).map((item) => `<li>${escapeHtml(item.family)}${item.version ? ` ${escapeHtml(item.version)}` : ""}: ${item.pageCount} page(s)${item.recommendedBaseline ? `, baseline ${escapeHtml(item.recommendedBaseline)}+` : ""}, urgency ${escapeHtml(String(item.urgency || "medium").toUpperCase())}</li>`).join("")}
+          </ul>
+        ` : ""}
+        ${offline.length > 0 ? `
+          <p><strong>Recurring offline/caching opportunities:</strong></p>
+          <ul>
+            ${offline.slice(0, 6).map((item) => `<li>${escapeHtml(item.title)}: ${item.pageCount} page(s), urgency ${escapeHtml(String(item.urgency || "medium").toUpperCase())}</li>`).join("")}
+          </ul>
+        ` : ""}
+        ${recurringOptimization.length > 0 ? `
+          <p><strong>Recurring optimization opportunities:</strong></p>
+          <ul>
+            ${recurringOptimization.slice(0, 6).map((item) => `<li>${escapeHtml(item.title)}: ${item.pageCount} page(s)${item.totalEstimatedSavingsBytes > 0 ? `, est. ${escapeHtml(formatBytes(item.totalEstimatedSavingsBytes))} total savings` : ""}${item.totalEstimatedBlockingMs > 0 ? `, est. ${Math.round(item.totalEstimatedBlockingMs)} ms unblock` : ""}</li>`).join("")}
+          </ul>
+        ` : ""}
+      </section>
+    `;
+  }).join("");
+
+  return `${intro}${blocks}`;
+}
+
+function renderPageSpecificGuidance(siteGuidance) {
+  if (!siteGuidance?.sites?.length) {
+    return "<p>No page-level guidance groups are available.</p>";
+  }
+
+  const blocks = siteGuidance.sites.map((site) => {
+    const pages = site.pageSpecific || [];
+    if (pages.length === 0) {
+      return `
+        <section>
+          <h3>${escapeHtml(site.origin)}</h3>
+          <p>No page-specific exceptions were identified for this site sample.</p>
+        </section>
+      `;
+    }
+
+    return `
+      <section>
+        <h3>${escapeHtml(site.origin)}</h3>
+        <ul>
+          ${pages.slice(0, 6).map((page) => `<li><strong>${escapeHtml(page.url)}</strong><br>Urgency: ${escapeHtml(String(page.urgency || "low").toUpperCase())}. Scores: compression ${escapeHtml(formatPercentScore(page.compressionScore))}, optimization ${escapeHtml(formatPercentScore(page.optimizationScore))}, offline ${escapeHtml(formatPercentScore(page.offlineScore))}, dependency ${escapeHtml(formatPercentScore(page.dependencyScore))}, language ${escapeHtml(formatPercentScore(page.languageScore))}, security ${escapeHtml(formatPercentScore(page.securityScore))}, expected files ${escapeHtml(formatPercentScore(page.expectedFilesScore))}.${page.topRecommendations?.length ? `<br>Top actions: ${page.topRecommendations.slice(0, 3).map((item) => escapeHtml(item.title)).join("; ")}` : ""}</li>`).join("")}
+        </ul>
+      </section>
+    `;
+  }).join("");
+
+  return blocks;
 }
 
 function kbToBytes(kb) {

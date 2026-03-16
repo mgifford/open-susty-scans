@@ -58,6 +58,12 @@ From an issue body markdown file:
 npm run scan -- --issue-file ./issue-body.md --issue-number 42 --title "SCAN: Government Services"
 ```
 
+Directly from a GitHub issue URL:
+
+```bash
+npm run scan -- --issue-url https://github.com/mgifford/open-susty-scans/issues/1 --title "SCAN: Spain"
+```
+
 Optional output directory:
 
 ```bash
@@ -76,6 +82,16 @@ Each run writes:
 - report.json: machine-readable structured results
 - report.md: human-focused summary and prioritized recommendations
 - report.html: accessible, actionable report with copy buttons for issue snippets
+
+Automated publishing is available through GitHub Actions:
+- Each scan run can publish the report to GitHub Pages under `reports/issue-<number>/<run-id>/`
+- A stable latest link is kept at `reports/issue-<number>/latest/`
+- A repository-wide index page is published at `reports.html` (similar to open-scans style listing)
+- The source issue gets an updated bot comment with report links (HTML, Markdown, JSON, and index)
+
+Reports now separate guidance into:
+- Site-wide guidance grouped by origin (shared recommendations that can often be fixed once at template/platform level)
+- Page-specific guidance (exceptions and page-level follow-up items)
 
 Reports also include a budgetGuidance section aligned with WSG SC 3.1:
 - Average transfer bytes per page
@@ -120,6 +136,61 @@ Reports also include non-critical resource defer-loading analysis aligned with W
 - Per-page non-critical resource score and urgency
 - Candidate resources to defer (offscreen media, non-critical scripts/styles, render-blocking assets, and heavy likely-deferrable requests)
 
+Reports also include metadata machine-readability analysis aligned with WSG guidance:
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#structure-metadata-for-machine-readability
+- Per-page metadata score and urgency
+- Checks for html lang, meta description, canonical URL, Open Graph tags, Twitter card tags, and JSON-LD validity
+- Cross-page summary of recurring metadata gaps to prioritize shared template fixes
+
+Reports also include multi-device layout support analysis aligned with WSG guidance:
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#ensure-layouts-work-for-different-devices-and-requirements
+- Per-page layout adaptation score and urgency for mobile and tablet viewports
+- Detects horizontal overflow, fixed-width components, undersized tap targets, and oversized media
+- Cross-page totals to prioritize responsive template and component fixes
+
+Reports also include a lightweight security review aligned with WSG guidance:
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#ensure-that-your-code-is-secure
+- Per-page lightweight security score and urgency
+- Flags common, easy-to-find issues such as vulnerable JavaScript library findings, missing security headers (CSP, HSTS, etc.), and external scripts without SRI
+- Scope is non-invasive and does not perform penetration testing
+
+Reports also include dependency maintenance review aligned with WSG guidance:
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#use-dependencies-appropriately-and-ensure-maintenance
+- Per-page dependency maintenance score and urgency
+- Highlights vulnerable JavaScript library findings by page and recurring vulnerable dependencies across the scan set
+- Includes dependency integrity hygiene signal (external scripts without SRI)
+
+Reports also include expected and beneficial files review aligned with WSG guidance:
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#include-expected-and-beneficial-files
+- Per-page expected-files score and urgency
+- Checks for common root-level files such as robots.txt, sitemap.xml, .well-known/security.txt, manifest.webmanifest, and favicon.ico
+- Cross-page summary of recurring missing files to prioritize platform-level fixes
+
+Reports also include optimization opportunities aligned with WSG guidance:
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#use-the-most-efficient-solution-for-your-service
+- Per-page optimization score and urgency
+- Highlights easy bloat-removal opportunities such as oversized images, missing text compression, unused CSS/JS, non-minified assets, and render-blocking resources
+- Cross-page recurring optimization patterns and aggregate potential savings (bytes and render-blocking time)
+
+Reports also include dedicated compression opportunities aligned with WSG guidance:
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#reduce-data-transfer-with-compression
+- Per-page compression score and urgency
+- Highlights text compression (Brotli/gzip), modern image formats, image re-encoding, and compression-friendly minification opportunities
+- Cross-page recurring compression patterns and aggregate potential byte savings
+
+Reports also include latest stable language version guidance aligned with WSG guidance:
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#use-the-latest-stable-language-version
+- Per-page language/runtime version score and urgency
+- Detects externally visible runtime or language version signals from response headers (for example Node.js or PHP) and flags likely outdated baselines
+- Summarizes recurring outdated runtime/language signatures across pages and origins to support platform-level upgrades
+- Includes guidance to pair dependency upgrades with runtime/language baseline updates
+
+Reports also include offline access and caching support guidance aligned with WSG guidance:
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#optimize-caching-and-support-offline-access
+- Per-page offline support score and urgency
+- Uses Lighthouse signals for service worker availability, offline behavior, installable manifest/start URL support, and long cache TTL effectiveness
+- Provides recurring cross-page and site-level offline/caching opportunities for platform-level fixes
+
 ## Actionable Triage Flow
 
 1. Open report.html.
@@ -127,6 +198,27 @@ Reports also include non-critical resource defer-loading analysis aligned with W
 3. Use "Copy issue text" to copy ready-to-paste issue content.
 4. Paste into your GitHub issue queue and assign owners.
 5. Re-run after fixes and compare key metrics (transfer size, CO2, performance score).
+
+## GitHub Automation
+
+Workflow path:
+- `.github/workflows/scan-and-publish.yml`
+
+Triggers:
+- `issues` events (`opened`, `edited`, `reopened`) for issue-driven scans
+- `workflow_dispatch` with an `issue_url` input for manual runs
+
+What it does:
+- Runs the scanner using the GitHub issue URL intake
+- Publishes reports to the `gh-pages` branch
+- Generates/updates `reports.html` index on GitHub Pages
+- Upserts a single report comment on the issue with direct links
+
+GitHub Pages URL pattern:
+- `https://<owner>.github.io/<repo>/reports.html`
+
+For this repository, expected URL:
+- `https://mgifford.github.io/open-susty-scans/reports.html`
 
 ## Scope
 

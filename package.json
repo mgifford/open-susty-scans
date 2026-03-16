@@ -6,7 +6,9 @@
   "main": "src/cli.js",
   "scripts": {
     "scan": "node src/cli.js",
-    "scan:issue": "node src/cli.js --issue-file ./.tmp/issue.md --title \"SCAN: Example\""
+    "scan:issue": "node src/cli.js --issue-file ./.tmp/issue.md --title \"SCAN: Example\"",
+    "pages:build": "node src/report/build-pages-site.js",
+    "issue:comment": "node src/report/post-issue-comment.js"
   },
   "dependencies": {
     "@tgwf/co2": "^0.16.8",

@@ -1,0 +1,105 @@
+name: Scan And Publish Reports
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+  workflow_dispatch:
+    inputs:
+      issue_url:
+        description: GitHub issue URL to scan
+        required: true
+        type: string
+      issue_number:
+        description: Issue number (optional override)
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  scan-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Resolve issue context
+        id: ctx
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "issues" ]; then
+            echo "issue_number=${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
+            echo "issue_url=${{ github.server_url }}/${{ github.repository }}/issues/${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
+          else
+            INPUT_ISSUE_NUMBER="${{ inputs.issue_number }}"
+            INPUT_ISSUE_URL="${{ inputs.issue_url }}"
+            if [ -n "$INPUT_ISSUE_NUMBER" ]; then
+              echo "issue_number=$INPUT_ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
+            else
+              PARSED_NUMBER=$(echo "$INPUT_ISSUE_URL" | sed -E 's|.*/issues/([0-9]+).*|\1|')
+              echo "issue_number=$PARSED_NUMBER" >> "$GITHUB_OUTPUT"
+            fi
+            echo "issue_url=$INPUT_ISSUE_URL" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run scan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p .tmp/current-report
+          npm run scan -- \
+            --issue-url "${{ steps.ctx.outputs.issue_url }}" \
+            --issue-number "${{ steps.ctx.outputs.issue_number }}" \
+            --output ./.tmp/current-report
+
+      - name: Checkout gh-pages content (if exists)
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: ./.tmp/gh-pages
+
+      - name: Prepare pages site
+        env:
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          mkdir -p .tmp/site
+          if [ -d ./.tmp/gh-pages/reports ] || [ -f ./.tmp/gh-pages/reports.html ]; then
+            cp -R ./.tmp/gh-pages/. ./.tmp/site/
+          fi
+
+          node src/report/build-pages-site.js \
+            --site-dir ./.tmp/site \
+            --report-dir ./.tmp/current-report \
+            --issue-number "${{ steps.ctx.outputs.issue_number }}" \
+            --run-id "$RUN_ID" \
+            --repo "$REPO" \
+            --metadata-out ./.tmp/report-metadata.json
+
+      - name: Publish GitHub Pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./.tmp/site
+
+      - name: Post issue comment with report links
+        if: ${{ steps.ctx.outputs.issue_number != '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ steps.ctx.outputs.issue_number }}
+          REPORT_METADATA_PATH: ./.tmp/report-metadata.json
+        run: node src/report/post-issue-comment.js
