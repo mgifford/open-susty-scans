@@ -25,6 +25,8 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       startsWith(github.event.issue.title, 'SCAN:')
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -62,6 +64,7 @@ jobs:
           fi
 
       - name: Run scan
+        if: steps.ctx.outputs.issue_url != ''
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -72,6 +75,7 @@ jobs:
             --output ./.tmp/current-report
 
       - name: Prepare pages site
+        if: steps.ctx.outputs.issue_url != ''
         env:
           REPO: ${{ github.repository }}
           RUN_ID: ${{ github.run_id }}
@@ -92,6 +96,7 @@ jobs:
             --metadata-out ./.tmp/report-metadata.json
 
       - name: Commit published pages content to main
+        if: steps.ctx.outputs.issue_url != ''
         run: |
           rm -rf ./reports
           mkdir -p ./reports
