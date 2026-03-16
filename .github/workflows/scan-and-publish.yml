@@ -9,17 +9,21 @@ on:
         description: GitHub issue URL to scan, or plain issue number (e.g. 42)
         required: false
         type: string
-      issue_number:
-        description: Issue number (used when issue_url is not provided)
-        required: false
-        type: string
 
 permissions:
   contents: write
   issues: write
 
+concurrency:
+  group: scan-repository
+  cancel-in-progress: false
+
 jobs:
   scan-and-publish:
+    # For issue events, only run when the title starts with "SCAN:"
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      startsWith(github.event.issue.title, 'SCAN:')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
@@ -42,27 +46,18 @@ jobs:
             echo "issue_number=${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
             echo "issue_url=${{ github.server_url }}/${{ github.repository }}/issues/${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
           else
-            INPUT_ISSUE_NUMBER="${{ inputs.issue_number }}"
             INPUT_ISSUE_URL="${{ inputs.issue_url }}"
 
-            # If issue_url is a plain number, expand it to a full URL using a temporary variable
+            # If issue_url is a plain number, expand it to a full URL
             if [[ "$INPUT_ISSUE_URL" =~ ^[0-9]+$ ]]; then
               PLAIN_NUM="$INPUT_ISSUE_URL"
               INPUT_ISSUE_URL="https://github.com/${{ github.repository }}/issues/$PLAIN_NUM"
-              INPUT_ISSUE_NUMBER="${INPUT_ISSUE_NUMBER:-$PLAIN_NUM}"
             fi
 
-            # If still no valid URL (e.g. only issue_number was provided), construct it
-            if [ -n "$INPUT_ISSUE_NUMBER" ] && ! [[ "$INPUT_ISSUE_URL" =~ ^https://github\.com/ ]]; then
-              INPUT_ISSUE_URL="https://github.com/${{ github.repository }}/issues/$INPUT_ISSUE_NUMBER"
-            fi
+            # Parse issue_number from the URL
+            ISSUE_NUMBER=$(echo "$INPUT_ISSUE_URL" | sed -E 's|.*/issues/([0-9]+).*|\1|')
 
-            # If issue_number is still empty, parse it from the URL
-            if [ -z "$INPUT_ISSUE_NUMBER" ]; then
-              INPUT_ISSUE_NUMBER=$(echo "$INPUT_ISSUE_URL" | sed -E 's|.*/issues/([0-9]+).*|\1|')
-            fi
-
-            echo "issue_number=$INPUT_ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
+            echo "issue_number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
             echo "issue_url=$INPUT_ISSUE_URL" >> "$GITHUB_OUTPUT"
           fi
 
