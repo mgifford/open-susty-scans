@@ -89,6 +89,13 @@ Reports also include redundancy analysis aligned with WSG SC 3.2:
 - Estimated redundant bytes per page
 - Top redundancy recommendations based on Lighthouse waste audits
 
+Reports also include modularization analysis aligned with WSG guidance for bandwidth-heavy components:
+- Per-page modularization score (0 to 100)
+- Per-page urgency (low, medium, high)
+- Heavy initial-load request counts and bytes
+- On-demand modularization candidates for scripts, images, styles, fonts, and media
+- Strategies such as lazy loading, route-level code splitting, and deferred initialization
+
 ## Actionable Triage Flow
 
 1. Open report.html.
@@ -141,6 +148,24 @@ Scoring model:
   - High: score >= 60 or estimated redundant transfer >= 512 KB
   - Medium: score >= 30 or estimated redundant transfer >= 128 KB
   - Low: below medium thresholds
+
+  ## Modularization Analysis
+
+  WSG reference:
+  - https://www.w3.org/TR/web-sustainability-guidelines/#modularize-bandwidth-heavy-components
+
+  This project looks for opportunities to break heavier applications into modules that are only loaded when needed. It does this by examining:
+  - Heavy initial-load requests from Lighthouse network data
+  - Offscreen images that should be lazy-loaded
+  - Unused JavaScript that should be code-split
+  - Render-blocking resources that should be deferred
+  - Heavy assets grouped by type and origin
+
+  Typical recommendations include:
+  - Lazy-load offscreen media and gallery assets
+  - Split JavaScript by route or interaction
+  - Defer non-critical UI modules until after first render
+  - Move large media, fonts, or styles behind explicit user actions or route boundaries
 
 ## Notes
 

@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { analyzeRedundancyFromLighthouse, prioritizedFindingsFromLighthouse } from "../wsg/mapping.js";
+import { analyzeModularizationFromLighthouse, analyzeRedundancyFromLighthouse, prioritizedFindingsFromLighthouse } from "../wsg/mapping.js";
 
 const WSG_PERFORMANCE_ENERGY_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact";
 const SWD_RATING_SOURCE_URL = "https://sustainablewebdesign.org/digital-carbon-ratings/";
@@ -30,6 +30,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
 
     const findings = prioritizedFindingsFromLighthouse({ audits: result.lighthouse.audits }, wsgIndex);
     const redundancy = analyzeRedundancyFromLighthouse({ audits: result.lighthouse.audits }, wsgIndex);
+    const modularization = analyzeModularizationFromLighthouse({ audits: result.lighthouse.audits }, wsgIndex);
     return {
       url: result.url,
       status: "ok",
@@ -39,6 +40,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
       transferBytes: result.sustainability.transferBytes,
       co2Grams: result.sustainability.co2Grams,
       redundancy,
+      modularization,
       findings
     };
   });
@@ -70,6 +72,8 @@ function buildSummary(perUrl) {
   const averageCo2GramsPerPage = ok.length > 0 ? totalCo2 / ok.length : null;
   const averageRedundancyScore = average(ok.map((item) => item.redundancy?.score));
   const highUrgencyRedundancyCount = ok.filter((item) => item.redundancy?.urgency === "high").length;
+  const averageModularizationScore = average(ok.map((item) => item.modularization?.score));
+  const highUrgencyModularizationCount = ok.filter((item) => item.modularization?.urgency === "high").length;
 
   return {
     okCount: ok.length,
@@ -81,7 +85,9 @@ function buildSummary(perUrl) {
     averageTransferBytes,
     averageCo2GramsPerPage,
     averageRedundancyScore,
-    highUrgencyRedundancyCount
+    highUrgencyRedundancyCount,
+    averageModularizationScore,
+    highUrgencyModularizationCount
   };
 }
 
@@ -177,6 +183,8 @@ export function renderMarkdown(report) {
   lines.push(`- Average CO2 per page: ${formatGrams(report.summary.averageCo2GramsPerPage)}`);
   lines.push(`- Average redundancy score: ${formatPercentScore(report.summary.averageRedundancyScore)}`);
   lines.push(`- Pages with high redundancy urgency: ${report.summary.highUrgencyRedundancyCount}`);
+  lines.push(`- Average modularization score: ${formatPercentScore(report.summary.averageModularizationScore)}`);
+  lines.push(`- Pages with high modularization urgency: ${report.summary.highUrgencyModularizationCount}`);
   lines.push("");
   lines.push("## WSG SC 3.1 Budget Guidance");
   lines.push("");
@@ -208,6 +216,12 @@ export function renderMarkdown(report) {
   lines.push("- Redundancy score: 0 (low redundancy) to 100 (high redundancy)");
   lines.push("- Urgency levels: low, medium, high");
   lines.push("");
+  lines.push("## WSG Modularization Analysis");
+  lines.push("");
+  lines.push("- WSG reference: Modularize bandwidth-heavy components (https://www.w3.org/TR/web-sustainability-guidelines/#modularize-bandwidth-heavy-components)");
+  lines.push("- Modularization score: 0 (few obvious on-demand opportunities) to 100 (many heavy initial-load components)");
+  lines.push("- This analysis looks for heavy scripts, images, styles, fonts, and media that should be split or loaded on demand.");
+  lines.push("");
   lines.push("## Priority Improvements");
   lines.push("");
 
@@ -226,6 +240,8 @@ export function renderMarkdown(report) {
     lines.push(`- CO2 estimate: ${entry.co2Grams.toFixed(4)} g`);
     lines.push(`- Redundancy score: ${formatPercentScore(entry.redundancy?.score)}`);
     lines.push(`- Redundancy urgency: ${(entry.redundancy?.urgency || "n/a").toUpperCase()}`);
+    lines.push(`- Modularization score: ${formatPercentScore(entry.modularization?.score)}`);
+    lines.push(`- Modularization urgency: ${(entry.modularization?.urgency || "n/a").toUpperCase()}`);
 
     if (entry.redundancy?.estimatedRedundantBytes > 0) {
       lines.push(`- Estimated redundant transfer: ${formatBytes(entry.redundancy.estimatedRedundantBytes)} (${(entry.redundancy.redundancyRatio * 100).toFixed(1)}% of transfer)`);
@@ -235,6 +251,18 @@ export function renderMarkdown(report) {
       lines.push("- Redundancy recommendations:");
       for (const recommendation of entry.redundancy.recommendations.slice(0, 4)) {
         lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}${recommendation.estimatedSavingsBytes > 0 ? ` (est. ${formatBytes(recommendation.estimatedSavingsBytes)} savings)` : ""}`);
+      }
+    }
+
+    if (entry.modularization?.heavyRequestCount > 0) {
+      lines.push(`- Heavy initial-load requests: ${entry.modularization.heavyRequestCount} (${formatBytes(entry.modularization.heavyBytes)} total)`);
+    }
+
+    if (entry.modularization?.onDemandCandidates?.length > 0) {
+      lines.push("- On-demand modularization candidates:");
+      for (const candidate of entry.modularization.onDemandCandidates.slice(0, 4)) {
+        lines.push(`  - [${candidate.urgency.toUpperCase()}] ${candidate.title}${candidate.estimatedSavingsBytes > 0 ? ` (est. ${formatBytes(candidate.estimatedSavingsBytes)})` : ""}`);
+        lines.push(`    - ${candidate.strategy}`);
       }
     }
 
@@ -347,8 +375,20 @@ export function renderHtml(report, markdownText) {
         <li><strong>Scanned URLs:</strong> ${report.summary.okCount} / ${report.requestedUrls.length}</li>
         <li><strong>Estimated CO2:</strong> ${report.summary.totalCo2Grams.toFixed(4)} g</li>
         <li><strong>Average redundancy score:</strong> ${formatPercentScore(report.summary.averageRedundancyScore)}</li>
+        <li><strong>Average modularization score:</strong> ${formatPercentScore(report.summary.averageModularizationScore)}</li>
       </ul>
     </header>
+
+    <section class="card" aria-labelledby="modularization-heading">
+      <h2 id="modularization-heading">WSG Modularization Overview</h2>
+      <p class="muted">Finds bandwidth-heavy components that should be split, deferred, or loaded only on demand.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="https://www.w3.org/TR/web-sustainability-guidelines/#modularize-bandwidth-heavy-components">Modularize bandwidth-heavy components</a></li>
+        <li><strong>Average modularization score:</strong> ${formatPercentScore(report.summary.averageModularizationScore)} (0 low, 100 high)</li>
+        <li><strong>High urgency pages:</strong> ${report.summary.highUrgencyModularizationCount}</li>
+      </ul>
+      <p>Use this to identify candidates for route-level splitting, interaction-triggered imports, lazy media loading, and deferring heavy third-party or feature bundles.</p>
+    </section>
 
     <section class="card" aria-labelledby="redundancy-heading">
       <h2 id="redundancy-heading">WSG 3.2 Redundancy Overview</h2>
