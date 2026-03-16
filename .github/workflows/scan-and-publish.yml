@@ -107,6 +107,7 @@ jobs:
             echo "No pages changes to commit"
           else
             git commit -m "Publish sustainability reports for issue #${{ steps.ctx.outputs.issue_number }}"
+            git pull --rebase origin main
             git push origin main
           fi
 
