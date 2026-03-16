@@ -256,12 +256,10 @@ function main() {
 
   rows.sort((a, b) => String(b.generatedAt).localeCompare(String(a.generatedAt)));
 
-  writeFileSync(join(siteDir, "reports.html"), buildReportsHtml(rows, projectBase), "utf8");
-  writeFileSync(
-    join(siteDir, "index.html"),
-    "<!doctype html><html><head><meta http-equiv=\"refresh\" content=\"0; url=reports.html\"></head><body><a href=\"reports.html\">Reports</a></body></html>",
-    "utf8"
-  );
+  const reportsHtml = buildReportsHtml(rows, projectBase);
+  writeFileSync(join(siteDir, "reports.html"), reportsHtml, "utf8");
+  mkdirSync(join(siteDir, "reports"), { recursive: true });
+  writeFileSync(join(siteDir, "reports", "index.html"), reportsHtml, "utf8");
 
   const currentHtml = `${projectBase}reports/issue-${issueNumber}/${runId}/report.html`;
   const currentMd = `${projectBase}reports/issue-${issueNumber}/${runId}/report.md`;

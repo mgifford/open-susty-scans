@@ -86,7 +86,7 @@ Each run writes:
 Automated publishing is available through GitHub Actions:
 - Each scan run can publish the report to GitHub Pages under `reports/issue-<number>/<run-id>/`
 - A stable latest link is kept at `reports/issue-<number>/latest/`
-- A repository-wide index page is published at `reports.html` (similar to open-scans style listing)
+- A repository-wide index page is published at both `reports.html` and `reports/index.html` (similar to open-scans style listing)
 - The source issue gets an updated bot comment with report links (HTML, Markdown, JSON, and index)
 
 Reports now separate guidance into:
@@ -210,11 +210,12 @@ Triggers:
 
 What it does:
 - Runs the scanner using the GitHub issue URL intake
-- Publishes reports to the `gh-pages` branch
+- Commits published report pages back to `main` so GitHub Pages (configured to main) can serve them
 - Generates/updates `reports.html` index on GitHub Pages
 - Upserts a single report comment on the issue with direct links
 
 GitHub Pages URL pattern:
+- `https://<owner>.github.io/<repo>/reports/`
 - `https://<owner>.github.io/<repo>/reports.html`
 
 For this repository, expected URL:

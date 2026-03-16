@@ -63,21 +63,16 @@ jobs:
             --issue-number "${{ steps.ctx.outputs.issue_number }}" \
             --output ./.tmp/current-report
 
-      - name: Checkout gh-pages content (if exists)
-        continue-on-error: true
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: ./.tmp/gh-pages
-
       - name: Prepare pages site
         env:
           REPO: ${{ github.repository }}
           RUN_ID: ${{ github.run_id }}
         run: |
           mkdir -p .tmp/site
-          if [ -d ./.tmp/gh-pages/reports ] || [ -f ./.tmp/gh-pages/reports.html ]; then
-            cp -R ./.tmp/gh-pages/. ./.tmp/site/
+          if [ -d ./reports ] || [ -f ./reports.html ]; then
+            cp -R ./reports ./.tmp/site/ 2>/dev/null || true
+            cp ./reports.html ./.tmp/site/reports.html 2>/dev/null || true
+            cp ./.nojekyll ./.tmp/site/.nojekyll 2>/dev/null || true
           fi
 
           node src/report/build-pages-site.js \
@@ -88,12 +83,24 @@ jobs:
             --repo "$REPO" \
             --metadata-out ./.tmp/report-metadata.json
 
-      - name: Publish GitHub Pages branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./.tmp/site
+      - name: Commit published pages content to main
+        run: |
+          rm -rf ./reports
+          mkdir -p ./reports
+          cp -R ./.tmp/site/reports/. ./reports/
+          cp ./.tmp/site/reports.html ./reports.html
+          cp ./.tmp/site/.nojekyll ./.nojekyll
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports reports.html .nojekyll
+
+          if git diff --cached --quiet; then
+            echo "No pages changes to commit"
+          else
+            git commit -m "Publish sustainability reports for issue #${{ steps.ctx.outputs.issue_number }}"
+            git push origin main
+          fi
 
       - name: Post issue comment with report links
         if: ${{ steps.ctx.outputs.issue_number != '' }}
