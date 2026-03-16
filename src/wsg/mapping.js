@@ -21,6 +21,7 @@ const REDUNDANCY_AUDITS = [
 ];
 
 const MODULARIZATION_WSG_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#modularize-bandwidth-heavy-components";
+const DEAD_CODE_WSG_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-code";
 
 const REDUNDANCY_RELATED_AUDITS = [
   ...REDUNDANCY_AUDITS,
@@ -147,6 +148,7 @@ export function analyzeModularizationFromLighthouse(lhr, wsgIndex) {
     heavyRequestCount: heavyRequests.length,
     heavyBytes,
     heavyRatio,
+    heavyRequests: heavyRequests.slice(0, 20),
     groupedByType,
     groupedByOrigin,
     onDemandCandidates: buildModularizationCandidates({
@@ -154,6 +156,57 @@ export function analyzeModularizationFromLighthouse(lhr, wsgIndex) {
       offscreenImageSavings,
       unusedJavascriptSavings,
       renderBlockingSavings,
+      wsg
+    }),
+    wsg
+  };
+}
+
+export function analyzeDeadCodeFromLighthouse(lhr, wsgIndex) {
+  const audits = lhr.audits || {};
+  const transferBytes = extractTransferBytes(audits);
+
+  const cssUnusedBytes = getSavingsBytes(audits["unused-css-rules"]);
+  const jsUnusedBytes = getSavingsBytes(audits["unused-javascript"]);
+  const duplicatedJsBytes = getSavingsBytes(audits["duplicated-javascript"]);
+  const domStats = extractDomStats(audits["dom-size"]);
+
+  const cssRatio = transferBytes > 0 ? Math.min(cssUnusedBytes / transferBytes, 1) : 0;
+  const jsRatio = transferBytes > 0 ? Math.min((jsUnusedBytes + duplicatedJsBytes) / transferBytes, 1) : 0;
+  const htmlPenalty = htmlPenaltyFromDomStats(domStats, audits["dom-size"]);
+
+  const weighted = (0.35 * cssRatio) + (0.45 * jsRatio) + (0.2 * htmlPenalty);
+  const score = Math.round(weighted * 100);
+  const urgency = deadCodeUrgency(score, cssUnusedBytes + jsUnusedBytes + duplicatedJsBytes, domStats.totalBodyElements);
+  const wsg = wsgIndex.get(DEAD_CODE_WSG_URL) || null;
+
+  return {
+    score,
+    urgency,
+    transferBytes,
+    css: {
+      unusedBytes: cssUnusedBytes,
+      ratio: cssRatio,
+      auditId: "unused-css-rules"
+    },
+    javascript: {
+      unusedBytes: jsUnusedBytes,
+      duplicatedBytes: duplicatedJsBytes,
+      ratio: jsRatio,
+      auditIds: ["unused-javascript", "duplicated-javascript"]
+    },
+    html: {
+      estimatedPenalty: htmlPenalty,
+      totalBodyElements: domStats.totalBodyElements,
+      maxDepth: domStats.maxDepth,
+      maxChildElements: domStats.maxChildElements,
+      note: "HTML dead code cannot be measured directly from Lighthouse. This score estimates unnecessary markup from DOM size and complexity signals."
+    },
+    recommendations: buildDeadCodeRecommendations({
+      cssUnusedBytes,
+      jsUnusedBytes,
+      duplicatedJsBytes,
+      domStats,
       wsg
     }),
     wsg
@@ -184,6 +237,79 @@ function getSavingsBytes(audit) {
 function extractTransferBytes(audits) {
   const networkItems = audits["network-requests"]?.details?.items || [];
   return networkItems.reduce((sum, item) => sum + (item.transferSize || 0), 0);
+}
+
+function extractDomStats(audit) {
+  const stats = audit?.details?.items?.[0] || {};
+  return {
+    totalBodyElements: typeof stats.totalBodyElements === "number" ? stats.totalBodyElements : 0,
+    maxDepth: typeof stats.maxDepth === "number" ? stats.maxDepth : 0,
+    maxChildElements: typeof stats.maxChildElements === "number" ? stats.maxChildElements : 0
+  };
+}
+
+function htmlPenaltyFromDomStats(domStats, domAudit) {
+  const totalPenalty = Math.min(domStats.totalBodyElements / 1500, 1);
+  const depthPenalty = Math.min(domStats.maxDepth / 40, 1);
+  const childPenalty = Math.min(domStats.maxChildElements / 60, 1);
+  const auditPenalty = scorePenalty(domAudit);
+  return Math.min((0.35 * totalPenalty) + (0.25 * depthPenalty) + (0.15 * childPenalty) + (0.25 * auditPenalty), 1);
+}
+
+function deadCodeUrgency(score, deadBytes, totalBodyElements) {
+  if (score >= 60 || deadBytes >= 256 * 1024 || totalBodyElements >= 1500) return "high";
+  if (score >= 30 || deadBytes >= 64 * 1024 || totalBodyElements >= 800) return "medium";
+  return "low";
+}
+
+function buildDeadCodeRecommendations({ cssUnusedBytes, jsUnusedBytes, duplicatedJsBytes, domStats, wsg }) {
+  const recommendations = [];
+
+  if (cssUnusedBytes > 0) {
+    recommendations.push({
+      area: "css",
+      title: "Remove unused CSS selectors and component styles",
+      urgency: cssUnusedBytes >= 64 * 1024 ? "high" : "medium",
+      estimatedSavingsBytes: cssUnusedBytes,
+      strategy: "Trim styles that never match rendered markup and split component CSS so only used styles are shipped.",
+      wsg
+    });
+  }
+
+  if (jsUnusedBytes > 0) {
+    recommendations.push({
+      area: "javascript",
+      title: "Remove unused JavaScript and feature bundles",
+      urgency: jsUnusedBytes >= 64 * 1024 ? "high" : "medium",
+      estimatedSavingsBytes: jsUnusedBytes,
+      strategy: "Drop unused packages and feature code, or move them behind route-level or interaction-triggered imports.",
+      wsg
+    });
+  }
+
+  if (duplicatedJsBytes > 0) {
+    recommendations.push({
+      area: "javascript",
+      title: "Deduplicate repeated JavaScript modules",
+      urgency: duplicatedJsBytes >= 32 * 1024 ? "medium" : "low",
+      estimatedSavingsBytes: duplicatedJsBytes,
+      strategy: "Consolidate repeated modules in the build graph so the browser does not download duplicate code.",
+      wsg
+    });
+  }
+
+  if (domStats.totalBodyElements >= 800 || domStats.maxDepth >= 32 || domStats.maxChildElements >= 60) {
+    recommendations.push({
+      area: "html",
+      title: "Reduce unnecessary HTML wrappers and markup depth",
+      urgency: domStats.totalBodyElements >= 1500 ? "high" : "medium",
+      estimatedSavingsBytes: 0,
+      strategy: "Audit template wrappers, hidden blocks, repeated utility containers, and CMS-generated markup that does not support the rendered experience.",
+      wsg
+    });
+  }
+
+  return recommendations.slice(0, 6);
 }
 
 function normalizeRequest(item) {

@@ -3,6 +3,7 @@
 Issue-driven sustainability scanning for the Web Sustainability Guidelines (WSG), using:
 - Lighthouse (performance and best-practices categories)
 - CO2.js for per-page and aggregate emissions estimates
+- The Green Web Foundation API for green hosting checks
 - WSG guideline mapping for actionable remediation
 - Sustainable Web Design rating comparisons for budget guidance
 
@@ -95,6 +96,24 @@ Reports also include modularization analysis aligned with WSG guidance for bandw
 - Heavy initial-load request counts and bytes
 - On-demand modularization candidates for scripts, images, styles, fonts, and media
 - Strategies such as lazy loading, route-level code splitting, and deferred initialization
+
+Reports also include third-party JavaScript assessment aligned with WSG guidance:
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#give-third-parties-the-same-priority-as-first-parties-during-assessment
+- Per-page third-party JS risk score and urgency
+- Cross-scan view of third-party script providers by pages affected, request count, and transfer size
+- Provider hosting status via the Green Web Foundation dataset to support sustainability-aware vendor review
+- Dedicated cross-page summary of recurring non-green (and unknown) external providers to highlight highest hosting risk dependencies
+
+Reports also include green hosting checks using the Green Web Foundation dataset:
+- Whether each submitted URL host is identified as powered by green energy
+- Whether external stylesheet and JavaScript origins are identified as powered by green energy
+- Provider names where available
+- Aggregate counts for green, not confirmed green, and unknown hosts
+
+Reports also include dead-code analysis aligned with WSG guidance:
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-code
+- Per-page dead-code score and urgency
+- Recommendations covering unused CSS, unused/duplicated JavaScript, and excessive HTML complexity
 
 ## Actionable Triage Flow
 
