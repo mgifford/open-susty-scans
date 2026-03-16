@@ -1,0 +1,40 @@
+name: Sustainability Scan Request
+description: Submit URLs for Lighthouse + CO2.js + WSG guidance analysis
+title: "SCAN: "
+labels:
+  - scan-request
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Submit a list of public URLs to scan for sustainability improvements.
+        Use one URL per line. The scanner reads the `# URLs` section first.
+
+  - type: input
+    id: scan_title
+    attributes:
+      label: Scan title
+      description: Short descriptive title for this scan batch
+      placeholder: Government Service Key Journeys
+    validations:
+      required: true
+
+  - type: textarea
+    id: urls
+    attributes:
+      label: URLs
+      description: Public HTTP/HTTPS URLs. One per line.
+      placeholder: |
+        https://example.org/
+        https://example.org/about
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Optional context for triage and follow-up
+      placeholder: Focus on top templates and quick wins.
+

@@ -1,0 +1,17 @@
+{
+  "name": "open-susty-scans",
+  "version": "0.1.0",
+  "description": "Issue-driven sustainability scanning with Lighthouse, CO2.js, and WSG mapping.",
+  "type": "module",
+  "main": "src/cli.js",
+  "scripts": {
+    "scan": "node src/cli.js",
+    "scan:issue": "node src/cli.js --issue-file ./.tmp/issue.md --title \"SCAN: Example\""
+  },
+  "dependencies": {
+    "@tgwf/co2": "^0.16.8",
+    "chrome-launcher": "^1.1.1",
+    "lighthouse": "^12.8.2",
+    "puppeteer": "^24.7.1"
+  }
+}
