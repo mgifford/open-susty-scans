@@ -2,6 +2,19 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { prioritizedFindingsFromLighthouse } from "../wsg/mapping.js";
 
+const WSG_PERFORMANCE_ENERGY_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact";
+const SWD_RATING_SOURCE_URL = "https://sustainablewebdesign.org/digital-carbon-ratings/";
+
+const SWD_RATINGS = [
+  { rating: "A+", maxTransferBytes: kbToBytes(272.51), maxCo2Grams: 0.040 },
+  { rating: "A", maxTransferBytes: kbToBytes(531.15), maxCo2Grams: 0.079 },
+  { rating: "B", maxTransferBytes: kbToBytes(975.85), maxCo2Grams: 0.145 },
+  { rating: "C", maxTransferBytes: kbToBytes(1410.39), maxCo2Grams: 0.209 },
+  { rating: "D", maxTransferBytes: kbToBytes(1875.01), maxCo2Grams: 0.278 },
+  { rating: "E", maxTransferBytes: kbToBytes(2419.56), maxCo2Grams: 0.359 },
+  { rating: "F", maxTransferBytes: Number.POSITIVE_INFINITY, maxCo2Grams: Number.POSITIVE_INFINITY }
+];
+
 export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIndex }) {
   const generatedAt = new Date().toISOString();
 
@@ -29,6 +42,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
   });
 
   const summary = buildSummary(perUrl);
+  const budgetGuidance = buildBudgetGuidance(summary);
 
   return {
     version: "0.1.0",
@@ -37,6 +51,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
     generatedAt,
     requestedUrls: urls,
     summary,
+    budgetGuidance,
     results: perUrl
   };
 }
@@ -49,6 +64,8 @@ function buildSummary(perUrl) {
   const avgBestPractices = average(ok.map((item) => item.bestPracticesScore));
   const totalBytes = ok.reduce((sum, item) => sum + (item.transferBytes || 0), 0);
   const totalCo2 = ok.reduce((sum, item) => sum + (item.co2Grams || 0), 0);
+  const averageTransferBytes = ok.length > 0 ? totalBytes / ok.length : null;
+  const averageCo2GramsPerPage = ok.length > 0 ? totalCo2 / ok.length : null;
 
   return {
     okCount: ok.length,
@@ -56,8 +73,78 @@ function buildSummary(perUrl) {
     averagePerformanceScore: avgPerformance,
     averageBestPracticesScore: avgBestPractices,
     totalTransferBytes: totalBytes,
-    totalCo2Grams: totalCo2
+    totalCo2Grams: totalCo2,
+    averageTransferBytes,
+    averageCo2GramsPerPage
   };
+}
+
+function buildBudgetGuidance(summary) {
+  const avgBytes = summary.averageTransferBytes;
+  const avgCo2 = summary.averageCo2GramsPerPage;
+  const currentTransferRating = typeof avgBytes === "number" ? ratingForTransferBytes(avgBytes) : null;
+  const currentCo2Rating = typeof avgCo2 === "number" ? ratingForCo2(avgCo2) : null;
+  const target = SWD_RATINGS.find((entry) => entry.rating === "B");
+
+  return {
+    wsgReference: {
+      id: "3.1",
+      title: "Set goals based on performance and energy impact",
+      url: WSG_PERFORMANCE_ENERGY_URL
+    },
+    benchmarkReference: {
+      name: "Sustainable Web Design Digital Carbon Ratings",
+      url: SWD_RATING_SOURCE_URL
+    },
+    current: {
+      averageTransferBytes: avgBytes,
+      averageCo2GramsPerPage: avgCo2,
+      transferRating: currentTransferRating,
+      co2Rating: currentCo2Rating
+    },
+    recommendedBudget: {
+      targetRating: "B",
+      maxTransferBytesPerPage: target.maxTransferBytes,
+      maxCo2GramsPerPage: target.maxCo2Grams
+    },
+    reductionsNeeded: {
+      transferBytesPerPage: computeReduction(avgBytes, target.maxTransferBytes),
+      co2GramsPerPage: computeReduction(avgCo2, target.maxCo2Grams)
+    },
+    stretchBudget: {
+      targetRating: "A",
+      maxTransferBytesPerPage: SWD_RATINGS.find((entry) => entry.rating === "A").maxTransferBytes,
+      maxCo2GramsPerPage: SWD_RATINGS.find((entry) => entry.rating === "A").maxCo2Grams
+    }
+  };
+}
+
+function computeReduction(currentValue, targetValue) {
+  if (typeof currentValue !== "number") {
+    return { absolute: null, percent: null, needsReduction: false };
+  }
+  const absolute = currentValue - targetValue;
+  const needsReduction = absolute > 0;
+  const percent = needsReduction ? (absolute / currentValue) * 100 : 0;
+  return { absolute: needsReduction ? absolute : 0, percent, needsReduction };
+}
+
+function ratingForTransferBytes(bytes) {
+  for (const item of SWD_RATINGS) {
+    if (bytes <= item.maxTransferBytes) {
+      return item.rating;
+    }
+  }
+  return "F";
+}
+
+function ratingForCo2(co2Grams) {
+  for (const item of SWD_RATINGS) {
+    if (co2Grams <= item.maxCo2Grams) {
+      return item.rating;
+    }
+  }
+  return "F";
 }
 
 function average(values) {
@@ -80,6 +167,32 @@ export function renderMarkdown(report) {
   lines.push(`- Average performance score: ${formatScore(report.summary.averagePerformanceScore)}`);
   lines.push(`- Total transfer: ${formatBytes(report.summary.totalTransferBytes)}`);
   lines.push(`- Estimated CO2: ${report.summary.totalCo2Grams.toFixed(4)} g`);
+  lines.push(`- Average transfer per page: ${formatBytes(report.summary.averageTransferBytes)}`);
+  lines.push(`- Average CO2 per page: ${formatGrams(report.summary.averageCo2GramsPerPage)}`);
+  lines.push("");
+  lines.push("## WSG SC 3.1 Budget Guidance");
+  lines.push("");
+  lines.push(`- WSG reference: ${report.budgetGuidance.wsgReference.title} (${report.budgetGuidance.wsgReference.url})`);
+  lines.push(`- Sustainable Web Design benchmark: ${report.budgetGuidance.benchmarkReference.url}`);
+  lines.push(`- Current transfer rating: ${report.budgetGuidance.current.transferRating || "n/a"}`);
+  lines.push(`- Current CO2 rating: ${report.budgetGuidance.current.co2Rating || "n/a"}`);
+  lines.push(`- Recommended budget target: rating ${report.budgetGuidance.recommendedBudget.targetRating}`);
+  lines.push(`- Budget max transfer/page: ${formatBytes(report.budgetGuidance.recommendedBudget.maxTransferBytesPerPage)}`);
+  lines.push(`- Budget max CO2/page: ${formatGrams(report.budgetGuidance.recommendedBudget.maxCo2GramsPerPage)}`);
+
+  if (report.budgetGuidance.reductionsNeeded.transferBytesPerPage.needsReduction) {
+    lines.push(`- Transfer reduction needed: ${formatBytes(report.budgetGuidance.reductionsNeeded.transferBytesPerPage.absolute)} (${report.budgetGuidance.reductionsNeeded.transferBytesPerPage.percent.toFixed(1)}%)`);
+  } else {
+    lines.push("- Transfer reduction needed: none (already within target budget)");
+  }
+
+  if (report.budgetGuidance.reductionsNeeded.co2GramsPerPage.needsReduction) {
+    lines.push(`- CO2 reduction needed: ${formatGrams(report.budgetGuidance.reductionsNeeded.co2GramsPerPage.absolute)} (${report.budgetGuidance.reductionsNeeded.co2GramsPerPage.percent.toFixed(1)}%)`);
+  } else {
+    lines.push("- CO2 reduction needed: none (already within target budget)");
+  }
+
+  lines.push(`- Stretch budget (rating ${report.budgetGuidance.stretchBudget.targetRating}): ${formatBytes(report.budgetGuidance.stretchBudget.maxTransferBytesPerPage)} and ${formatGrams(report.budgetGuidance.stretchBudget.maxCo2GramsPerPage)} per page`);
   lines.push("");
   lines.push("## Priority Improvements");
   lines.push("");
@@ -209,6 +322,23 @@ export function renderHtml(report, markdownText) {
       </ul>
     </header>
 
+    <section class="card" aria-labelledby="budget-heading">
+      <h2 id="budget-heading">WSG 3.1 Performance and Energy Budget</h2>
+      <p class="muted">Benchmark comparison using Sustainable Web Design Digital Carbon Ratings.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.budgetGuidance.wsgReference.url)}">${escapeHtml(report.budgetGuidance.wsgReference.id)} ${escapeHtml(report.budgetGuidance.wsgReference.title)}</a></li>
+        <li><strong>Benchmark source:</strong> <a href="${escapeAttr(report.budgetGuidance.benchmarkReference.url)}">Sustainable Web Design ratings</a></li>
+        <li><strong>Current average transfer/page:</strong> ${formatBytes(report.summary.averageTransferBytes)} (rating ${escapeHtml(report.budgetGuidance.current.transferRating || "n/a")})</li>
+        <li><strong>Current average CO2/page:</strong> ${formatGrams(report.summary.averageCo2GramsPerPage)} (rating ${escapeHtml(report.budgetGuidance.current.co2Rating || "n/a")})</li>
+        <li><strong>Recommended budget target:</strong> Rating ${escapeHtml(report.budgetGuidance.recommendedBudget.targetRating)} = max ${formatBytes(report.budgetGuidance.recommendedBudget.maxTransferBytesPerPage)} and ${formatGrams(report.budgetGuidance.recommendedBudget.maxCo2GramsPerPage)} per page</li>
+      </ul>
+      <p><strong>Reduction needed:</strong>
+      Transfer ${report.budgetGuidance.reductionsNeeded.transferBytesPerPage.needsReduction ? `${formatBytes(report.budgetGuidance.reductionsNeeded.transferBytesPerPage.absolute)} (${report.budgetGuidance.reductionsNeeded.transferBytesPerPage.percent.toFixed(1)}%)` : "none"},
+      CO2 ${report.budgetGuidance.reductionsNeeded.co2GramsPerPage.needsReduction ? `${formatGrams(report.budgetGuidance.reductionsNeeded.co2GramsPerPage.absolute)} (${report.budgetGuidance.reductionsNeeded.co2GramsPerPage.percent.toFixed(1)}%)` : "none"}.
+      </p>
+      <p><strong>Stretch target:</strong> Rating ${escapeHtml(report.budgetGuidance.stretchBudget.targetRating)} = ${formatBytes(report.budgetGuidance.stretchBudget.maxTransferBytesPerPage)} and ${formatGrams(report.budgetGuidance.stretchBudget.maxCo2GramsPerPage)} per page.</p>
+    </section>
+
     <section class="card" aria-labelledby="overview-heading">
       <h2 id="overview-heading">Overview Table</h2>
       <table>
@@ -289,6 +419,15 @@ function formatBytes(bytes) {
     idx += 1;
   }
   return `${current.toFixed(2)} ${units[idx]}`;
+}
+
+function formatGrams(grams) {
+  if (typeof grams !== "number" || Number.isNaN(grams)) return "n/a";
+  return `${grams.toFixed(4)} g`;
+}
+
+function kbToBytes(kb) {
+  return kb * 1024;
 }
 
 function escapeHtml(value) {

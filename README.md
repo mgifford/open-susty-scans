@@ -49,6 +49,13 @@ Each run writes:
 - `report.md`: human-focused summary and prioritized recommendations
 - `report.html`: accessible, actionable report with copy buttons for issue snippets
 
+Reports now also include a `budgetGuidance` section aligned with WSG SC 3.1:
+- Average transfer bytes per page
+- Average CO2 grams per page
+- Suggested budget target (rating `B`) and stretch target (rating `A`)
+- Required reduction percentage to meet target budgets
+- Comparison against Sustainable Web Design Digital Carbon Ratings
+
 ## Actionable Triage Flow
 
 1. Open `report.html`.
@@ -60,3 +67,14 @@ Each run writes:
 ## Scope
 
 This project intentionally avoids accessibility-engine output and starts with performance/sustainability indicators, as requested.
+
+## Budget Benchmarks
+
+For page-level budget guidance, this project compares scan averages against:
+- WSG: Set goals based on performance and energy impact
+- Sustainable Web Design Digital Carbon Ratings:
+	- https://sustainablewebdesign.org/digital-carbon-ratings/
+
+Default recommendation:
+- Team budget target: Rating B or better
+- Stretch target: Rating A or better
