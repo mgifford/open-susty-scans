@@ -14,6 +14,20 @@ const AUDIT_TO_WSG = {
   "dom-size": "https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information"
 };
 
+const REDUNDANCY_AUDITS = [
+  "unused-css-rules",
+  "unused-javascript",
+  "duplicated-javascript"
+];
+
+const REDUNDANCY_RELATED_AUDITS = [
+  ...REDUNDANCY_AUDITS,
+  "dom-size",
+  "uses-text-compression",
+  "unminified-css",
+  "unminified-javascript"
+];
+
 export function mapAuditToWsg(auditId) {
   return AUDIT_TO_WSG[auditId] || null;
 }
@@ -53,10 +67,124 @@ export function prioritizedFindingsFromLighthouse(lhr, wsgIndex) {
   return findings;
 }
 
+export function analyzeRedundancyFromLighthouse(lhr, wsgIndex) {
+  const audits = lhr.audits || {};
+  const transferBytes = extractTransferBytes(audits);
+
+  const wasteByAudit = REDUNDANCY_AUDITS.map((auditId) => {
+    const audit = audits[auditId];
+    const savingsBytes = getSavingsBytes(audit);
+    return {
+      auditId,
+      title: audit?.title || auditId,
+      savingsBytes,
+      displayValue: audit?.displayValue || ""
+    };
+  }).filter((entry) => entry.savingsBytes > 0);
+
+  const totalRedundantBytes = wasteByAudit.reduce((sum, item) => sum + item.savingsBytes, 0);
+  const redundancyRatio = transferBytes > 0 ? Math.min(totalRedundantBytes / transferBytes, 1) : 0;
+
+  const domPenalty = scorePenalty(audits["dom-size"]);
+  const compressionPenalty = scorePenalty(audits["uses-text-compression"]);
+  const minificationPenalty = average([
+    scorePenalty(audits["unminified-css"]),
+    scorePenalty(audits["unminified-javascript"])
+  ]);
+
+  const weighted = (0.55 * redundancyRatio) + (0.2 * domPenalty) + (0.15 * compressionPenalty) + (0.1 * minificationPenalty);
+  const score = Math.round(weighted * 100);
+  const urgency = redundancyUrgency(score, totalRedundantBytes);
+  const wsgUrl = "https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information";
+  const wsg = wsgIndex.get(wsgUrl) || null;
+
+  return {
+    score,
+    urgency,
+    transferBytes,
+    estimatedRedundantBytes: totalRedundantBytes,
+    redundancyRatio,
+    relatedAuditIds: REDUNDANCY_RELATED_AUDITS.filter((auditId) => audits[auditId]),
+    wasteByAudit,
+    recommendations: buildRedundancyRecommendations(wasteByAudit, audits, wsg),
+    wsg
+  };
+}
+
 function severityRank(value) {
   if (value === "high") return 0;
   if (value === "medium") return 1;
   return 2;
+}
+
+function scorePenalty(audit) {
+  const score = typeof audit?.score === "number" ? audit.score : 1;
+  return Math.max(0, Math.min(1, 1 - score));
+}
+
+function getSavingsBytes(audit) {
+  if (!audit) return 0;
+  const fromDetails = audit.details?.overallSavingsBytes;
+  if (typeof fromDetails === "number" && fromDetails > 0) {
+    return fromDetails;
+  }
+  const numericValue = typeof audit.numericValue === "number" ? audit.numericValue : 0;
+  return numericValue > 0 ? numericValue : 0;
+}
+
+function extractTransferBytes(audits) {
+  const networkItems = audits["network-requests"]?.details?.items || [];
+  return networkItems.reduce((sum, item) => sum + (item.transferSize || 0), 0);
+}
+
+function average(values) {
+  const valid = values.filter((value) => typeof value === "number" && !Number.isNaN(value));
+  if (valid.length === 0) return 0;
+  return valid.reduce((sum, value) => sum + value, 0) / valid.length;
+}
+
+function redundancyUrgency(score, redundantBytes) {
+  if (score >= 60 || redundantBytes >= 512 * 1024) return "high";
+  if (score >= 30 || redundantBytes >= 128 * 1024) return "medium";
+  return "low";
+}
+
+function buildRedundancyRecommendations(wasteByAudit, audits, wsg) {
+  const recommendations = [];
+
+  for (const waste of wasteByAudit.sort((a, b) => b.savingsBytes - a.savingsBytes)) {
+    const baseTitle = waste.title.replace(/^\s*reduce\s+/i, "").trim().toLowerCase();
+    const normalizedTitle = baseTitle.length > 0 ? `Reduce ${baseTitle}` : waste.title;
+    recommendations.push({
+      title: normalizedTitle,
+      urgency: waste.savingsBytes >= 128 * 1024 ? "high" : "medium",
+      estimatedSavingsBytes: waste.savingsBytes,
+      auditId: waste.auditId,
+      wsg
+    });
+  }
+
+  if (scorePenalty(audits["uses-text-compression"]) > 0.1) {
+    recommendations.push({
+      title: "Enable and verify text compression",
+      urgency: "medium",
+      estimatedSavingsBytes: getSavingsBytes(audits["uses-text-compression"]),
+      auditId: "uses-text-compression",
+      wsg
+    });
+  }
+
+  if (scorePenalty(audits["dom-size"]) > 0.2) {
+    recommendations.push({
+      title: "Reduce DOM complexity and redundant markup",
+      urgency: "medium",
+      estimatedSavingsBytes: 0,
+      auditId: "dom-size",
+      wsg
+    });
+  }
+
+  return recommendations.slice(0, 6);
 }
 
 function buildIssueTemplate(auditId, audit, wsg) {

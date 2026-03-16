@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { prioritizedFindingsFromLighthouse } from "../wsg/mapping.js";
+import { analyzeRedundancyFromLighthouse, prioritizedFindingsFromLighthouse } from "../wsg/mapping.js";
 
 const WSG_PERFORMANCE_ENERGY_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact";
 const SWD_RATING_SOURCE_URL = "https://sustainablewebdesign.org/digital-carbon-ratings/";
@@ -29,6 +29,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
     }
 
     const findings = prioritizedFindingsFromLighthouse({ audits: result.lighthouse.audits }, wsgIndex);
+    const redundancy = analyzeRedundancyFromLighthouse({ audits: result.lighthouse.audits }, wsgIndex);
     return {
       url: result.url,
       status: "ok",
@@ -37,6 +38,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
       bestPracticesScore: result.lighthouse.categories.bestPractices,
       transferBytes: result.sustainability.transferBytes,
       co2Grams: result.sustainability.co2Grams,
+      redundancy,
       findings
     };
   });
@@ -66,6 +68,8 @@ function buildSummary(perUrl) {
   const totalCo2 = ok.reduce((sum, item) => sum + (item.co2Grams || 0), 0);
   const averageTransferBytes = ok.length > 0 ? totalBytes / ok.length : null;
   const averageCo2GramsPerPage = ok.length > 0 ? totalCo2 / ok.length : null;
+  const averageRedundancyScore = average(ok.map((item) => item.redundancy?.score));
+  const highUrgencyRedundancyCount = ok.filter((item) => item.redundancy?.urgency === "high").length;
 
   return {
     okCount: ok.length,
@@ -75,7 +79,9 @@ function buildSummary(perUrl) {
     totalTransferBytes: totalBytes,
     totalCo2Grams: totalCo2,
     averageTransferBytes,
-    averageCo2GramsPerPage
+    averageCo2GramsPerPage,
+    averageRedundancyScore,
+    highUrgencyRedundancyCount
   };
 }
 
@@ -169,6 +175,8 @@ export function renderMarkdown(report) {
   lines.push(`- Estimated CO2: ${report.summary.totalCo2Grams.toFixed(4)} g`);
   lines.push(`- Average transfer per page: ${formatBytes(report.summary.averageTransferBytes)}`);
   lines.push(`- Average CO2 per page: ${formatGrams(report.summary.averageCo2GramsPerPage)}`);
+  lines.push(`- Average redundancy score: ${formatPercentScore(report.summary.averageRedundancyScore)}`);
+  lines.push(`- Pages with high redundancy urgency: ${report.summary.highUrgencyRedundancyCount}`);
   lines.push("");
   lines.push("## WSG SC 3.1 Budget Guidance");
   lines.push("");
@@ -194,6 +202,12 @@ export function renderMarkdown(report) {
 
   lines.push(`- Stretch budget (rating ${report.budgetGuidance.stretchBudget.targetRating}): ${formatBytes(report.budgetGuidance.stretchBudget.maxTransferBytesPerPage)} and ${formatGrams(report.budgetGuidance.stretchBudget.maxCo2GramsPerPage)} per page`);
   lines.push("");
+  lines.push("## WSG SC 3.2 Redundancy Analysis");
+  lines.push("");
+  lines.push("- WSG reference: Remove unnecessary or redundant information (https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information)");
+  lines.push("- Redundancy score: 0 (low redundancy) to 100 (high redundancy)");
+  lines.push("- Urgency levels: low, medium, high");
+  lines.push("");
   lines.push("## Priority Improvements");
   lines.push("");
 
@@ -210,6 +224,19 @@ export function renderMarkdown(report) {
     lines.push(`- Performance: ${formatScore(entry.performanceScore)}`);
     lines.push(`- Transfer: ${formatBytes(entry.transferBytes)}`);
     lines.push(`- CO2 estimate: ${entry.co2Grams.toFixed(4)} g`);
+    lines.push(`- Redundancy score: ${formatPercentScore(entry.redundancy?.score)}`);
+    lines.push(`- Redundancy urgency: ${(entry.redundancy?.urgency || "n/a").toUpperCase()}`);
+
+    if (entry.redundancy?.estimatedRedundantBytes > 0) {
+      lines.push(`- Estimated redundant transfer: ${formatBytes(entry.redundancy.estimatedRedundantBytes)} (${(entry.redundancy.redundancyRatio * 100).toFixed(1)}% of transfer)`);
+    }
+
+    if (entry.redundancy?.recommendations?.length > 0) {
+      lines.push("- Redundancy recommendations:");
+      for (const recommendation of entry.redundancy.recommendations.slice(0, 4)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}${recommendation.estimatedSavingsBytes > 0 ? ` (est. ${formatBytes(recommendation.estimatedSavingsBytes)} savings)` : ""}`);
+      }
+    }
 
     if (entry.findings.length === 0) {
       lines.push("- No high-priority issues flagged by current mapping.");
@@ -319,8 +346,20 @@ export function renderHtml(report, markdownText) {
         <li><strong>Generated:</strong> ${escapeHtml(report.generatedAt)}</li>
         <li><strong>Scanned URLs:</strong> ${report.summary.okCount} / ${report.requestedUrls.length}</li>
         <li><strong>Estimated CO2:</strong> ${report.summary.totalCo2Grams.toFixed(4)} g</li>
+        <li><strong>Average redundancy score:</strong> ${formatPercentScore(report.summary.averageRedundancyScore)}</li>
       </ul>
     </header>
+
+    <section class="card" aria-labelledby="redundancy-heading">
+      <h2 id="redundancy-heading">WSG 3.2 Redundancy Overview</h2>
+      <p class="muted">Checks unnecessary or redundant information using Lighthouse waste signals.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information">3.2 Remove unnecessary or redundant information</a></li>
+        <li><strong>Average redundancy score:</strong> ${formatPercentScore(report.summary.averageRedundancyScore)} (0 low, 100 high)</li>
+        <li><strong>High urgency pages:</strong> ${report.summary.highUrgencyRedundancyCount}</li>
+      </ul>
+      <p>Urgency is based on estimated redundant transfer and failed redundancy-related audits, helping teams prioritize fixes that reduce unnecessary bytes first.</p>
+    </section>
 
     <section class="card" aria-labelledby="budget-heading">
       <h2 id="budget-heading">WSG 3.1 Performance and Energy Budget</h2>
@@ -424,6 +463,11 @@ function formatBytes(bytes) {
 function formatGrams(grams) {
   if (typeof grams !== "number" || Number.isNaN(grams)) return "n/a";
   return `${grams.toFixed(4)} g`;
+}
+
+function formatPercentScore(score) {
+  if (typeof score !== "number" || Number.isNaN(score)) return "n/a";
+  return `${Math.round(score)}/100`;
 }
 
 function kbToBytes(kb) {
