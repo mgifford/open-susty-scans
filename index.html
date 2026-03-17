@@ -152,55 +152,91 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <nav class="topnav" aria-label="Site navigation">
-      <a href="index.html">Submit Scan</a>
-      <a href="reports.html">View Reports</a>
-    </nav>
+  <main>
+    <h1>Open Susty Scans Reports</h1>
+    <p class="meta">Published scan reports for this repository. Mirrors the open-scans style list for quick triage.</p>
+    <p class="meta toplinks">
+      <a href="https://mgifford.github.io/open-susty-scans/">Home</a>
+    </p>
+    <section class="card" aria-label="Report list">
+      <table>
+        <thead>
+          <tr>
+            <th>Issue</th>
+            <th>Scan Title</th>
+            <th>Generated</th>
+            <th>URLs Requested</th>
+            <th>URLs Scanned</th>
+            <th>Total Transfer</th>
+            <th>Total CO2</th>
+            <th>Report Links</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+      <tr>
+        <td>#14</td>
+        <td>SCAN: NH.gov</td>
+        <td>2026-03-17T01:16:32.415Z</td>
+        <td>56</td>
+        <td>56</td>
+        <td>40.17 MB</td>
+        <td>16.1347 g</td>
+        <td>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23173526394/report.html">HTML</a>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23173526394/report.md">MD</a>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23173526394/report.json">JSON</a>
+        </td>
+      </tr>
+    
 
-    <h1>Submit URLs for Sustainability Scanning</h1>
-    <p class="subtitle">Enter up to 500 URLs to scan for web sustainability signals using Lighthouse, CO2.js, and WSG-aligned analysis.</p>
+      <tr>
+        <td>#11</td>
+        <td>SCAN: PEI Government</td>
+        <td>2026-03-17T01:06:06.483Z</td>
+        <td>100</td>
+        <td>100</td>
+        <td>69.60 MB</td>
+        <td>27.9558 g</td>
+        <td>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23173080747/report.html">HTML</a>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23173080747/report.md">MD</a>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23173080747/report.json">JSON</a>
+        </td>
+      </tr>
+    
 
-    <form id="scan-form" novalidate>
-      <div class="form-group">
-        <label for="scan-title">Scan Title</label>
-        <p class="help-text" id="scan-title-hint">A descriptive name for this scan batch (e.g., "GSA.gov Homepage and Key Pages")</p>
-        <input type="text" id="scan-title" name="scan-title" required
-               placeholder="Example: GSA.gov Homepage and Key Pages"
-               aria-describedby="scan-title-hint" />
-      </div>
+      <tr>
+        <td>#6</td>
+        <td>SCAN: thegreenwebfoundation.org</td>
+        <td>2026-03-17T00:34:05.078Z</td>
+        <td>100</td>
+        <td>100</td>
+        <td>49.33 MB</td>
+        <td>19.8161 g</td>
+        <td>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.html">HTML</a>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.md">MD</a>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.json">JSON</a>
+        </td>
+      </tr>
+    
 
-      <div class="form-group">
-        <label for="urls">URLs to Scan</label>
-        <p class="help-text" id="urls-hint">
-          Enter URLs one per line or comma-separated. Maximum 500 URLs.<br />
-          Only public HTTPS/HTTP URLs are accepted. Local and private URLs will be rejected.
-        </p>
-        <textarea id="urls" name="urls" required
-                  placeholder="https://example.com&#10;https://example.com/about&#10;https://example.com/contact"
-                  aria-describedby="urls-hint"></textarea>
-      </div>
-
-      <div class="preview" id="preview" aria-live="polite">
-        <h3>URL Preview</h3>
-        <div class="url-count" id="url-count"></div>
-        <div class="url-list" id="url-list"></div>
-      </div>
-
-      <button type="submit" id="submit-button">Create Scan Request</button>
-
-      <div class="loading" id="loading" aria-live="polite">
-        <span class="spinner" aria-hidden="true"></span>Creating scan request…
-      </div>
-
-      <div class="error-message" id="error-message" role="alert"></div>
-      <div class="success-message" id="success-message" role="status"></div>
-    </form>
-
-    <footer>
-      <a href="https://github.com/mgifford/open-susty-scans">Join our GitHub Community</a>
-    </footer>
-  </div>
+      <tr>
+        <td>#6</td>
+        <td>SCAN: thegreenwebfoundation.org</td>
+        <td>2026-03-16T18:40:07.544Z</td>
+        <td>100</td>
+        <td>100</td>
+        <td>47.91 MB</td>
+        <td>19.2468 g</td>
+        <td>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.html">HTML</a>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.md">MD</a>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.json">JSON</a>
+        </td>
+      </tr>
+    
 
   <script type="module" src="submit.js"></script>
 </body>
