@@ -85,6 +85,7 @@ jobs:
           if [ -d ./reports ] || [ -f ./reports.html ]; then
             cp -R ./reports ./.tmp/site/ 2>/dev/null || true
             cp ./reports.html ./.tmp/site/reports.html 2>/dev/null || true
+            cp ./index.html ./.tmp/site/index.html 2>/dev/null || true
             cp ./.nojekyll ./.tmp/site/.nojekyll 2>/dev/null || true
           fi
 
@@ -103,11 +104,12 @@ jobs:
           mkdir -p ./reports
           cp -R ./.tmp/site/reports/. ./reports/
           cp ./.tmp/site/reports.html ./reports.html
+          cp ./.tmp/site/index.html ./index.html
           cp ./.tmp/site/.nojekyll ./.nojekyll
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports reports.html .nojekyll
+          git add reports reports.html index.html .nojekyll
 
           if git diff --cached --quiet; then
             echo "No pages changes to commit"

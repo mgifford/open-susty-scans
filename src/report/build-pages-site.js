@@ -258,6 +258,7 @@ function main() {
 
   const reportsHtml = buildReportsHtml(rows, projectBase);
   writeFileSync(join(siteDir, "reports.html"), reportsHtml, "utf8");
+  writeFileSync(join(siteDir, "index.html"), reportsHtml, "utf8");
   mkdirSync(join(siteDir, "reports"), { recursive: true });
   writeFileSync(join(siteDir, "reports", "index.html"), reportsHtml, "utf8");
 

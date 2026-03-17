@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Open Susty Scans Reports</title>
+  <style>
+    :root {
+      --bg: #f4f2ec;
+      --surface: #ffffff;
+      --ink: #1f2d2a;
+      --muted: #5b6a66;
+      --accent: #0d6b52;
+      --border: #d4ddd8;
+    }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top right, #e7efe9 0%, var(--bg) 45%);
+      color: var(--ink);
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+    }
+    main { max-width: 1120px; margin: 0 auto; padding: 1.2rem; }
+    h1 { margin-bottom: 0.2rem; }
+    p.meta { color: var(--muted); margin-top: 0; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; min-width: 820px; }
+    th, td { text-align: left; padding: 0.55rem; border-bottom: 1px solid var(--border); }
+    th { color: #2a3a36; }
+    a { color: var(--accent); margin-right: 0.5rem; }
+    .toplinks a { margin-right: 1rem; }
+    @media (max-width: 740px) {
+      main { padding: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Open Susty Scans Reports</h1>
+    <p class="meta">Published scan reports for this repository. Mirrors the open-scans style list for quick triage.</p>
+    <p class="meta toplinks">
+      <a href="https://mgifford.github.io/open-susty-scans/">Home</a>
+    </p>
+    <section class="card" aria-label="Report list">
+      <table>
+        <thead>
+          <tr>
+            <th>Issue</th>
+            <th>Scan Title</th>
+            <th>Generated</th>
+            <th>URLs Requested</th>
+            <th>URLs Scanned</th>
+            <th>Total Transfer</th>
+            <th>Total CO2</th>
+            <th>Report Links</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+      <tr>
+        <td>#6</td>
+        <td>SCAN: thegreenwebfoundation.org</td>
+        <td>2026-03-16T18:40:07.544Z</td>
+        <td>100</td>
+        <td>100</td>
+        <td>47.91 MB</td>
+        <td>19.2468 g</td>
+        <td>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.html">HTML</a>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.md">MD</a>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.json">JSON</a>
+        </td>
+      </tr>
+    
+
+      <tr>
+        <td>#1</td>
+        <td>SCAN: Spain</td>
+        <td>2026-03-16T17:49:20.577Z</td>
+        <td>100</td>
+        <td>100</td>
+        <td>132.88 MB</td>
+        <td>53.3747 g</td>
+        <td>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.html">HTML</a>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.md">MD</a>
+          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.json">JSON</a>
+        </td>
+      </tr>
+    
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
