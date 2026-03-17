@@ -3,99 +3,205 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Open Susty Scans Reports</title>
+  <title>Open Susty Scans – Submit a Scan</title>
+  <meta name="description" content="Open Susty Scans is a free, open-source tool that checks websites for sustainability signals using Lighthouse, CO2.js, and WSG-aligned analysis. Submit up to 500 URLs and get detailed reports." />
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --bg: #f4f2ec;
       --surface: #ffffff;
       --ink: #1f2d2a;
       --muted: #5b6a66;
       --accent: #0d6b52;
+      --accent-dark: #09503d;
       --border: #d4ddd8;
+      --success-bg: #d6f5e3;
+      --success-fg: #0d6b52;
+      --success-border: #4ac26b;
+      --error-bg: #ffebe9;
+      --error-fg: #cf222e;
+      --error-border: #ff8182;
     }
     body {
-      margin: 0;
-      background: radial-gradient(circle at top right, #e7efe9 0%, var(--bg) 45%);
-      color: var(--ink);
       font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      line-height: 1.6;
+      color: var(--ink);
+      background: radial-gradient(circle at top right, #e7efe9 0%, var(--bg) 45%);
+      padding: 2rem;
     }
-    main { max-width: 1120px; margin: 0 auto; padding: 1.2rem; }
-    h1 { margin-bottom: 0.2rem; }
-    p.meta { color: var(--muted); margin-top: 0; }
-    .card {
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
       background: var(--surface);
-      border: 1px solid var(--border);
+      padding: 2rem;
       border-radius: 14px;
-      padding: 1rem;
-      overflow-x: auto;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
     }
-    table { width: 100%; border-collapse: collapse; min-width: 820px; }
-    th, td { text-align: left; padding: 0.55rem; border-bottom: 1px solid var(--border); }
-    th { color: #2a3a36; }
-    a { color: var(--accent); margin-right: 0.5rem; }
-    .toplinks a { margin-right: 1rem; }
-    @media (max-width: 740px) {
-      main { padding: 0.8rem; }
+    h1 { color: var(--accent); margin-bottom: 0.5rem; font-size: 2rem; }
+    .subtitle { color: var(--muted); margin-bottom: 2rem; }
+    nav.topnav {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    nav.topnav a {
+      color: var(--accent);
+      text-decoration: none;
+      margin-right: 1.5rem;
+      font-weight: 600;
+    }
+    nav.topnav a:hover { text-decoration: underline; }
+    .form-group { margin-bottom: 1.5rem; }
+    label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+    .help-text { font-size: 0.875rem; color: var(--muted); margin-bottom: 0.5rem; }
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    textarea { min-height: 200px; resize: vertical; }
+    textarea:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(13,107,82,0.15);
+    }
+    .preview {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: var(--bg);
+      border-radius: 6px;
+      display: none;
+    }
+    .preview.visible { display: block; }
+    .preview h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+    .url-count { margin-bottom: 0.75rem; font-weight: 600; }
+    .url-count.valid { color: var(--success-fg); }
+    .url-count.invalid { color: var(--error-fg); }
+    .url-list { max-height: 300px; overflow-y: auto; margin-top: 0.5rem; }
+    .url-item {
+      padding: 0.5rem;
+      margin-bottom: 0.25rem;
+      border-radius: 4px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.875rem;
+    }
+    .url-item.accepted { background: var(--success-bg); color: var(--success-fg); }
+    .url-item.rejected { background: var(--error-bg); color: var(--error-fg); }
+    .url-item .reason { font-size: 0.75rem; margin-top: 0.25rem; opacity: 0.8; }
+    button[type="submit"] {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button[type="submit"]:hover:not(:disabled) { background: var(--accent-dark); }
+    button[type="submit"]:disabled { background: #7bbfaa; cursor: not-allowed; }
+    .error-message, .success-message {
+      padding: 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      display: none;
+    }
+    .error-message.visible, .success-message.visible { display: block; }
+    .error-message {
+      background: var(--error-bg);
+      color: var(--error-fg);
+      border: 1px solid var(--error-border);
+    }
+    .success-message {
+      background: var(--success-bg);
+      color: var(--success-fg);
+      border: 1px solid var(--success-border);
+    }
+    .success-message a { color: var(--success-fg); font-weight: 600; }
+    .loading { display: none; text-align: center; padding: 1rem; color: var(--muted); }
+    .loading.visible { display: block; }
+    .spinner {
+      display: inline-block;
+      width: 20px; height: 20px;
+      border: 3px solid rgba(0,0,0,0.1);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 1s ease-in-out infinite;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    footer {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    footer a:hover { text-decoration: underline; }
+    @media (max-width: 600px) {
+      body { padding: 0.75rem; }
+      .container { padding: 1rem; }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Open Susty Scans Reports</h1>
-    <p class="meta">Published scan reports for this repository. Mirrors the open-scans style list for quick triage.</p>
-    <p class="meta toplinks">
-      <a href="https://mgifford.github.io/open-susty-scans/">Home</a>
-    </p>
-    <section class="card" aria-label="Report list">
-      <table>
-        <thead>
-          <tr>
-            <th>Issue</th>
-            <th>Scan Title</th>
-            <th>Generated</th>
-            <th>URLs Requested</th>
-            <th>URLs Scanned</th>
-            <th>Total Transfer</th>
-            <th>Total CO2</th>
-            <th>Report Links</th>
-          </tr>
-        </thead>
-        <tbody>
-          
-      <tr>
-        <td>#6</td>
-        <td>SCAN: thegreenwebfoundation.org</td>
-        <td>2026-03-16T18:40:07.544Z</td>
-        <td>100</td>
-        <td>100</td>
-        <td>47.91 MB</td>
-        <td>19.2468 g</td>
-        <td>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.json">JSON</a>
-        </td>
-      </tr>
-    
+  <div class="container">
+    <nav class="topnav" aria-label="Site navigation">
+      <a href="index.html">Submit Scan</a>
+      <a href="reports.html">View Reports</a>
+    </nav>
 
-      <tr>
-        <td>#1</td>
-        <td>SCAN: Spain</td>
-        <td>2026-03-16T17:49:20.577Z</td>
-        <td>100</td>
-        <td>100</td>
-        <td>132.88 MB</td>
-        <td>53.3747 g</td>
-        <td>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.json">JSON</a>
-        </td>
-      </tr>
-    
-        </tbody>
-      </table>
-    </section>
-  </main>
+    <h1>Submit URLs for Sustainability Scanning</h1>
+    <p class="subtitle">Enter up to 500 URLs to scan for web sustainability signals using Lighthouse, CO2.js, and WSG-aligned analysis.</p>
+
+    <form id="scan-form" novalidate>
+      <div class="form-group">
+        <label for="scan-title">Scan Title</label>
+        <p class="help-text" id="scan-title-hint">A descriptive name for this scan batch (e.g., "GSA.gov Homepage and Key Pages")</p>
+        <input type="text" id="scan-title" name="scan-title" required
+               placeholder="Example: GSA.gov Homepage and Key Pages"
+               aria-describedby="scan-title-hint" />
+      </div>
+
+      <div class="form-group">
+        <label for="urls">URLs to Scan</label>
+        <p class="help-text" id="urls-hint">
+          Enter URLs one per line or comma-separated. Maximum 500 URLs.<br />
+          Only public HTTPS/HTTP URLs are accepted. Local and private URLs will be rejected.
+        </p>
+        <textarea id="urls" name="urls" required
+                  placeholder="https://example.com&#10;https://example.com/about&#10;https://example.com/contact"
+                  aria-describedby="urls-hint"></textarea>
+      </div>
+
+      <div class="preview" id="preview" aria-live="polite">
+        <h3>URL Preview</h3>
+        <div class="url-count" id="url-count"></div>
+        <div class="url-list" id="url-list"></div>
+      </div>
+
+      <button type="submit" id="submit-button">Create Scan Request</button>
+
+      <div class="loading" id="loading" aria-live="polite">
+        <span class="spinner" aria-hidden="true"></span>Creating scan request…
+      </div>
+
+      <div class="error-message" id="error-message" role="alert"></div>
+      <div class="success-message" id="success-message" role="status"></div>
+    </form>
+
+    <footer>
+      <a href="https://github.com/mgifford/open-susty-scans">Join our GitHub Community</a>
+    </footer>
+  </div>
+
+  <script type="module" src="submit.js"></script>
 </body>
 </html>
