@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Open Susty Scans Reports</title>
+  <title>Open Susty Scans – Reports</title>
   <style>
     :root {
       --bg: #f4f2ec;
@@ -11,57 +11,82 @@
       --ink: #1f2d2a;
       --muted: #5b6a66;
       --accent: #0d6b52;
+      --accent-dark: #09503d;
       --border: #d4ddd8;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
       background: radial-gradient(circle at top right, #e7efe9 0%, var(--bg) 45%);
       color: var(--ink);
       font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      line-height: 1.6;
+      padding: 2rem;
     }
-    main { max-width: 1120px; margin: 0 auto; padding: 1.2rem; }
-    h1 { margin-bottom: 0.2rem; }
-    p.meta { color: var(--muted); margin-top: 0; }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1rem;
-      overflow-x: auto;
-    }
+    .container { max-width: 1120px; margin: 0 auto; background: var(--surface); padding: 2rem; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+    h1 { color: var(--accent); margin-bottom: 0.5rem; font-size: 2rem; }
+    .subtitle { color: var(--muted); margin-bottom: 2rem; }
+    nav.topnav { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    nav.topnav a { color: var(--accent); text-decoration: none; margin-right: 1.5rem; font-weight: 600; }
+    nav.topnav a:hover { text-decoration: underline; }
+    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     table { width: 100%; border-collapse: collapse; min-width: 820px; }
-    th, td { text-align: left; padding: 0.55rem; border-bottom: 1px solid var(--border); }
-    th { color: #2a3a36; }
-    a { color: var(--accent); margin-right: 0.5rem; }
-    .toplinks a { margin-right: 1rem; }
+    th, td { text-align: left; padding: 0.6rem 0.55rem; border-bottom: 1px solid var(--border); }
+    th { background: var(--bg); color: #2a3a36; }
+    tbody tr:hover { background: #f0f7f4; }
+    a { color: var(--accent); text-decoration: none; margin-right: 0.5rem; }
+    a:hover { text-decoration: underline; }
+    .sort-btn {
+      background: none; border: none; font: inherit; font-weight: 600;
+      color: #2a3a36; cursor: pointer; padding: 0;
+      display: inline-flex; align-items: center; gap: 0.25rem; white-space: nowrap;
+    }
+    .sort-btn:hover { color: var(--accent); }
+    .sort-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+    .sort-icon { font-size: 0.75rem; opacity: 0.5; }
+    .sort-btn:hover .sort-icon { opacity: 1; }
+    .table-info { color: var(--muted); font-size: 0.875rem; margin-top: 0.75rem; }
+    .pagination-nav { display: flex; align-items: center; gap: 0.375rem; flex-wrap: wrap; margin-top: 1.25rem; }
+    .page-info { color: var(--muted); font-size: 0.875rem; margin-right: 0.5rem; }
+    .page-btn {
+      padding: 0.375rem 0.75rem; border: 1px solid var(--border); border-radius: 6px;
+      background: var(--surface); color: var(--accent); cursor: pointer; font-size: 0.875rem; line-height: 1.4;
+    }
+    .page-btn:hover { background: #f0f7f4; }
+    .page-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .page-btn-active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .page-btn-active:hover { background: var(--accent-dark); }
+    .page-ellipsis { color: var(--muted); padding: 0 0.25rem; }
     @media (max-width: 740px) {
-      main { padding: 0.8rem; }
+      body { padding: 0.75rem; }
+      .container { padding: 1rem; }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Open Susty Scans Reports</h1>
-    <p class="meta">Published scan reports for this repository. Mirrors the open-scans style list for quick triage.</p>
-    <p class="meta toplinks">
-      <a href="https://mgifford.github.io/open-susty-scans/">Home</a>
-    </p>
-    <section class="card" aria-label="Report list">
+  <div class="container">
+    <nav class="topnav" aria-label="Site navigation">
+      <a href="https://mgifford.github.io/open-susty-scans/">Submit Scan</a>
+      <a href="https://mgifford.github.io/open-susty-scans/reports.html">All Reports</a>
+    </nav>
+    <h1>Sustainability Scan Reports</h1>
+    <p class="subtitle">Published scan reports for this repository.</p>
+    <div class="table-wrapper">
       <table>
         <thead>
           <tr>
-            <th>Issue</th>
-            <th>Scan Title</th>
-            <th>Generated</th>
-            <th>URLs Requested</th>
-            <th>URLs Scanned</th>
-            <th>Total Transfer</th>
-            <th>Total CO2</th>
-            <th>Report Links</th>
+            <th scope="col"><button class="sort-btn" data-col="issue">Issue <span class="sort-icon" aria-hidden="true">↕</span></button></th>
+            <th scope="col"><button class="sort-btn" data-col="title">Scan Title <span class="sort-icon" aria-hidden="true">↕</span></button></th>
+            <th scope="col"><button class="sort-btn" data-col="date">Generated <span class="sort-icon" aria-hidden="true">↕</span></button></th>
+            <th scope="col"><button class="sort-btn" data-col="urls">URLs Requested <span class="sort-icon" aria-hidden="true">↕</span></button></th>
+            <th scope="col">URLs Scanned</th>
+            <th scope="col">Total Transfer</th>
+            <th scope="col">Total CO2</th>
+            <th scope="col">Report Links</th>
           </tr>
         </thead>
         <tbody>
           
+      <tr data-date="2026-03-17T00:34:05.078Z" data-issue="6" data-title="SCAN: thegreenwebfoundation.org" data-urls="100">
       <tr>
         <td>#14</td>
         <td>SCAN: NH.gov</td>
@@ -102,7 +127,7 @@
         <td>100</td>
         <td>49.33 MB</td>
         <td>19.8161 g</td>
-        <td>
+        <td class="report-links">
           <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.html">HTML</a>
           <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.md">MD</a>
           <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.json">JSON</a>
@@ -110,7 +135,7 @@
       </tr>
     
 
-      <tr>
+      <tr data-date="2026-03-16T18:40:07.544Z" data-issue="6" data-title="SCAN: thegreenwebfoundation.org" data-urls="100">
         <td>#6</td>
         <td>SCAN: thegreenwebfoundation.org</td>
         <td>2026-03-16T18:40:07.544Z</td>
@@ -118,7 +143,7 @@
         <td>100</td>
         <td>47.91 MB</td>
         <td>19.2468 g</td>
-        <td>
+        <td class="report-links">
           <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.html">HTML</a>
           <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.md">MD</a>
           <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.json">JSON</a>
@@ -126,7 +151,7 @@
       </tr>
     
 
-      <tr>
+      <tr data-date="2026-03-16T17:49:20.577Z" data-issue="1" data-title="SCAN: Spain" data-urls="100">
         <td>#1</td>
         <td>SCAN: Spain</td>
         <td>2026-03-16T17:49:20.577Z</td>
@@ -134,7 +159,7 @@
         <td>100</td>
         <td>132.88 MB</td>
         <td>53.3747 g</td>
-        <td>
+        <td class="report-links">
           <a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.html">HTML</a>
           <a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.md">MD</a>
           <a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.json">JSON</a>
@@ -143,7 +168,156 @@
     
         </tbody>
       </table>
-    </section>
-  </main>
+    </div>
+    <p class="table-info" id="table-info" aria-live="polite"></p>
+    <div id="pagination"></div>
+  </div>
+  <script>
+  (function () {
+    var PAGE_SIZE = 50;
+    var currentPage = 1;
+    var sortCol = 'date';
+    var sortDir = 'desc';
+
+    var tbody = document.querySelector('tbody');
+    var tableEl = document.querySelector('table');
+    var paginationEl = document.getElementById('pagination');
+    var tableInfoEl = document.getElementById('table-info');
+
+    if (!tbody) return;
+
+    function getRows() {
+      return Array.from(tbody.querySelectorAll('tr'));
+    }
+
+    function compareValues(a, b) {
+      var valA, valB;
+      if (sortCol === 'issue' || sortCol === 'urls') {
+        valA = parseInt(a.dataset[sortCol], 10) || 0;
+        valB = parseInt(b.dataset[sortCol], 10) || 0;
+      } else if (sortCol === 'date') {
+        valA = a.dataset.date || '';
+        valB = b.dataset.date || '';
+      } else {
+        valA = (a.dataset.title || '').toLowerCase();
+        valB = (b.dataset.title || '').toLowerCase();
+      }
+      var cmp = valA < valB ? -1 : valA > valB ? 1 : 0;
+      return sortDir === 'asc' ? cmp : -cmp;
+    }
+
+    function sortRows() {
+      var rows = getRows();
+      rows.sort(compareValues);
+      rows.forEach(function (row) { tbody.appendChild(row); });
+    }
+
+    function renderPage() {
+      var rows = getRows();
+      var total = rows.length;
+      var totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+      if (currentPage > totalPages) currentPage = totalPages;
+      var start = (currentPage - 1) * PAGE_SIZE;
+      var end = start + PAGE_SIZE;
+
+      rows.forEach(function (row, i) {
+        row.style.display = (i >= start && i < end) ? '' : 'none';
+      });
+
+      if (tableInfoEl) {
+        var showing = Math.min(end, total);
+        tableInfoEl.textContent = total > 0
+          ? 'Showing ' + (start + 1) + ' to ' + showing + ' of ' + total + ' reports'
+          : '';
+      }
+
+      renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+      if (!paginationEl) return;
+      if (totalPages <= 1) {
+        paginationEl.innerHTML = '';
+        return;
+      }
+
+      var html = '<nav class="pagination-nav" aria-label="Report pages">';
+      html += '<span class="page-info">Page ' + currentPage + ' of ' + totalPages + '</span>';
+
+      if (currentPage > 1) {
+        html += '<button class="page-btn" data-page="' + (currentPage - 1) + '">Previous</button>';
+      }
+
+      var pages = [];
+      for (var i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          pages.push(i);
+        }
+      }
+
+      var prev = 0;
+      pages.forEach(function (page) {
+        if (prev && page - prev > 1) {
+          html += '<span class="page-ellipsis" aria-hidden="true">…</span>';
+        }
+        var isActive = page === currentPage;
+        html += '<button class="page-btn' + (isActive ? ' page-btn-active' : '') + '" data-page="' + page + '"' +
+          (isActive ? ' aria-current="page"' : '') + '>' + page + '</button>';
+        prev = page;
+      });
+
+      if (currentPage < totalPages) {
+        html += '<button class="page-btn" data-page="' + (currentPage + 1) + '">Next</button>';
+      }
+
+      html += '</nav>';
+      paginationEl.innerHTML = html;
+
+      paginationEl.querySelectorAll('.page-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          currentPage = parseInt(this.dataset.page, 10);
+          renderPage();
+          if (tableEl) {
+            var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            tableEl.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+          }
+        });
+      });
+    }
+
+    function updateSortIcons() {
+      document.querySelectorAll('.sort-btn').forEach(function (btn) {
+        var icon = btn.querySelector('.sort-icon');
+        var th = btn.closest('th');
+        if (btn.dataset.col === sortCol) {
+          icon.textContent = sortDir === 'asc' ? '↑' : '↓';
+          if (th) th.setAttribute('aria-sort', sortDir === 'asc' ? 'ascending' : 'descending');
+        } else {
+          icon.textContent = '↕';
+          if (th) th.removeAttribute('aria-sort');
+        }
+      });
+    }
+
+    document.querySelectorAll('.sort-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var col = this.dataset.col;
+        if (col === sortCol) {
+          sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          sortCol = col;
+          sortDir = col === 'date' ? 'desc' : 'asc';
+        }
+        currentPage = 1;
+        sortRows();
+        updateSortIcons();
+        renderPage();
+      });
+    });
+
+    updateSortIcons();
+    renderPage();
+  }());
+  </script>
 </body>
 </html>
