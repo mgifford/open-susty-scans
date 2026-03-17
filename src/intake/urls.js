@@ -5,7 +5,29 @@ export function parseUrls(rawText) {
     .split(/[\n,]/g)
     .map((value) => value.trim())
     .filter(Boolean)
-    .filter((value) => value.startsWith("http://") || value.startsWith("https://"));
+    .map((value) => {
+      // Fast path: the whole trimmed value is already a valid URL.
+      if (isValidHttpUrl(value)) return value;
+      // Slow path: try to extract an embedded http/https URL from the line
+      // (handles list markers, markdown links, URLs with trailing descriptions).
+      const match = value.match(/https?:\/\/\S+/);
+      if (!match) return null;
+      // Strip common trailing punctuation that is unlikely to be part of a URL.
+      const candidate = match[0].replace(/[.,!?;:'")\]>]+$/, "");
+      return isValidHttpUrl(candidate) ? candidate : null;
+    })
+    .filter(Boolean);
+}
+
+function isValidHttpUrl(value) {
+  try {
+    const url = new URL(value);
+    // Require a dotted hostname to reject clearly non-routable single-label values
+    // (e.g. "https://not") while still allowing all public domain URLs.
+    return (url.protocol === "http:" || url.protocol === "https:") && url.hostname.includes(".");
+  } catch {
+    return false;
+  }
 }
 
 export function extractSection(body, sectionName) {
