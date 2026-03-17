@@ -1,0 +1,45 @@
+name: Energy Audit Scan
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Site to scan'
+        required: true
+        default: 'https://green-coding.io'
+
+jobs:
+  energy-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm install playwright
+          npx playwright install chromium --with-deps
+
+      # --- START MEASUREMENT ---
+      - name: Start Energy Measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          task: start-measurement
+
+      # --- EXECUTE SCAN ---
+      - name: Run Playwright Scan
+        run: node scripts/scan-site.js "${{ github.event.inputs.url }}"
+
+      # --- GET RESULTS ---
+      - name: Get Energy Results
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          task: display-results
+          json-output: true # Saves data to /tmp/eco-ci/lap-data.json
+          
+      # --- PUBLISH (Optional) ---
+      # You can now take that JSON and commit it to a 'data' folder
+      # which your GitHub Pages site reads to build a dashboard.
