@@ -199,6 +199,110 @@ Reports also include offline access and caching support guidance aligned with WS
 4. Paste into your GitHub issue queue and assign owners.
 5. Re-run after fixes and compare key metrics (transfer size, CO2, performance score).
 
+## Energy Measurement
+
+### Overview
+
+The energy audit workflow measures the actual energy consumed by a Playwright
+browser session during a realistic "visit-and-scroll" simulation of each target
+URL. This is more accurate than a simple `curl` call because it exercises
+JavaScript, CSS rendering, lazy-loaded images, and deferred scripts — the parts
+of a page that dominate real user energy cost.
+
+Energy data is collected on GitHub-hosted runners using
+[Eco CI](https://github.com/marketplace/actions/eco-ci-energy-estimation) by
+[Green Coding Solutions](https://www.green-coding.io/).
+
+### Energy audit workflow (`energy.yml`)
+
+Workflow path:
+- `.github/workflows/energy.yml`
+
+Trigger:
+- `workflow_dispatch` only — run on demand from the Actions tab
+
+Inputs:
+
+| Input | Description | Default |
+|---|---|---|
+| `url` | Single URL to scan | `https://green-coding.io` |
+| `urls_file` | Repo-relative path to a newline-separated URL list (overrides `url`) | — |
+| `send_data` | Send energy data to metrics.green-coding.io (enables public badge) | `false` |
+
+What it does:
+1. Installs dependencies and Playwright Chromium (≥ 1.55.1)
+2. Starts an Eco CI energy measurement window
+3. Runs `scripts/scan-site.js` (visit → wait for network idle → scroll through → idle pause → scroll back)
+4. Captures an Eco CI lap measurement labelled `Playwright visit-and-scroll`
+5. Displays the final energy summary in the workflow step summary
+6. Runs `scripts/build-energy-report.js` to produce `reports/energy/latest/index.html` and `reports/energy/latest/report.json`
+7. Compares against `reports/energy/baseline.json` and fails the step if energy regresses by more than 20 %
+8. Updates the baseline file for the next run
+9. Commits the report and baseline back to `main` so GitHub Pages serves it
+10. Uploads raw JSON as a 7-day build artifact
+
+Energy report published URL:
+- `https://mgifford.github.io/open-susty-scans/reports/energy/latest/`
+
+### Playwright visit-and-scroll simulation (`scripts/scan-site.js`)
+
+The script simulates realistic user behaviour to capture rendering and
+scripting energy beyond a bare network transfer:
+
+1. **Navigate** to the URL and wait for `networkidle`
+2. **Collect navigation timing** (TTFB, DOMContentLoaded, load)
+3. **Incremental scroll** — 300 px steps with 250 ms pauses (reading cadence)
+   to trigger lazy-loaded images and deferred scripts
+4. **Idle pause** — 2 s at the bottom to capture deferred/async CPU cost
+5. **Scroll back to top** — simulates the user returning focus
+
+Accepts `--url <url>` or `--urls-file <path>` and writes a JSON metrics file
+when `--output <path>` is given.
+
+### Regression testing
+
+On each run, `scripts/build-energy-report.js`:
+
+- Reads the Eco CI energy total from `/tmp/eco-ci/total-data.json`
+- Compares against `reports/energy/baseline.json` (committed to `main`)
+- Marks the step as failed if the total joules increased by more than **20 %**
+- Updates the baseline file so the next run compares against the latest good values
+
+This lets you detect when a new feature, a heavy JavaScript library, or a
+third-party tracking script causes a measurable energy spike.
+
+### Green badge
+
+When `send_data` is set to `true`, Eco CI sends the energy measurement to
+[metrics.green-coding.io](https://metrics.green-coding.io/ci-index.html). Once
+data has been sent, add this badge to your README:
+
+```markdown
+[![Energy badge](https://api.green-coding.io/v1/ci/badge/get?repo=mgifford/open-susty-scans&branch=main)](https://metrics.green-coding.io/ci-index.html)
+```
+
+The badge displays the most recent total energy value and updates automatically
+on each workflow run.
+
+### Deeper accuracy with the Green Metrics Tool
+
+For lab-grade accuracy using controlled, isolated infrastructure consider:
+
+- **[website-tester](https://github.com/green-coding-solutions/website-tester)**
+  — reference Playwright scripts for measuring real browser rendering energy
+- **[Green Metrics Tool (GMT)](https://docs.green-coding.io/)** — open-source
+  tool for measuring software energy with a `usage_scenario.yml` file that
+  defines exact user flows (e.g. "Load homepage", "Wait 5 s", "Click Login")
+- **[website-tester.green-coding.io](https://website-tester.green-coding.io)**
+  — the managed GMT service; submit a URL and get a detailed breakdown of energy
+  per rendering phase, without needing self-hosted infrastructure
+
+A `usage_scenario.yml` gives much more granular results than CI-runner
+estimation because:
+- Each step (navigation, interaction, idle) is timed and measured separately
+- The browser runs in a controlled container with known power characteristics
+- You can A/B test specific changes in isolation
+
 ## GitHub Automation
 
 ### On-demand scan (`scan-and-publish.yml`)

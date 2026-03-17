@@ -1,45 +1,137 @@
 name: Energy Audit Scan
+# Measures the energy consumed by a Playwright visit-and-scroll scan on GitHub-hosted runners.
+# Uses Eco CI for runner-level energy estimation and stores results in GitHub Pages.
+#
+# References:
+#   Eco CI:         https://github.com/marketplace/actions/eco-ci-energy-estimation
+#   GMT docs:       https://docs.green-coding.io/
+#   website-tester: https://github.com/green-coding-solutions/website-tester
+
 on:
   workflow_dispatch:
     inputs:
       url:
-        description: 'Site to scan'
-        required: true
+        description: 'URL to scan (e.g. https://example.com)'
+        required: false
         default: 'https://green-coding.io'
+      urls_file:
+        description: 'Repo-relative path to a text file with URLs to scan (overrides url input)'
+        required: false
+      send_data:
+        description: 'Send energy data to Green Coding API (enables public badge at metrics.green-coding.io)'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write  # needed to commit energy reports back to main
 
 jobs:
-  energy-job:
+  energy-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
+          cache: npm
 
-      - name: Install Playwright
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        # Install a patched Playwright version (≥1.55.1 fixes SSL cert verification).
         run: |
-          npm install playwright
+          npm install playwright@^1.55.1
           npx playwright install chromium --with-deps
 
-      # --- START MEASUREMENT ---
-      - name: Start Energy Measurement
-        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+      # ── Energy measurement starts here ─────────────────────────────────────
+      - name: Start energy measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: start-measurement
+          send-data: ${{ inputs.send_data || false }}
+        continue-on-error: true
 
-      # --- EXECUTE SCAN ---
-      - name: Run Playwright Scan
-        run: node scripts/scan-site.js "${{ github.event.inputs.url }}"
+      # ── Playwright visit-and-scroll scan ─────────────────────────────────
+      - name: Run Playwright energy scan
+        run: |
+          mkdir -p .tmp/energy
+          if [ -n "${{ inputs.urls_file }}" ]; then
+            node scripts/scan-site.js \
+              --urls-file "${{ inputs.urls_file }}" \
+              --output .tmp/energy/scan-metrics.json
+          else
+            node scripts/scan-site.js \
+              --url "${{ inputs.url || 'https://green-coding.io' }}" \
+              --output .tmp/energy/scan-metrics.json
+          fi
 
-      # --- GET RESULTS ---
-      - name: Get Energy Results
-        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+      # ── Capture energy lap for the scan phase ────────────────────────────
+      - name: Capture scan energy lap
+        id: lap-scan
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
+        with:
+          task: get-measurement
+          label: 'Playwright visit-and-scroll'
+        continue-on-error: true
+
+      # ── Finalise and emit JSON ────────────────────────────────────────────
+      - name: Display energy results
+        id: total-results
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: display-results
-          json-output: true # Saves data to /tmp/eco-ci/lap-data.json
-          
-      # --- PUBLISH (Optional) ---
-      # You can now take that JSON and commit it to a 'data' folder
-      # which your GitHub Pages site reads to build a dashboard.
+          json-output: true
+          send-data: ${{ inputs.send_data || false }}
+        continue-on-error: true
+
+      # ── Build accessible HTML + JSON report ──────────────────────────────
+      - name: Build energy report
+        run: |
+          node scripts/build-energy-report.js \
+            --eco-ci /tmp/eco-ci/total-data.json \
+            --scan-metrics .tmp/energy/scan-metrics.json \
+            --out-dir reports/energy/latest \
+            --baseline reports/energy/baseline.json \
+            --update-baseline
+
+      # ── Upload raw JSON as a 7-day build artifact ─────────────────────────
+      - name: Upload energy report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: energy-report-${{ github.run_id }}
+          path: |
+            reports/energy/latest/report.json
+            .tmp/energy/scan-metrics.json
+          if-no-files-found: warn
+          retention-days: 7
+
+      # ── Commit report + updated baseline back to main ─────────────────────
+      - name: Commit energy report to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/energy
+          if git diff --cached --quiet; then
+            echo "No energy report changes to commit"
+          else
+            git commit -m "Publish energy report from run ${{ github.run_id }}"
+            git pull --rebase origin main
+            git push origin main
+          fi
+
+      # ── Badge instructions in workflow summary ────────────────────────────
+      - name: Show badge instructions
+        if: inputs.send_data == true
+        run: |
+          echo "## Energy Badge" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Add this badge to your README after enabling \`send_data\`:" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo '```markdown' >> "$GITHUB_STEP_SUMMARY"
+          echo "[![Energy badge](https://api.green-coding.io/v1/ci/badge/get?repo=${{ github.repository }}&branch=main)](https://metrics.green-coding.io/ci-index.html)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
