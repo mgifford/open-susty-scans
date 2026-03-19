@@ -152,92 +152,40 @@
   </style>
 </head>
 <body>
-  <main>
-    <h1>Open Susty Scans Reports</h1>
-    <p class="meta">Published scan reports for this repository. Mirrors the open-scans style list for quick triage.</p>
-    <p class="meta toplinks">
-      <a href="https://mgifford.github.io/open-susty-scans/">Home</a>
-    </p>
-    <section class="card" aria-label="Report list">
-      <table>
-        <thead>
-          <tr>
-            <th>Issue</th>
-            <th>Scan Title</th>
-            <th>Generated</th>
-            <th>URLs Requested</th>
-            <th>URLs Scanned</th>
-            <th>Total Transfer</th>
-            <th>Total CO2</th>
-            <th>Report Links</th>
-          </tr>
-        </thead>
-        <tbody>
-          
-      <tr>
-        <td>#14</td>
-        <td>SCAN: NH.gov</td>
-        <td>2026-03-17T01:16:32.415Z</td>
-        <td>56</td>
-        <td>56</td>
-        <td>40.17 MB</td>
-        <td>16.1347 g</td>
-        <td>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23173526394/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23173526394/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23173526394/report.json">JSON</a>
-        </td>
-      </tr>
-    
+  <div class="container">
+    <nav class="topnav" aria-label="Site navigation">
+      <a href="./">Submit Scan</a>
+      <a href="./reports/">All Reports</a>
+    </nav>
+    <h1>Open Susty Scans</h1>
+    <p class="subtitle">A free, open-source tool that checks websites for sustainability signals using Lighthouse, CO2.js, and WSG-aligned analysis. Submit up to 500 URLs via a GitHub issue and get detailed reports.</p>
 
-      <tr>
-        <td>#11</td>
-        <td>SCAN: PEI Government</td>
-        <td>2026-03-17T01:06:06.483Z</td>
-        <td>100</td>
-        <td>100</td>
-        <td>69.60 MB</td>
-        <td>27.9558 g</td>
-        <td>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23173080747/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23173080747/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23173080747/report.json">JSON</a>
-        </td>
-      </tr>
-    
+    <form id="scan-form" novalidate>
+      <div class="form-group">
+        <label for="scan-title">Scan title</label>
+        <p class="help-text">Give this scan a short descriptive name (e.g. "NH.gov").</p>
+        <input type="text" id="scan-title" name="scan-title" placeholder="e.g. NH.gov" autocomplete="off" />
+      </div>
+      <div class="form-group">
+        <label for="urls">URLs to scan</label>
+        <p class="help-text">Paste one URL per line (or comma-separated). HTTP and HTTPS only. Up to 500 URLs.</p>
+        <textarea id="urls" name="urls" placeholder="https://example.com&#10;https://another-site.org"></textarea>
+      </div>
 
-      <tr>
-        <td>#6</td>
-        <td>SCAN: thegreenwebfoundation.org</td>
-        <td>2026-03-17T00:34:05.078Z</td>
-        <td>100</td>
-        <td>100</td>
-        <td>49.33 MB</td>
-        <td>19.8161 g</td>
-        <td>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.json">JSON</a>
-        </td>
-      </tr>
-    
+      <div class="preview" id="preview" aria-live="polite">
+        <h3>Preview</h3>
+        <p class="url-count" id="url-count"></p>
+        <div class="url-list" id="url-list"></div>
+      </div>
 
-      <tr>
-        <td>#6</td>
-        <td>SCAN: thegreenwebfoundation.org</td>
-        <td>2026-03-16T18:40:07.544Z</td>
-        <td>100</td>
-        <td>100</td>
-        <td>47.91 MB</td>
-        <td>19.2468 g</td>
-        <td>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.json">JSON</a>
-        </td>
-      </tr>
-    
+      <div class="error-message" id="error-message" role="alert"></div>
+      <div class="success-message" id="success-message" role="status"></div>
+      <div class="loading" id="loading" aria-live="polite"><span class="spinner" aria-hidden="true"></span> Preparing your scan request…</div>
 
-  <script type="module" src="submit.js"></script>
+      <button type="submit" id="submit-button">Submit scan request →</button>
+    </form>
+  </div>
+
+  <script type="module" src="./submit.js"></script>
 </body>
 </html>
