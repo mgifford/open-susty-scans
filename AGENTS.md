@@ -62,6 +62,13 @@ Agent-facing instructions for working in this repository.
 - Keep external requests minimal and explicit (Lighthouse target URLs, Green Web checks, GitHub issue intake).
 - Avoid destructive git operations in automation and local instructions.
 
+## AI disclosure
+
+- Whenever you make a contribution to this repository, update the `## AI Disclosure` section in `README.md` to reflect the AI tools used.
+- Disclose the LLM or AI agent name, the context in which it was used (e.g. building features, writing documentation, reviewing code), and whether it is used at runtime or only during development.
+- Do not list AI tools that have not been used. Each disclosure entry must be accurate and specific.
+- If you are an AI coding agent completing this task, add yourself to the disclosure table if you are not already listed.
+
 ## Pull request guidance for agents
 
 - Keep changes scoped to the requested task.

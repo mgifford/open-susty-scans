@@ -405,6 +405,33 @@ Scoring model:
   - Defer non-critical UI modules until after first render
   - Move large media, fonts, or styles behind explicit user actions or route boundaries
 
+## AI Disclosure
+
+Transparency about AI usage is a core value of this project.
+
+### Used to build this project
+
+All features, bug fixes, documentation, and workflow changes in this repository have been implemented with the assistance of **GitHub Copilot** (powered by Claude, an LLM developed by Anthropic), operating as a GitHub Copilot Coding Agent. Every pull request since the initial commit was authored by the Copilot agent in response to issue-based prompts from the project maintainer.
+
+| AI / LLM | Role | Context |
+|---|---|---|
+| GitHub Copilot Coding Agent (Claude / Anthropic) | Code authoring, refactoring, documentation, CI workflow design | Development only — used interactively via GitHub Copilot to implement all feature PRs and fixes |
+
+### Used at runtime
+
+**No AI or LLM is invoked when the program runs.**
+
+The scanner pipeline relies entirely on deterministic, open-source tools:
+- [Lighthouse](https://developer.chrome.com/docs/lighthouse) — performance and best-practice audits
+- [CO2.js](https://developers.thegreenwebfoundation.org/co2js/overview/) — carbon emissions estimates
+- [Green Web Foundation API](https://www.thegreenwebfoundation.org/green-web-datasets/) — green hosting checks
+
+### Browser-based AI
+
+**No browser-based AI features are enabled.**
+
+The generated HTML reports (report.html, reports.html index) use no client-side AI APIs, no on-device model inference, and no calls to AI-as-a-service endpoints. All analysis is pre-computed server-side during the scan run.
+
 ## Notes
 
 - Ratings are based on average page values from the scanned URL set.
