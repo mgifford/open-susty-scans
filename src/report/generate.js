@@ -2800,6 +2800,7 @@ export function renderHtml(report, markdownText) {
         <li><strong>Average offline support score:</strong> ${formatPercentScore(report.summary.averageOfflineSupportScore)}</li>
         <li><strong>Average language version score:</strong> ${formatPercentScore(report.summary.averageLanguageVersionScore)}</li>
       </ul>
+      <p class="muted" style="margin-top:0.75rem;">Download this report: <a href="./report.md">Markdown report</a> · <a href="./report.json">JSON report</a></p>
     </header>
 
     <section class="card" aria-labelledby="form-validation-heading">

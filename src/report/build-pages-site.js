@@ -92,17 +92,12 @@ function buildReportsHtml(rows, baseUrl) {
     .map((row) => `
       <tr data-date="${htmlEscape(row.generatedAt)}" data-issue="${htmlEscape(String(row.issueNumber))}" data-title="${htmlEscape(row.scanTitle)}" data-urls="${htmlEscape(String(row.urlsRequested))}">
         <td>${htmlEscape(row.issueLabel)}</td>
-        <td>${htmlEscape(row.scanTitle)}</td>
-        <td>${htmlEscape(row.generatedAt)}</td>
+        <td><a href="${htmlEscape(row.htmlUrl)}">${htmlEscape(row.scanTitle)}</a></td>
+        <td><time class="scan-date" datetime="${htmlEscape(row.generatedAt)}" tabindex="0">${htmlEscape(row.generatedAt)}</time></td>
         <td>${htmlEscape(String(row.urlsRequested))}</td>
         <td>${htmlEscape(String(row.urlsScanned))}</td>
         <td>${htmlEscape(row.totalTransfer)}</td>
         <td>${htmlEscape(row.totalCo2)}</td>
-        <td class="report-links">
-          <a href="${htmlEscape(row.htmlUrl)}">HTML</a>
-          <a href="${htmlEscape(row.mdUrl)}">MD</a>
-          <a href="${htmlEscape(row.jsonUrl)}">JSON</a>
-        </td>
       </tr>
     `)
     .join("\n");
@@ -154,6 +149,24 @@ function buildReportsHtml(rows, baseUrl) {
     .sort-icon { font-size: 0.75rem; opacity: 0.5; }
     .sort-btn:hover .sort-icon { opacity: 1; }
     .table-info { color: var(--muted); font-size: 0.875rem; margin-top: 0.75rem; }
+    .scan-date { position: relative; cursor: default; border-bottom: 1px dotted var(--muted); }
+    .scan-date[title]:hover::after,
+    .scan-date[title]:focus-visible::after {
+      content: attr(title);
+      position: absolute;
+      bottom: calc(100% + 0.375rem);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink);
+      color: #fff;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .scan-date:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
     .pagination-nav { display: flex; align-items: center; gap: 0.375rem; flex-wrap: wrap; margin-top: 1.25rem; }
     .page-info { color: var(--muted); font-size: 0.875rem; margin-right: 0.5rem; }
     .page-btn {
@@ -175,7 +188,7 @@ function buildReportsHtml(rows, baseUrl) {
   <div class="container">
     <nav class="topnav" aria-label="Site navigation">
       <a href="${htmlEscape(baseUrl)}">Submit Scan</a>
-      <a href="${htmlEscape(baseUrl)}reports.html">All Reports</a>
+      <a href="${htmlEscape(baseUrl)}reports/">All Reports</a>
     </nav>
     <h1>Sustainability Scan Reports</h1>
     <p class="subtitle">Published scan reports for this repository.</p>
@@ -185,16 +198,15 @@ function buildReportsHtml(rows, baseUrl) {
           <tr>
             <th scope="col"><button class="sort-btn" data-col="issue">Issue <span class="sort-icon" aria-hidden="true">↕</span></button></th>
             <th scope="col"><button class="sort-btn" data-col="title">Scan Title <span class="sort-icon" aria-hidden="true">↕</span></button></th>
-            <th scope="col"><button class="sort-btn" data-col="date">Generated <span class="sort-icon" aria-hidden="true">↕</span></button></th>
+            <th scope="col"><button class="sort-btn" data-col="date">Date <span class="sort-icon" aria-hidden="true">↕</span></button></th>
             <th scope="col"><button class="sort-btn" data-col="urls">URLs Requested <span class="sort-icon" aria-hidden="true">↕</span></button></th>
             <th scope="col">URLs Scanned</th>
             <th scope="col">Total Transfer</th>
             <th scope="col">Total CO2</th>
-            <th scope="col">Report Links</th>
           </tr>
         </thead>
         <tbody>
-          ${tableRows || `<tr><td colspan="8">No reports published yet.</td></tr>`}
+          ${tableRows || `<tr><td colspan="7">No reports published yet.</td></tr>`}
         </tbody>
       </table>
     </div>
@@ -202,6 +214,18 @@ function buildReportsHtml(rows, baseUrl) {
     <div id="pagination"></div>
   </div>
   <script>
+  (function () {
+    // Format scan dates to user's locale date, with full datetime as tooltip
+    document.querySelectorAll('time.scan-date').forEach(function (el) {
+      var iso = el.getAttribute('datetime');
+      if (!iso) return;
+      var d = new Date(iso);
+      if (isNaN(d.getTime())) return;
+      el.textContent = d.toLocaleDateString();
+      el.setAttribute('title', d.toLocaleString());
+    });
+  }());
+
   (function () {
     var PAGE_SIZE = 50;
     var currentPage = 1;
@@ -438,7 +462,7 @@ function main() {
   const currentMd = `${projectBase}reports/issue-${issueNumber}/${runId}/report.md`;
   const currentJson = `${projectBase}reports/issue-${issueNumber}/${runId}/report.json`;
   const latestHtml = `${projectBase}reports/issue-${issueNumber}/latest/report.html`;
-  const reportsIndex = `${projectBase}reports.html`;
+  const reportsIndex = `${projectBase}reports/`;
 
   const currentReportJson = safeReadJson(join(reportDir, "report.json")) || {};
   const metadata = {

@@ -45,6 +45,24 @@
     .sort-icon { font-size: 0.75rem; opacity: 0.5; }
     .sort-btn:hover .sort-icon { opacity: 1; }
     .table-info { color: var(--muted); font-size: 0.875rem; margin-top: 0.75rem; }
+    .scan-date { position: relative; cursor: default; border-bottom: 1px dotted var(--muted); }
+    .scan-date[title]:hover::after,
+    .scan-date[title]:focus-visible::after {
+      content: attr(title);
+      position: absolute;
+      bottom: calc(100% + 0.375rem);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink);
+      color: #fff;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .scan-date:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
     .pagination-nav { display: flex; align-items: center; gap: 0.375rem; flex-wrap: wrap; margin-top: 1.25rem; }
     .page-info { color: var(--muted); font-size: 0.875rem; margin-right: 0.5rem; }
     .page-btn {
@@ -66,7 +84,7 @@
   <div class="container">
     <nav class="topnav" aria-label="Site navigation">
       <a href="https://mgifford.github.io/open-susty-scans/">Submit Scan</a>
-      <a href="https://mgifford.github.io/open-susty-scans/reports.html">All Reports</a>
+      <a href="https://mgifford.github.io/open-susty-scans/reports/">All Reports</a>
     </nav>
     <h1>Sustainability Scan Reports</h1>
     <p class="subtitle">Published scan reports for this repository.</p>
@@ -76,125 +94,89 @@
           <tr>
             <th scope="col"><button class="sort-btn" data-col="issue">Issue <span class="sort-icon" aria-hidden="true">↕</span></button></th>
             <th scope="col"><button class="sort-btn" data-col="title">Scan Title <span class="sort-icon" aria-hidden="true">↕</span></button></th>
-            <th scope="col"><button class="sort-btn" data-col="date">Generated <span class="sort-icon" aria-hidden="true">↕</span></button></th>
+            <th scope="col"><button class="sort-btn" data-col="date">Date <span class="sort-icon" aria-hidden="true">↕</span></button></th>
             <th scope="col"><button class="sort-btn" data-col="urls">URLs Requested <span class="sort-icon" aria-hidden="true">↕</span></button></th>
             <th scope="col">URLs Scanned</th>
             <th scope="col">Total Transfer</th>
             <th scope="col">Total CO2</th>
-            <th scope="col">Report Links</th>
           </tr>
         </thead>
         <tbody>
           
       <tr data-date="2026-03-17T14:09:22.490Z" data-issue="11" data-title="SCAN: PEI Government" data-urls="100">
         <td>#11</td>
-        <td>SCAN: PEI Government</td>
-        <td>2026-03-17T14:09:22.490Z</td>
+        <td><a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23197126723/report.html">SCAN: PEI Government</a></td>
+        <td><time class="scan-date" datetime="2026-03-17T14:09:22.490Z" tabindex="0">2026-03-17T14:09:22.490Z</time></td>
         <td>100</td>
         <td>100</td>
         <td>69.54 MB</td>
         <td>27.9317 g</td>
-        <td class="report-links">
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23197126723/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23197126723/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23197126723/report.json">JSON</a>
-        </td>
       </tr>
     
 
       <tr data-date="2026-03-17T13:51:15.778Z" data-issue="14" data-title="SCAN: NH.gov" data-urls="56">
         <td>#14</td>
-        <td>SCAN: NH.gov</td>
-        <td>2026-03-17T13:51:15.778Z</td>
+        <td><a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23197126723/report.html">SCAN: NH.gov</a></td>
+        <td><time class="scan-date" datetime="2026-03-17T13:51:15.778Z" tabindex="0">2026-03-17T13:51:15.778Z</time></td>
         <td>56</td>
         <td>56</td>
         <td>40.37 MB</td>
         <td>16.2181 g</td>
-        <td class="report-links">
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23197126723/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23197126723/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23197126723/report.json">JSON</a>
-        </td>
       </tr>
     
 
       <tr data-date="2026-03-17T01:16:32.415Z" data-issue="14" data-title="SCAN: NH.gov" data-urls="56">
         <td>#14</td>
-        <td>SCAN: NH.gov</td>
-        <td>2026-03-17T01:16:32.415Z</td>
+        <td><a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23173526394/report.html">SCAN: NH.gov</a></td>
+        <td><time class="scan-date" datetime="2026-03-17T01:16:32.415Z" tabindex="0">2026-03-17T01:16:32.415Z</time></td>
         <td>56</td>
         <td>56</td>
         <td>40.17 MB</td>
         <td>16.1347 g</td>
-        <td class="report-links">
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23173526394/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23173526394/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-14/23173526394/report.json">JSON</a>
-        </td>
       </tr>
     
 
       <tr data-date="2026-03-17T01:06:06.483Z" data-issue="11" data-title="SCAN: PEI Government" data-urls="100">
         <td>#11</td>
-        <td>SCAN: PEI Government</td>
-        <td>2026-03-17T01:06:06.483Z</td>
+        <td><a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23173080747/report.html">SCAN: PEI Government</a></td>
+        <td><time class="scan-date" datetime="2026-03-17T01:06:06.483Z" tabindex="0">2026-03-17T01:06:06.483Z</time></td>
         <td>100</td>
         <td>100</td>
         <td>69.60 MB</td>
         <td>27.9558 g</td>
-        <td class="report-links">
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23173080747/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23173080747/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-11/23173080747/report.json">JSON</a>
-        </td>
       </tr>
     
 
       <tr data-date="2026-03-17T00:34:05.078Z" data-issue="6" data-title="SCAN: thegreenwebfoundation.org" data-urls="100">
         <td>#6</td>
-        <td>SCAN: thegreenwebfoundation.org</td>
-        <td>2026-03-17T00:34:05.078Z</td>
+        <td><a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.html">SCAN: thegreenwebfoundation.org</a></td>
+        <td><time class="scan-date" datetime="2026-03-17T00:34:05.078Z" tabindex="0">2026-03-17T00:34:05.078Z</time></td>
         <td>100</td>
         <td>100</td>
         <td>49.33 MB</td>
         <td>19.8161 g</td>
-        <td class="report-links">
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23172068214/report.json">JSON</a>
-        </td>
       </tr>
     
 
       <tr data-date="2026-03-16T18:40:07.544Z" data-issue="6" data-title="SCAN: thegreenwebfoundation.org" data-urls="100">
         <td>#6</td>
-        <td>SCAN: thegreenwebfoundation.org</td>
-        <td>2026-03-16T18:40:07.544Z</td>
+        <td><a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.html">SCAN: thegreenwebfoundation.org</a></td>
+        <td><time class="scan-date" datetime="2026-03-16T18:40:07.544Z" tabindex="0">2026-03-16T18:40:07.544Z</time></td>
         <td>100</td>
         <td>100</td>
         <td>47.91 MB</td>
         <td>19.2468 g</td>
-        <td class="report-links">
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-6/23159223824/report.json">JSON</a>
-        </td>
       </tr>
     
 
       <tr data-date="2026-03-16T17:49:20.577Z" data-issue="1" data-title="SCAN: Spain" data-urls="100">
         <td>#1</td>
-        <td>SCAN: Spain</td>
-        <td>2026-03-16T17:49:20.577Z</td>
+        <td><a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.html">SCAN: Spain</a></td>
+        <td><time class="scan-date" datetime="2026-03-16T17:49:20.577Z" tabindex="0">2026-03-16T17:49:20.577Z</time></td>
         <td>100</td>
         <td>100</td>
         <td>132.88 MB</td>
         <td>53.3747 g</td>
-        <td class="report-links">
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.html">HTML</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.md">MD</a>
-          <a href="https://mgifford.github.io/open-susty-scans/reports/issue-1/23155775404/report.json">JSON</a>
-        </td>
       </tr>
     
         </tbody>
@@ -204,6 +186,18 @@
     <div id="pagination"></div>
   </div>
   <script>
+  (function () {
+    // Format scan dates to user's locale date, with full datetime as tooltip
+    document.querySelectorAll('time.scan-date').forEach(function (el) {
+      var iso = el.getAttribute('datetime');
+      if (!iso) return;
+      var d = new Date(iso);
+      if (isNaN(d.getTime())) return;
+      el.textContent = d.toLocaleDateString();
+      el.setAttribute('title', d.toLocaleString());
+    });
+  }());
+
   (function () {
     var PAGE_SIZE = 50;
     var currentPage = 1;
