@@ -201,6 +201,8 @@ export async function crawlSiteUrls(baseUrl, limit = DEFAULT_LIMIT) {
         !href ||
         href.startsWith("mailto:") ||
         href.startsWith("javascript:") ||
+        href.startsWith("data:") ||
+        href.startsWith("vbscript:") ||
         href.startsWith("tel:")
       ) continue;
       try {
