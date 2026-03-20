@@ -11,7 +11,7 @@
     "issue:comment": "node src/report/post-issue-comment.js"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
   "dependencies": {
     "@tgwf/co2": "^0.16.8",
