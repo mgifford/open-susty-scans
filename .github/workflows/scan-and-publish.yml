@@ -41,6 +41,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # ── Eco CI energy measurement for this CI run ─────────────────────────
+      - name: Start CI energy measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
+        with:
+          task: start-measurement
+          send-data: false
+        continue-on-error: true
+
+      - name: Capture install energy lap
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
+        with:
+          task: get-measurement
+          label: 'Install dependencies'
+        continue-on-error: true
+
       - name: Resolve issue context
         id: ctx
         shell: bash
@@ -74,6 +89,13 @@ jobs:
             --issue-url "${{ steps.ctx.outputs.issue_url }}" \
             --issue-number "${{ steps.ctx.outputs.issue_number }}" \
             --output ./.tmp/current-report
+
+      - name: Capture scan energy lap
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
+        with:
+          task: get-measurement
+          label: 'Sustainability scan'
+        continue-on-error: true
 
       - name: Prepare pages site
         if: steps.ctx.outputs.issue_url
@@ -127,3 +149,12 @@ jobs:
           ISSUE_NUMBER: ${{ steps.ctx.outputs.issue_number }}
           REPORT_METADATA_PATH: ./.tmp/report-metadata.json
         run: node src/report/post-issue-comment.js
+
+      # ── Show Eco CI energy totals for this CI run ─────────────────────────
+      - name: Display CI energy results
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
+        with:
+          task: display-results
+          json-output: true
+          send-data: false
+        continue-on-error: true

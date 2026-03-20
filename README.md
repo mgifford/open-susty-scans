@@ -203,15 +203,43 @@ Reports also include offline access and caching support guidance aligned with WS
 
 ### Overview
 
-The energy audit workflow measures the actual energy consumed by a Playwright
-browser session during a realistic "visit-and-scroll" simulation of each target
-URL. This is more accurate than a simple `curl` call because it exercises
-JavaScript, CSS rendering, lazy-loaded images, and deferred scripts — the parts
-of a page that dominate real user energy cost.
-
-Energy data is collected on GitHub-hosted runners using
+This project measures energy in two distinct ways using
 [Eco CI](https://github.com/marketplace/actions/eco-ci-energy-estimation) by
-[Green Coding Solutions](https://www.green-coding.io/).
+[Green Coding Solutions](https://www.green-coding.io/):
+
+1. **CI pipeline energy** — every scan workflow (`scan-and-publish.yml` and
+   `scan-issue-queue.yml`) instruments its own compute steps and shows a live
+   energy summary in the Actions step summary. This tells you how much energy
+   each scan run consumes on the GitHub-hosted runner, covering dependency
+   install, Lighthouse execution, and pages build.
+
+2. **Website visit energy** — the dedicated `energy.yml` workflow runs a
+   Playwright browser session against target URLs and measures the energy cost
+   of a realistic "visit-and-scroll" simulation. This is the per-page user-side
+   energy perspective.
+
+### CI pipeline energy (scan and publish workflows)
+
+Both `scan-and-publish.yml` and `scan-issue-queue.yml` include Eco CI steps
+that record energy usage for each major phase:
+
+| Phase | Label |
+|---|---|
+| `npm ci` (dependency install) | `Install dependencies` |
+| Lighthouse scan execution | `Sustainability scan` |
+| Issue queue processing | `Scan and process issues` |
+
+After each workflow run, the **Actions step summary** displays a breakdown of
+joules and estimated CO₂ per phase, and a total for the full job. No data is
+sent to external services by default (`send-data: false`).
+
+To view CI energy data:
+1. Go to the **Actions** tab in the repository.
+2. Open any completed `Scan And Publish Reports` or `Scan Issue Queue` run.
+3. Scroll to the **Display CI energy results** step at the bottom of the job.
+
+All Eco CI steps use `continue-on-error: true` so a measurement failure never
+blocks the main scan workflow.
 
 ### Energy audit workflow (`energy.yml`)
 
@@ -415,7 +443,7 @@ All features, bug fixes, documentation, and workflow changes in this repository 
 
 | AI / LLM | Role | Context |
 |---|---|---|
-| GitHub Copilot Coding Agent (Claude / Anthropic) | Code authoring, refactoring, documentation, CI workflow design | Development only — used interactively via GitHub Copilot to implement all feature PRs and fixes |
+| GitHub Copilot Coding Agent (Claude / Anthropic) | Code authoring, refactoring, documentation, CI workflow design | Development only — used interactively via GitHub Copilot to implement all feature PRs and fixes, including Eco CI pipeline energy tracking |
 
 ### Used at runtime
 
