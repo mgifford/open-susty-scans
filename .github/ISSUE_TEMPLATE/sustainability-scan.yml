@@ -10,6 +10,11 @@ body:
         Submit a list of public URLs to scan for sustainability improvements.
         Use one URL per line. The scanner reads the `# URLs` section first.
 
+        **Auto-discovery mode:** If the issue title contains a site URL (e.g. `SCAN: https://www.example.gov/`)
+        and no explicit URLs are provided below, the scanner will automatically discover up to 100 HTML pages
+        by checking the site's `sitemap.xml` and crawling links. Set `Pages: N` in the Notes field to
+        change the target page count.
+
   - type: input
     id: scan_title
     attributes:
@@ -23,18 +28,23 @@ body:
     id: urls
     attributes:
       label: URLs
-      description: Public HTTP/HTTPS URLs. One per line.
+      description: >
+        Public HTTP/HTTPS URLs, one per line. Leave blank to enable auto-discovery
+        from the site URL in the issue title.
       placeholder: |
         https://example.org/
         https://example.org/about
       render: markdown
-    validations:
-      required: true
 
   - type: textarea
     id: notes
     attributes:
       label: Notes
-      description: Optional context for triage and follow-up
-      placeholder: Focus on top templates and quick wins.
+      description: >
+        Optional context for triage and follow-up.
+        Add `Pages: N` on its own line to control how many pages are discovered
+        when auto-discovery is used (default: 100).
+      placeholder: |
+        Focus on top templates and quick wins.
+        Pages: 50
 

@@ -64,6 +64,18 @@ Directly from a GitHub issue URL:
 npm run scan -- --issue-url https://github.com/mgifford/open-susty-scans/issues/1 --title "SCAN: Spain"
 ```
 
+**Auto-discovery mode** — when a GitHub issue title contains a site URL but no explicit URLs
+are listed in the body, the scanner automatically discovers HTML pages to scan:
+
+1. Checks `robots.txt` for `Sitemap:` directives, then tries `sitemap.xml`.
+2. Randomly samples up to 100 pages from the sitemap (or all pages if fewer are found).
+3. Falls back to a lightweight BFS crawler when the sitemap has fewer pages than the target count.
+4. Only HTML pages are included — PDFs, Word docs, XML feeds, images, and other non-HTML
+   assets are filtered out.
+
+Add `Pages: N` on its own line in the issue Notes field to change the target page count
+(default: 100).
+
 Optional output directory:
 
 ```bash
