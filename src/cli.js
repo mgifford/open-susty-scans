@@ -2,6 +2,7 @@
 import { resolve } from "node:path";
 import { dedupeUrls, loadUrlsFromFile, loadUrlsFromIssueBodyFile, parseIssueBodyForUrls } from "./intake/urls.js";
 import { fetchIssueBodyFromGitHubUrl } from "./intake/github.js";
+import { discoverUrls, extractBaseUrlFromTitle } from "./intake/discover.js";
 import { fetchWsgGuidelines, indexGuidelinesByUrl } from "./wsg/client.js";
 import { scanUrls } from "./scan/lighthouse.js";
 import { buildReportBundle, writeReports } from "./report/generate.js";
@@ -18,6 +19,7 @@ async function main() {
 
   let issueNumber = args.issueNumber;
   let issueDerivedTitle = null;
+  let issueBody = null;
 
   let urls = [];
   if (args.issueUrl) {
@@ -25,6 +27,7 @@ async function main() {
     urls = loadUrlsFromIssueBodyText(issue.body);
     issueNumber = issueNumber || issue.issueNumber;
     issueDerivedTitle = issue.title;
+    issueBody = issue.body;
   } else if (args.issueFile) {
     urls = loadUrlsFromIssueBodyFile(resolve(args.issueFile));
   } else if (args.urlsFile) {
@@ -32,6 +35,16 @@ async function main() {
   }
 
   scanTitle = scanTitle || issueDerivedTitle || "WSG Sustainability Scan";
+
+  // When no explicit URLs were provided, attempt automatic discovery from the
+  // base URL embedded in the issue title (e.g. "SCAN: https://www.gsa.gov/").
+  if (urls.length === 0 && issueDerivedTitle) {
+    const baseUrl = extractBaseUrlFromTitle(issueDerivedTitle);
+    if (baseUrl) {
+      const discovered = await discoverUrls(baseUrl, issueBody);
+      urls = dedupeUrls(discovered);
+    }
+  }
 
   if (urls.length === 0) {
     throw new Error("No URLs were found. Use --urls-file, --issue-file, or --issue-url.");

@@ -91,6 +91,7 @@ export function validateUrls(urls) {
 
 // Format issue body for GitHub issue creation
 export function formatIssueBody(scanTitle, urls) {
+  if (urls.length === 0) return ""; // auto-discovery: no body needed, scanner will discover from title
   return `# URLs\n\n${urls.join("\n")}\n`;
 }
 
@@ -137,8 +138,8 @@ export async function createGitHubIssue(scanTitle, urls) {
   const issueTitle = `SCAN: ${scanTitle.replace(SCAN_PREFIX_REGEX, "")}`;
   const issueBody = formatIssueBody(scanTitle, urls);
   const encodedTitle = encodeURIComponent(issueTitle);
-  const encodedBody = encodeURIComponent(issueBody);
-  return `https://github.com/${owner}/${repo}/issues/new?title=${encodedTitle}&body=${encodedBody}`;
+  const bodyParam = issueBody ? `&body=${encodeURIComponent(issueBody)}` : "";
+  return `https://github.com/${owner}/${repo}/issues/new?title=${encodedTitle}${bodyParam}`;
 }
 
 // Initialize form
@@ -245,9 +246,14 @@ function initForm() {
         : validUrls;
 
     if (accepted.length === 0) {
-      errorDiv.textContent = "No valid URLs to scan. Please enter at least one public HTTP/HTTPS URL.";
-      errorDiv.classList.add("visible");
-      return;
+      // Allow submission without URLs when the title contains a site URL —
+      // the scanner will discover pages automatically via sitemap / crawl.
+      const titleHasUrl = /https?:\/\/\S+/.test(scanTitle);
+      if (!titleHasUrl) {
+        errorDiv.textContent = "No valid URLs to scan. Enter at least one URL, or include a site URL in the title for auto-discovery (e.g. https://www.example.gov/).";
+        errorDiv.classList.add("visible");
+        return;
+      }
     }
 
     if (accepted.length > 500) {
