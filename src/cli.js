@@ -43,6 +43,12 @@ async function main() {
     if (baseUrl) {
       const discovered = await discoverUrls(baseUrl, issueBody);
       urls = dedupeUrls(discovered);
+      // Fallback: if discovery returned nothing (e.g. site blocked crawlers or
+      // sitemap was empty), scan at least the base URL from the title itself.
+      if (urls.length === 0) {
+        console.error(`[discover] Discovery returned no URLs; falling back to base URL: ${baseUrl}`);
+        urls = [baseUrl];
+      }
     }
   }
 

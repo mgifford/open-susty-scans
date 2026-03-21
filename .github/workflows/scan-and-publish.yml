@@ -150,6 +150,15 @@ jobs:
           REPORT_METADATA_PATH: ./.tmp/report-metadata.json
         run: node src/report/post-issue-comment.js
 
+      - name: Close issue after successful scan
+        if: steps.ctx.outputs.issue_number
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue close "${{ steps.ctx.outputs.issue_number }}" \
+            -R "${{ github.repository }}" \
+            || echo "WARNING: Failed to close issue #${{ steps.ctx.outputs.issue_number }}"
+
       # ── Show Eco CI energy totals for this CI run ─────────────────────────
       - name: Display CI energy results
         uses: green-coding-solutions/eco-ci-energy-estimation@v5
