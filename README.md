@@ -360,6 +360,7 @@ What it does:
 - Commits published report pages back to `main` so GitHub Pages (configured to main) can serve them
 - Generates/updates `reports.html` index on GitHub Pages
 - Upserts a single report comment on the issue with direct links
+- Closes the issue after a successful scan and comment so it is not re-scanned by the queue
 
 ### Queue scan (`scan-issue-queue.yml`)
 
