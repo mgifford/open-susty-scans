@@ -203,6 +203,14 @@ Reports also include offline access and caching support guidance aligned with WS
 - Uses Lighthouse signals for service worker availability, offline behavior, installable manifest/start URL support, and long cache TTL effectiveness
 - Provides recurring cross-page and site-level offline/caching opportunities for platform-level fixes
 
+Reports also include media sustainability hints aligned with WSG guidance (inspired by [Web Sustainability Index](https://websustainabilityindex.com/about)):
+- WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use
+- Per-page media hints score and urgency
+- Checks for unmuted autoplay video/audio (unnecessary bandwidth consumption)
+- Detects missing dark mode support via `prefers-color-scheme: dark` media query or `color-scheme` meta tag
+- Reports image lazy loading adoption (proportion of images with `loading="lazy"`)
+- Cross-page summary of pages with autoplay, dark mode gaps, and lazy loading gaps
+
 ## Actionable Triage Flow
 
 1. Open report.html.

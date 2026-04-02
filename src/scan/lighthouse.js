@@ -60,6 +60,10 @@ export async function scanUrls(urls) {
         const expectedFiles = await buildExpectedFilesAssessment({
           pageUrl: lhr.finalDisplayedUrl || lhr.finalUrl || url
         });
+        const mediaHints = await buildMediaHintsAssessment({
+          browser,
+          pageUrl: lhr.finalDisplayedUrl || lhr.finalUrl || url
+        });
 
         results.push({
           url,
@@ -86,7 +90,8 @@ export async function scanUrls(urls) {
             metadata,
             layoutAdaptation,
             securityLight,
-            expectedFiles
+            expectedFiles,
+            mediaHints
           }
         });
       } catch (error) {
@@ -1105,4 +1110,160 @@ function expectedFilesUrgency(score) {
   if (score >= 60) return "high";
   if (score >= 30) return "medium";
   return "low";
+}
+
+async function buildMediaHintsAssessment({ browser, pageUrl }) {
+  let page;
+  try {
+    page = await browser.newPage();
+    await page.goto(pageUrl, { waitUntil: "domcontentloaded", timeout: 45000 });
+
+    const hints = await page.evaluate(() => {
+      // Dark mode: check meta color-scheme and same-origin CSS media queries
+      const metaColorScheme = document.querySelector("meta[name='color-scheme']");
+      const hasMetaColorScheme = Boolean(
+        String(metaColorScheme?.getAttribute("content") || "").toLowerCase().includes("dark")
+      );
+
+      let hasDarkModeQuery = false;
+      try {
+        hasDarkModeQuery = Array.from(document.styleSheets).some((sheet) => {
+          try {
+            return Array.from(sheet.cssRules || []).some((rule) => {
+              if (rule.constructor.name === "CSSMediaRule") {
+                return String(rule.conditionText || "").includes("prefers-color-scheme");
+              }
+              return false;
+            });
+          } catch {
+            return false;
+          }
+        });
+      } catch {
+        hasDarkModeQuery = false;
+      }
+
+      const hasDarkMode = hasMetaColorScheme || hasDarkModeQuery;
+
+      // Autoplay media
+      const autoplayingMedia = [];
+      for (const video of document.querySelectorAll("video[autoplay]")) {
+        autoplayingMedia.push({ kind: "video", muted: video.hasAttribute("muted") });
+      }
+      for (const audio of document.querySelectorAll("audio[autoplay]")) {
+        autoplayingMedia.push({ kind: "audio", muted: false });
+      }
+
+      // Image lazy loading
+      const allImages = Array.from(document.querySelectorAll("img"));
+      const imagesWithLazy = allImages.filter(
+        (img) => String(img.getAttribute("loading") || "").toLowerCase() === "lazy"
+      ).length;
+
+      return {
+        hasDarkMode,
+        hasMetaColorScheme,
+        hasDarkModeQuery,
+        autoplayingMedia,
+        autoplayCount: autoplayingMedia.length,
+        unmutedAutoplayCount: autoplayingMedia.filter((m) => !m.muted).length,
+        totalImages: allImages.length,
+        imagesWithLazy,
+        imagesWithoutLazy: allImages.length - imagesWithLazy
+      };
+    });
+
+    return scoreMediaHints(hints);
+  } catch (error) {
+    return {
+      score: 0,
+      urgency: "low",
+      checks: {},
+      recommendations: [
+        {
+          title: "Media hints scan could not complete",
+          urgency: "medium",
+          detail: error instanceof Error ? error.message : String(error)
+        }
+      ]
+    };
+  } finally {
+    if (page) {
+      await page.close();
+    }
+  }
+}
+
+function scoreMediaHints(hints) {
+  let score = 0;
+
+  if (hints.unmutedAutoplayCount > 0) {
+    score += Math.min(40, hints.unmutedAutoplayCount * 20);
+  } else if (hints.autoplayCount > 0) {
+    score += Math.min(20, hints.autoplayCount * 10);
+  }
+
+  if (!hints.hasDarkMode) {
+    score += 20;
+  }
+
+  if (hints.totalImages > 0) {
+    const lazyRatio = hints.imagesWithLazy / hints.totalImages;
+    if (lazyRatio < 0.5) {
+      score += Math.round((0.5 - lazyRatio) * 2 * 30);
+    }
+  }
+
+  score = Math.min(100, score);
+  const urgency = score >= 60 ? "high" : score >= 30 ? "medium" : "low";
+
+  const recommendations = [];
+
+  if (hints.unmutedAutoplayCount > 0) {
+    recommendations.push({
+      title: "Remove unmuted autoplay media",
+      urgency: "high",
+      detail: `${hints.unmutedAutoplayCount} video/audio element(s) autoplay without mute. Autoplay media transfers bandwidth the user did not request and harms accessibility.`
+    });
+  } else if (hints.autoplayCount > 0) {
+    recommendations.push({
+      title: "Review muted autoplay video",
+      urgency: "medium",
+      detail: `${hints.autoplayCount} muted autoplay video(s) detected. Consider lazy-loading or user-triggered playback to reduce unnecessary data transfer.`
+    });
+  }
+
+  if (!hints.hasDarkMode) {
+    recommendations.push({
+      title: "Add dark mode support",
+      urgency: "medium",
+      detail: "No prefers-color-scheme: dark media query or color-scheme meta tag was found. Dark mode reduces energy use on OLED screens and improves user choice."
+    });
+  }
+
+  if (hints.totalImages > 0) {
+    const lazyRatio = hints.imagesWithLazy / hints.totalImages;
+    if (lazyRatio < 0.5 && hints.imagesWithoutLazy > 0) {
+      recommendations.push({
+        title: "Add loading=\"lazy\" to images",
+        urgency: hints.imagesWithoutLazy > 10 ? "high" : "medium",
+        detail: `${hints.imagesWithoutLazy} of ${hints.totalImages} image(s) lack an explicit loading="lazy" attribute. Lazy loading defers below-fold images and reduces initial page weight.`
+      });
+    }
+  }
+
+  if (recommendations.length === 0) {
+    recommendations.push({
+      title: "Media hints look healthy",
+      urgency: "low",
+      detail: "No major autoplay, dark mode, or lazy loading concerns were detected on this page."
+    });
+  }
+
+  return {
+    score,
+    urgency,
+    checks: hints,
+    recommendations
+  };
 }
