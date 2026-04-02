@@ -22,6 +22,7 @@ A comprehensive reference for all capabilities, checks, and measurements include
    - 4.10 [Lightweight Security Assessment](#410-lightweight-security-assessment)
    - 4.11 [Expected & Beneficial Files](#411-expected--beneficial-files)
    - 4.12 [Third-Party JavaScript Analysis](#412-third-party-javascript-analysis)
+   - 4.13 [Media Sustainability Hints](#413-media-sustainability-hints)
 5. [Lighthouse Integration](#5-lighthouse-integration)
 6. [Cross-Page Pattern Analysis](#6-cross-page-pattern-analysis)
 7. [Report Generation](#7-report-generation)
@@ -368,6 +369,21 @@ Per device:
 - Hosting provider metadata (hosted_by, partner status)
 
 **Summary output:** Ranked list of third-party origins with byte totals, request counts, and green-hosting status.
+
+---
+
+### 4.13 Media Sustainability Hints
+
+**What it checks:**
+- **Autoplay media** — detects `<video autoplay>` and `<audio autoplay>` elements; flags unmuted autoplay separately as it consumes bandwidth without user consent
+- **Dark mode support** — checks for a `prefers-color-scheme: dark` CSS media query in same-origin stylesheets and a `<meta name="color-scheme">` tag; dark mode reduces energy use on OLED screens
+- **Image lazy loading** — counts images with and without an explicit `loading="lazy"` attribute; pages where fewer than 50% of images are lazy-loaded are flagged
+
+**WSG reference:** [Optimize media to reduce resource use](https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use)
+
+**Inspiration:** [Web Sustainability Index](https://websustainabilityindex.com/about)
+
+**Summary output:** Cross-page counts for pages with autoplay, unmuted autoplay, missing dark mode, and lazy loading gaps.
 
 ---
 

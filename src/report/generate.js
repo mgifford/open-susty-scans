@@ -12,6 +12,7 @@ const WSG_EFFICIENT_SOLUTION_URL = "https://www.w3.org/TR/web-sustainability-gui
 const WSG_REDUCE_DATA_TRANSFER_COMPRESSION_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#reduce-data-transfer-with-compression";
 const WSG_LATEST_STABLE_LANGUAGE_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#use-the-latest-stable-language-version";
 const WSG_OFFLINE_ACCESS_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#optimize-caching-and-support-offline-access";
+const WSG_MEDIA_HINTS_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use";
 const SWD_RATING_SOURCE_URL = "https://sustainablewebdesign.org/digital-carbon-ratings/";
 
 const SWD_RATINGS = [
@@ -68,6 +69,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
       layoutAdaptation: result.sustainability.layoutAdaptation,
       securityLight: result.sustainability.securityLight,
       expectedFiles: result.sustainability.expectedFiles,
+      mediaHints: result.sustainability.mediaHints,
       compressionOpportunities,
       optimizationOpportunities,
       dependencyMaintenance,
@@ -97,6 +99,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
   const optimizationSummary = buildOptimizationSummary(perUrl);
   const offlineSupportSummary = buildOfflineSupportSummary(perUrl);
   const languageVersionSummary = buildLanguageVersionSummary(perUrl);
+  const mediaHintsSummary = buildMediaHintsSummary(perUrl);
   const siteGuidance = buildSiteGuidance(perUrl);
 
   return {
@@ -119,6 +122,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
     optimizationSummary,
     offlineSupportSummary,
     languageVersionSummary,
+    mediaHintsSummary,
     siteGuidance,
     crossPagePatterns,
     results: perUrl
@@ -163,6 +167,8 @@ function buildSummary(perUrl) {
   const highUrgencyOfflineSupportCount = ok.filter((item) => item.offlineSupport?.urgency === "high").length;
   const averageLanguageVersionScore = average(ok.map((item) => item.languageVersionGuidance?.score));
   const highUrgencyLanguageVersionCount = ok.filter((item) => item.languageVersionGuidance?.urgency === "high").length;
+  const averageMediaHintsScore = average(ok.map((item) => item.mediaHints?.score));
+  const highUrgencyMediaHintsCount = ok.filter((item) => item.mediaHints?.urgency === "high").length;
   const siteOrigins = Array.from(new Set(ok.map((item) => safeOrigin(item.finalUrl || item.url)).filter(Boolean)));
   const greenWeb = buildGreenWebSummary(ok);
 
@@ -203,6 +209,8 @@ function buildSummary(perUrl) {
     highUrgencyOfflineSupportCount,
     averageLanguageVersionScore,
     highUrgencyLanguageVersionCount,
+    averageMediaHintsScore,
+    highUrgencyMediaHintsCount,
     distinctSiteCount: siteOrigins.length,
     singleSiteScan: siteOrigins.length <= 1,
     greenWeb
@@ -492,6 +500,7 @@ function buildSiteGuidance(perUrl) {
         optimizationScore: entry.optimizationOpportunities?.score || 0,
         offlineScore: entry.offlineSupport?.score || 0,
         languageScore: entry.languageVersionGuidance?.score || 0,
+        mediaHintsScore: entry.mediaHints?.score || 0,
         urgency: highestUrgency([
           entry.securityLight?.urgency,
           entry.dependencyMaintenance?.urgency,
@@ -499,19 +508,21 @@ function buildSiteGuidance(perUrl) {
           entry.compressionOpportunities?.urgency,
           entry.optimizationOpportunities?.urgency,
           entry.offlineSupport?.urgency,
-          entry.languageVersionGuidance?.urgency
+          entry.languageVersionGuidance?.urgency,
+          entry.mediaHints?.urgency
         ]),
         topRecommendations: [
           ...(entry.compressionOpportunities?.recommendations || []),
           ...(entry.optimizationOpportunities?.recommendations || []),
           ...(entry.offlineSupport?.recommendations || []),
+          ...(entry.mediaHints?.recommendations || []),
           ...(entry.dependencyMaintenance?.recommendations || []),
           ...(entry.languageVersionGuidance?.recommendations || []),
           ...(entry.securityLight?.recommendations || []),
           ...(entry.expectedFiles?.recommendations || [])
         ].slice(0, 4)
       }))
-      .sort((a, b) => (b.compressionScore + b.optimizationScore + b.offlineScore + b.dependencyScore + b.languageScore + b.securityScore + b.expectedFilesScore) - (a.compressionScore + a.optimizationScore + a.offlineScore + a.dependencyScore + a.languageScore + a.securityScore + a.expectedFilesScore));
+      .sort((a, b) => (b.compressionScore + b.optimizationScore + b.offlineScore + b.dependencyScore + b.languageScore + b.securityScore + b.expectedFilesScore + b.mediaHintsScore) - (a.compressionScore + a.optimizationScore + a.offlineScore + a.dependencyScore + a.languageScore + a.securityScore + a.expectedFilesScore + a.mediaHintsScore));
 
     return {
       origin,
@@ -1397,6 +1408,40 @@ function parseMajor(version) {
   return Number.isFinite(value) ? value : null;
 }
 
+function buildMediaHintsSummary(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  let pagesWithAutoplay = 0;
+  let pagesWithUnmutedAutoplay = 0;
+  let pagesWithoutDarkMode = 0;
+  let pagesWithLazyLoadingGap = 0;
+
+  for (const entry of okEntries) {
+    if (!entry.mediaHints?.checks) continue;
+    const checks = entry.mediaHints.checks;
+    if ((checks.autoplayCount || 0) > 0) pagesWithAutoplay += 1;
+    if ((checks.unmutedAutoplayCount || 0) > 0) pagesWithUnmutedAutoplay += 1;
+    if (!checks.hasDarkMode) pagesWithoutDarkMode += 1;
+    if (checks.totalImages > 0) {
+      const lazyRatio = (checks.imagesWithLazy || 0) / checks.totalImages;
+      if (lazyRatio < 0.5) pagesWithLazyLoadingGap += 1;
+    }
+  }
+
+  return {
+    wsgReference: {
+      title: "Optimize media to reduce resource use",
+      url: WSG_MEDIA_HINTS_URL
+    },
+    assessedPages: okEntries.length,
+    averageScore: average(okEntries.map((item) => item.mediaHints?.score)),
+    highUrgencyPages: okEntries.filter((item) => item.mediaHints?.urgency === "high").length,
+    pagesWithAutoplay,
+    pagesWithUnmutedAutoplay,
+    pagesWithoutDarkMode,
+    pagesWithLazyLoadingGap
+  };
+}
+
 function buildSecurityLightSummary(perUrl) {
   const okEntries = perUrl.filter((item) => item.status === "ok");
   let pagesWithoutCsp = 0;
@@ -2093,6 +2138,8 @@ export function renderMarkdown(report) {
   lines.push(`- Pages with high optimization urgency: ${report.summary.highUrgencyOptimizationCount}`);
   lines.push(`- Average offline support score: ${formatPercentScore(report.summary.averageOfflineSupportScore)}`);
   lines.push(`- Pages with high offline support urgency: ${report.summary.highUrgencyOfflineSupportCount}`);
+  lines.push(`- Average media hints score: ${formatPercentScore(report.summary.averageMediaHintsScore)}`);
+  lines.push(`- Pages with high media hints urgency: ${report.summary.highUrgencyMediaHintsCount}`);
   lines.push(`- Average language version score: ${formatPercentScore(report.summary.averageLanguageVersionScore)}`);
   lines.push(`- Pages with high language version urgency: ${report.summary.highUrgencyLanguageVersionCount}`);
   lines.push("");
@@ -2261,6 +2308,18 @@ export function renderMarkdown(report) {
       lines.push(`  - ${item.family}${item.version ? ` ${item.version}` : ""}: seen on ${item.pageCount} page(s)${item.recommendedBaseline ? `, baseline ${item.recommendedBaseline}+` : ""}, urgency ${String(item.urgency || "medium").toUpperCase()}`);
     }
   }
+
+  lines.push("");
+  lines.push("## WSG Media Sustainability Hints");
+  lines.push("");
+  lines.push(`- WSG reference: ${report.mediaHintsSummary.wsgReference.title} (${report.mediaHintsSummary.wsgReference.url})`);
+  lines.push(`- Assessed pages: ${report.mediaHintsSummary.assessedPages}`);
+  lines.push(`- Average media hints score: ${formatPercentScore(report.mediaHintsSummary.averageScore)}`);
+  lines.push(`- High urgency pages: ${report.mediaHintsSummary.highUrgencyPages}`);
+  lines.push(`- Pages with autoplay media: ${report.mediaHintsSummary.pagesWithAutoplay}`);
+  lines.push(`- Pages with unmuted autoplay: ${report.mediaHintsSummary.pagesWithUnmutedAutoplay}`);
+  lines.push(`- Pages without dark mode support: ${report.mediaHintsSummary.pagesWithoutDarkMode}`);
+  lines.push(`- Pages with lazy loading gap (< 50% of images lazy): ${report.mediaHintsSummary.pagesWithLazyLoadingGap}`);
 
   lines.push("");
   lines.push("## WSG Third-Party JavaScript Assessment");
@@ -2525,6 +2584,8 @@ export function renderMarkdown(report) {
     lines.push(`- Optimization urgency: ${(entry.optimizationOpportunities?.urgency || "n/a").toUpperCase()}`);
     lines.push(`- Offline support score: ${formatPercentScore(entry.offlineSupport?.score)}`);
     lines.push(`- Offline support urgency: ${(entry.offlineSupport?.urgency || "n/a").toUpperCase()}`);
+    lines.push(`- Media hints score: ${formatPercentScore(entry.mediaHints?.score)}`);
+    lines.push(`- Media hints urgency: ${(entry.mediaHints?.urgency || "n/a").toUpperCase()}`);
     lines.push(`- Third-party JS risk score: ${formatPercentScore(entry.thirdPartyJs?.score)}`);
     lines.push(`- Third-party JS urgency: ${(entry.thirdPartyJs?.urgency || "n/a").toUpperCase()}`);
 
@@ -2676,6 +2737,14 @@ export function renderMarkdown(report) {
       }
     }
 
+    if ((entry.mediaHints?.recommendations || []).length > 0) {
+      lines.push("- Media sustainability recommendations:");
+      for (const recommendation of entry.mediaHints.recommendations.slice(0, 4)) {
+        lines.push(`  - [${recommendation.urgency.toUpperCase()}] ${recommendation.title}`);
+        lines.push(`    - ${recommendation.detail}`);
+      }
+    }
+
     if (entry.findings.length === 0) {
       lines.push("- No high-priority issues flagged by current mapping.");
       lines.push("");
@@ -2798,6 +2867,7 @@ export function renderHtml(report, markdownText) {
         <li><strong>Average compression score:</strong> ${formatPercentScore(report.summary.averageCompressionScore)}</li>
         <li><strong>Average optimization score:</strong> ${formatPercentScore(report.summary.averageOptimizationScore)}</li>
         <li><strong>Average offline support score:</strong> ${formatPercentScore(report.summary.averageOfflineSupportScore)}</li>
+        <li><strong>Average media hints score:</strong> ${formatPercentScore(report.summary.averageMediaHintsScore)}</li>
         <li><strong>Average language version score:</strong> ${formatPercentScore(report.summary.averageLanguageVersionScore)}</li>
       </ul>
       <p class="muted" style="margin-top:0.75rem;">Download this report: <a href="./report.md">Markdown report</a> · <a href="./report.json">JSON report</a></p>
@@ -2911,6 +2981,21 @@ export function renderHtml(report, markdownText) {
         <li><strong>High urgency pages:</strong> ${report.offlineSupportSummary.highUrgencyPages}</li>
       </ul>
       ${renderOfflineSupportSummary(report.offlineSupportSummary)}
+    </section>
+
+    <section class="card" aria-labelledby="media-hints-heading">
+      <h2 id="media-hints-heading">WSG Media Sustainability Hints</h2>
+      <p class="muted">Checks for autoplay media, dark mode support, and image lazy loading — three user-facing signals that reduce unnecessary data transfer and respect device energy constraints.</p>
+      <ul>
+        <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.mediaHintsSummary.wsgReference.url)}">${escapeHtml(report.mediaHintsSummary.wsgReference.title)}</a></li>
+        <li><strong>Assessed pages:</strong> ${report.mediaHintsSummary.assessedPages}</li>
+        <li><strong>Average media hints score:</strong> ${formatPercentScore(report.mediaHintsSummary.averageScore)} (0 low risk, 100 high risk)</li>
+        <li><strong>High urgency pages:</strong> ${report.mediaHintsSummary.highUrgencyPages}</li>
+        <li><strong>Pages with autoplay media:</strong> ${report.mediaHintsSummary.pagesWithAutoplay}</li>
+        <li><strong>Pages with unmuted autoplay:</strong> ${report.mediaHintsSummary.pagesWithUnmutedAutoplay}</li>
+        <li><strong>Pages without dark mode support:</strong> ${report.mediaHintsSummary.pagesWithoutDarkMode}</li>
+        <li><strong>Pages with lazy loading gap (&lt;50% of images lazy):</strong> ${report.mediaHintsSummary.pagesWithLazyLoadingGap}</li>
+      </ul>
     </section>
 
     <section class="card" aria-labelledby="language-version-heading">
@@ -3500,7 +3585,7 @@ function renderPageSpecificGuidance(siteGuidance) {
       <section>
         <h3>${escapeHtml(site.origin)}</h3>
         <ul>
-          ${pages.slice(0, 6).map((page) => `<li><strong>${escapeHtml(page.url)}</strong><br>Urgency: ${escapeHtml(String(page.urgency || "low").toUpperCase())}. Scores: compression ${escapeHtml(formatPercentScore(page.compressionScore))}, optimization ${escapeHtml(formatPercentScore(page.optimizationScore))}, offline ${escapeHtml(formatPercentScore(page.offlineScore))}, dependency ${escapeHtml(formatPercentScore(page.dependencyScore))}, language ${escapeHtml(formatPercentScore(page.languageScore))}, security ${escapeHtml(formatPercentScore(page.securityScore))}, expected files ${escapeHtml(formatPercentScore(page.expectedFilesScore))}.${page.topRecommendations?.length ? `<br>Top actions: ${page.topRecommendations.slice(0, 3).map((item) => escapeHtml(item.title)).join("; ")}` : ""}</li>`).join("")}
+          ${pages.slice(0, 6).map((page) => `<li><strong>${escapeHtml(page.url)}</strong><br>Urgency: ${escapeHtml(String(page.urgency || "low").toUpperCase())}. Scores: compression ${escapeHtml(formatPercentScore(page.compressionScore))}, optimization ${escapeHtml(formatPercentScore(page.optimizationScore))}, offline ${escapeHtml(formatPercentScore(page.offlineScore))}, dependency ${escapeHtml(formatPercentScore(page.dependencyScore))}, language ${escapeHtml(formatPercentScore(page.languageScore))}, security ${escapeHtml(formatPercentScore(page.securityScore))}, expected files ${escapeHtml(formatPercentScore(page.expectedFilesScore))}, media ${escapeHtml(formatPercentScore(page.mediaHintsScore))}.${page.topRecommendations?.length ? `<br>Top actions: ${page.topRecommendations.slice(0, 3).map((item) => escapeHtml(item.title)).join("; ")}` : ""}</li>`).join("")}
         </ul>
       </section>
     `;
