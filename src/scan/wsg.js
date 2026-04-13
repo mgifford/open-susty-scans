@@ -51,6 +51,12 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
       ];
       const trackingScripts = scripts.filter(src => trackingPatterns.some(p => src.includes(p)));
 
+      // 6. Navigation and Wayfinding (Check for basic landmark coverage)
+      const hasNavigation = !!document.querySelector("nav") || !!document.querySelector("[role='navigation']");
+
+      // 7. HTML Semantics (Check for basic document structure)
+      const hasMainContent = !!document.querySelector("main") || !!document.querySelector("[role='main']");
+
       return {
         hasPrintStyles,
         hasReducedMotion,
@@ -67,6 +73,10 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
         tracking: {
           count: trackingScripts.length,
           scripts: trackingScripts
+        },
+        semantics: {
+          hasNavigation,
+          hasMainContent
         }
       };
     });
@@ -139,6 +149,34 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
       });
     }
 
+    if (!wsgData.semantics.hasNavigation) {
+      score -= 10;
+      recommendations.push({
+        guideline: "2.5",
+        title: "Missing explicit navigation structure",
+        urgency: "medium",
+        detail: "No <nav> or role=\"navigation\" tags found. Proper wayfinding helps users find content efficiently and reduces unnecessary page loads.",
+        wsid: "2.navigation wayfinding",
+        wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-that-navigation-and-wayfinding-are-well-structured",
+        assessor: "script",
+        example: "<nav aria-label=\"Primary\">\n  <ul>\n    <li><a href=\"/\">Home</a></li>\n  </ul>\n</nav>"
+      });
+    }
+
+    if (!wsgData.semantics.hasMainContent) {
+      score -= 5;
+      recommendations.push({
+        guideline: "3.7",
+        title: "Missing main content landmark",
+        urgency: "medium",
+        detail: "No <main> or role=\"main\" tags found. Semantic HTML reduces code bloat and allows both assistive technology and web crawlers to parse content more efficiently.",
+        wsid: "3.ensure code follows good semantic practices",
+        wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-code-follows-good-semantic-practices",
+        assessor: "script",
+        example: "<main>\n  <article>\n    <h1>Page Title</h1>\n    <p>Content goes here.</p>\n  </article>\n</main>"
+      });
+    }
+
     // --- Human review hints: UX -------------------------------------------------
     recommendations.push({
       guideline: "2.4",
@@ -195,29 +233,9 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
       guideline: "2.10",
       title: "Review Content Conciseness",
       urgency: "investigate",
-      detail: "Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload, reading time, and inference energy for search engines and AI crawlers indexing this content.",
+      detail: "Use a Large Language Model (e.g. locally or via API) to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload, reading time, and inference energy for search engines indexing this content.",
       wsid: "2.provide clear inclusive content",
       wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#provide-clear-inclusive-content-with-purpose",
-      assessor: "ai"
-    });
-
-    recommendations.push({
-      guideline: "2.5",
-      title: "Evaluate Navigation and Wayfinding Quality",
-      urgency: "investigate",
-      detail: "Ask an LLM to assess whether the navigation labels, headings, and page hierarchy allow a user to locate content in as few steps as possible. Poor information architecture forces repeat page loads and increases server and user energy costs.",
-      wsid: "2.navigation wayfinding",
-      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-that-navigation-and-wayfinding-are-well-structured",
-      assessor: "ai"
-    });
-
-    recommendations.push({
-      guideline: "3.7",
-      title: "Evaluate HTML Semantic Correctness",
-      urgency: "investigate",
-      detail: "Use an LLM or structured analysis tool to verify that HTML uses semantic elements (article, nav, main, section, aside) correctly. Proper semantics reduces duplicate markup, improves accessibility, and allows browsers and crawlers to process pages more efficiently.",
-      wsid: "3.ensure code follows good semantic practices",
-      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-code-follows-good-semantic-practices",
       assessor: "ai"
     });
 

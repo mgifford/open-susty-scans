@@ -18,6 +18,13 @@ It is designed to support WSG SC 3.1:
 - Set goals based on performance and energy impact
 - https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact
 
+### Assessor Categories
+The tool evaluates guidelines across three categories, rendered as colored badges in output reports:
+- `[SCRIPT]`: Evaluated deterministically by code via Puppeteer/Lighthouse heuristics.
+- `[HUMAN]`: A manual investigation hint. These flags guide maintainers toward subjective tests (like UX journey efficiency) that require human evaluation.
+- `[AI]`: An automated heuristic hint. **Note: This tool does not execute an LLM or connect to any AI APIs by default.** The AI badge simply indicates that a specific guideline (e.g., evaluating semantic content conciseness) is best suited for an LLM to review.
+
+
 ## Prerequisites
 
 - Node.js 24+
