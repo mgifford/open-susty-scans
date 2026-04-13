@@ -2818,6 +2818,7 @@ export function renderHtml(report, markdownText) {
   <title>Sustainability Report - ${escapeHtml(report.scanTitle)}</title>
   <style>
     :root {
+      color-scheme: light dark;
       --bg: #f7f8f4;
       --surface: #ffffff;
       --ink: #1d2a2a;
@@ -2826,15 +2827,26 @@ export function renderHtml(report, markdownText) {
       --warning: #8a4b08;
       --border: #d9e1dd;
     }
-    body { margin: 0; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: linear-gradient(180deg, #edf5ef, var(--bg)); color: var(--ink); }
-    .wrap { max-width: 1100px; margin: 0 auto; padding: 1rem; }
-    h1, h2, h3 { line-height: 1.2; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin: 1rem 0; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { text-align: left; padding: 0.55rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #141a1a;
+        --surface: #1d2a2a;
+        --ink: #d9e1dd;
+        --muted: #a3b2ad;
+        --accent: #4ac26b;
+        --border: #3d4d48;
+      }
+    }
+    body { margin: 0; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
+    .wrap { max-inline-size: 1100px; margin-inline: auto; padding: 1rem; }
+    :where(h1, h2, h3) { line-height: 1.2; text-wrap: balance; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-block: 1rem; }
+    :where(img, svg, video, iframe) { max-inline-size: 100%; block-size: auto; }
+    table { inline-size: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 0.55rem; border-block-end: 1px solid var(--border); vertical-align: top; }
     a { color: var(--accent); }
-    .snippet textarea { width: 100%; min-height: 180px; font-family: ui-monospace, Menlo, monospace; }
-    .copy-btn { margin-top: 0.5rem; padding: 0.45rem 0.7rem; border: 1px solid var(--accent); background: var(--accent); color: #fff; border-radius: 8px; cursor: pointer; }
+    .snippet textarea { inline-size: 100%; min-block-size: 180px; font-family: ui-monospace, Menlo, monospace; }
+    .copy-btn { margin-block-start: 0.5rem; padding: 0.45rem 0.7rem; border: 1px solid var(--accent); background: var(--accent); color: #fff; border-radius: 8px; cursor: pointer; }
     .copy-btn:focus, a:focus { outline: 3px solid #ffd166; outline-offset: 2px; }
     .muted { color: var(--muted); }
     @media (max-width: 700px) {

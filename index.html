@@ -6,8 +6,10 @@
   <title>Open Susty Scans – Submit a Scan</title>
   <meta name="description" content="Open Susty Scans is a free, open-source tool that checks websites for sustainability signals using Lighthouse, CO2.js, and WSG-aligned analysis. Submit up to 500 URLs and get detailed reports." />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, ::before, ::after { box-sizing: border-box; }
     :root {
+      color-scheme: light dark;
+      accent-color: #0d6b52;
       --bg: #f4f2ec;
       --surface: #ffffff;
       --ink: #1f2d2a;
@@ -22,7 +24,23 @@
       --error-fg: #cf222e;
       --error-border: #ff8182;
     }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #141a1a;
+        --surface: #1d2a2a;
+        --ink: #d4ddd8;
+        --muted: #a3b2ad;
+        --accent: #4ac26b;
+        --accent-dark: #3a9b55;
+        --border: #3d4d48;
+        --success-bg: #143d2a;
+        --success-fg: #4ac26b;
+        --error-bg: #3d141a;
+        --error-fg: #ff8182;
+      }
+    }
     body {
+      margin: 0;
       font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
       line-height: 1.6;
       color: var(--ink);
@@ -30,73 +48,77 @@
       padding: 2rem;
     }
     .container {
-      max-width: 900px;
-      margin: 0 auto;
+      max-inline-size: 900px;
+      margin-inline: auto;
       background: var(--surface);
       padding: 2rem;
       border-radius: 14px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.12);
     }
-    h1 { color: var(--accent); margin-bottom: 0.5rem; font-size: 2rem; }
-    .subtitle { color: var(--muted); margin-bottom: 2rem; }
+    :where(h1, h2, h3) { text-wrap: balance; }
+    h1 { color: var(--accent); margin-block-end: 0.5rem; font-size: 2rem; }
+    .subtitle { color: var(--muted); margin-block-end: 2rem; text-wrap: pretty; }
     nav.topnav {
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border);
+      margin-block-end: 1.5rem;
+      padding-block-end: 1rem;
+      border-block-end: 1px solid var(--border);
     }
     nav.topnav a {
       color: var(--accent);
       text-decoration: none;
-      margin-right: 1.5rem;
+      margin-inline-end: 1.5rem;
       font-weight: 600;
     }
     nav.topnav a:hover { text-decoration: underline; }
-    .form-group { margin-bottom: 1.5rem; }
-    label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
-    .help-text { font-size: 0.875rem; color: var(--muted); margin-bottom: 0.5rem; }
+    .form-group { margin-block-end: 1.5rem; }
+    label { display: block; font-weight: 600; margin-block-end: 0.5rem; }
+    .help-text { font-size: 0.875rem; color: var(--muted); margin-block-end: 0.5rem; }
     textarea, input[type="text"] {
-      width: 100%;
+      inline-size: 100%;
       padding: 0.75rem;
       border: 1px solid var(--border);
       border-radius: 6px;
       font-family: ui-monospace, monospace;
       font-size: 0.875rem;
       line-height: 1.5;
+      background: var(--surface);
+      color: var(--ink);
     }
-    textarea { min-height: 200px; resize: vertical; }
+    textarea { min-block-size: 200px; resize: vertical; }
     textarea:focus, input[type="text"]:focus {
       outline: none;
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(13,107,82,0.15);
     }
     .preview {
-      margin-top: 1.5rem;
+      margin-block-start: 1.5rem;
       padding: 1rem;
       background: var(--bg);
       border-radius: 6px;
       display: none;
     }
     .preview.visible { display: block; }
-    .preview h3 { font-size: 1rem; margin-bottom: 0.75rem; }
-    .url-count { margin-bottom: 0.75rem; font-weight: 600; }
+    .preview h3 { font-size: 1rem; margin-block-end: 0.75rem; }
+    .url-count { margin-block-end: 0.75rem; font-weight: 600; }
     .url-count.valid { color: var(--success-fg); }
     .url-count.invalid { color: var(--error-fg); }
-    .url-list { max-height: 300px; overflow-y: auto; margin-top: 0.5rem; }
+    .url-list { max-block-size: 300px; overflow-y: auto; margin-block-start: 0.5rem; }
     .url-item {
       padding: 0.5rem;
-      margin-bottom: 0.25rem;
+      margin-block-end: 0.25rem;
       border-radius: 4px;
       font-family: ui-monospace, monospace;
       font-size: 0.875rem;
     }
     .url-item.accepted { background: var(--success-bg); color: var(--success-fg); }
     .url-item.rejected { background: var(--error-bg); color: var(--error-fg); }
-    .url-item .reason { font-size: 0.75rem; margin-top: 0.25rem; opacity: 0.8; }
+    .url-item .reason { font-size: 0.75rem; margin-block-start: 0.25rem; opacity: 0.8; }
     button[type="submit"] {
       background: var(--accent);
       color: #fff;
       border: none;
-      padding: 0.75rem 1.5rem;
+      padding-block: 0.75rem;
+      padding-inline: 1.5rem;
       border-radius: 6px;
       font-size: 1rem;
       font-weight: 600;
@@ -108,7 +130,7 @@
     .error-message, .success-message {
       padding: 1rem;
       border-radius: 6px;
-      margin-top: 1rem;
+      margin-block-start: 1rem;
       display: none;
     }
     .error-message.visible, .success-message.visible { display: block; }
@@ -127,26 +149,26 @@
     .loading.visible { display: block; }
     .spinner {
       display: inline-block;
-      width: 20px; height: 20px;
+      inline-size: 20px; block-size: 20px;
       border: 3px solid rgba(0,0,0,0.1);
       border-radius: 50%;
-      border-top-color: var(--accent);
+      border-block-start-color: var(--accent);
       animation: spin 1s ease-in-out infinite;
       vertical-align: middle;
-      margin-right: 0.5rem;
+      margin-inline-end: 0.5rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     footer {
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
+      margin-block-start: 2rem;
+      padding-block-start: 1.5rem;
+      border-block-start: 1px solid var(--border);
       text-align: center;
       color: var(--muted);
     }
     footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
     footer a:hover { text-decoration: underline; }
     @media (max-width: 600px) {
-      body { padding: 0.75rem; }
+      body { padding-block: 0.75rem; padding-inline: 0.75rem; }
       .container { padding: 1rem; }
     }
   </style>

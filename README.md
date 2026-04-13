@@ -464,7 +464,8 @@ All features, bug fixes, documentation, and workflow changes in this repository 
 
 | AI / LLM | Role | Context |
 |---|---|---|
-| GitHub Copilot Coding Agent (Claude / Anthropic) | Code authoring, refactoring, documentation, CI workflow design | Development only — used interactively via GitHub Copilot to implement all feature PRs and fixes, including Eco CI pipeline energy tracking |
+| GitHub Copilot Coding Agent (Claude / Anthropic) | Code authoring, refactoring, documentation, CI workflow design | Development only — used interactively via GitHub Copilot to implement all feature PRs and fixes |
+| Antigravity (Gemini 3 Flash) | Codebase review and documentation auditing | Development only — used interactively to review the codebase and ensure alignment with project standards |
 
 ### Used at runtime
 

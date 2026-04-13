@@ -44,6 +44,7 @@ Agent-facing instructions for working in this repository.
 
 - Use ESM JavaScript style consistent with existing `src` modules.
 - Prefer small, composable pure functions for analysis and rendering logic.
+- Follow the **Minimal and efficient CSS** policy in `SUSTAINABILITY.md` for all UI changes (logical properties, `color-scheme`, and trusting browser defaults).
 - Keep report text deterministic and concise; avoid unnecessary wording churn that creates noisy diffs.
 - Preserve existing report schema fields unless a change explicitly requires schema evolution.
 - When adding report sections, update all three outputs: JSON structure, Markdown section, and HTML section.
@@ -59,6 +60,7 @@ Agent-facing instructions for working in this repository.
 
 - Scan only publicly reachable URLs; do not add logic that probes authenticated or private targets.
 - Do not hardcode tokens or secrets. Use `GITHUB_TOKEN`/workflow secrets.
+- Follow the **Dependency selection and software longevity** policy in `SUSTAINABILITY.md`. Prefer lightweight, actively maintained dependencies and prioritize native platform features over library abstractions.
 - Keep external requests minimal and explicit (Lighthouse target URLs, Green Web checks, GitHub issue intake).
 - Avoid destructive git operations in automation and local instructions.
 

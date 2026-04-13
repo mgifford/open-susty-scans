@@ -6,6 +6,8 @@
   <title>Open Susty Scans – Reports</title>
   <style>
     :root {
+      color-scheme: light dark;
+      accent-color: #0d6b52;
       --bg: #f4f2ec;
       --surface: #ffffff;
       --ink: #1f2d2a;
@@ -14,26 +16,39 @@
       --accent-dark: #09503d;
       --border: #d4ddd8;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #141a1a;
+        --surface: #1d2a2a;
+        --ink: #d4ddd8;
+        --muted: #a3b2ad;
+        --accent: #4ac26b;
+        --accent-dark: #3a9b55;
+        --border: #3d4d48;
+      }
+    }
+    *, ::before, ::after { box-sizing: border-box; }
     body {
+      margin: 0;
       background: radial-gradient(circle at top right, #e7efe9 0%, var(--bg) 45%);
       color: var(--ink);
       font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
       line-height: 1.6;
       padding: 2rem;
     }
-    .container { max-width: 1120px; margin: 0 auto; background: var(--surface); padding: 2rem; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
-    h1 { color: var(--accent); margin-bottom: 0.5rem; font-size: 2rem; }
-    .subtitle { color: var(--muted); margin-bottom: 2rem; }
-    nav.topnav { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
-    nav.topnav a { color: var(--accent); text-decoration: none; margin-right: 1.5rem; font-weight: 600; }
+    .container { max-inline-size: 1120px; margin-inline: auto; background: var(--surface); padding: 2rem; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+    :where(h1, h2, h3) { text-wrap: balance; }
+    h1 { color: var(--accent); margin-block-end: 0.5rem; font-size: 2rem; }
+    .subtitle { color: var(--muted); margin-block-end: 2rem; text-wrap: pretty; }
+    nav.topnav { margin-block-end: 1.5rem; padding-block-end: 1rem; border-block-end: 1px solid var(--border); }
+    nav.topnav a { color: var(--accent); text-decoration: none; margin-inline-end: 1.5rem; font-weight: 600; }
     nav.topnav a:hover { text-decoration: underline; }
     .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    table { width: 100%; border-collapse: collapse; min-width: 820px; }
-    th, td { text-align: left; padding: 0.6rem 0.55rem; border-bottom: 1px solid var(--border); }
-    th { background: var(--bg); color: #2a3a36; }
-    tbody tr:hover { background: #f0f7f4; }
-    a { color: var(--accent); text-decoration: none; margin-right: 0.5rem; }
+    table { inline-size: 100%; border-collapse: collapse; min-inline-size: 820px; }
+    th, td { text-align: left; padding: 0.6rem 0.55rem; border-block-end: 1px solid var(--border); }
+    th { background: var(--bg); color: var(--ink); }
+    tbody tr:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+    a { color: var(--accent); text-decoration: none; margin-inline-end: 0.5rem; }
     a:hover { text-decoration: underline; }
     .sort-btn {
       background: none; border: none; font: inherit; font-weight: 600;
@@ -75,7 +90,7 @@
     .page-btn-active:hover { background: var(--accent-dark); }
     .page-ellipsis { color: var(--muted); padding: 0 0.25rem; }
     @media (max-width: 740px) {
-      body { padding: 0.75rem; }
+      body { padding-block: 0.75rem; padding-inline: 0.75rem; }
       .container { padding: 1rem; }
     }
   </style>
