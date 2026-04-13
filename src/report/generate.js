@@ -70,6 +70,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
       securityLight: result.sustainability.securityLight,
       expectedFiles: result.sustainability.expectedFiles,
       mediaHints: result.sustainability.mediaHints,
+      wsgCustom: result.sustainability.wsgCustom,
       compressionOpportunities,
       optimizationOpportunities,
       dependencyMaintenance,
@@ -100,6 +101,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
   const offlineSupportSummary = buildOfflineSupportSummary(perUrl);
   const languageVersionSummary = buildLanguageVersionSummary(perUrl);
   const mediaHintsSummary = buildMediaHintsSummary(perUrl);
+  const wsgHighlightsSummary = buildWsgHighlightsSummary(perUrl, wsgIndex);
   const siteGuidance = buildSiteGuidance(perUrl);
 
   return {
@@ -123,6 +125,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
     offlineSupportSummary,
     languageVersionSummary,
     mediaHintsSummary,
+    wsgHighlightsSummary,
     siteGuidance,
     crossPagePatterns,
     results: perUrl
@@ -1442,6 +1445,43 @@ function buildMediaHintsSummary(perUrl) {
   };
 }
 
+function buildWsgHighlightsSummary(perUrl, wsgIndex) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  const recurringMap = new Map();
+
+  for (const entry of okEntries) {
+    const recommendations = entry.wsgCustom?.recommendations || [];
+    for (const rec of recommendations) {
+      const key = rec.wsid || rec.title;
+      const current = recurringMap.get(key) || {
+        ...rec,
+        pageCount: 0,
+        pages: new Set()
+      };
+      if (!current.pages.has(entry.url)) {
+        current.pages.add(entry.url);
+        current.pageCount += 1;
+      }
+      recurringMap.set(key, current);
+    }
+  }
+
+  const highlights = Array.from(recurringMap.values()).map(h => {
+    // Attempt to enrich with wsgIndex data (examples/resources)
+    const criteria = wsgIndex.criteria.get(h.wsid?.toLowerCase());
+    return {
+      ...h,
+      criteria: criteria || null
+    };
+  }).sort((a, b) => b.pageCount - a.pageCount);
+
+  return {
+    assessedPages: okEntries.length,
+    averageScore: average(okEntries.map(e => e.wsgCustom?.score)),
+    highlights
+  };
+}
+
 function buildSecurityLightSummary(perUrl) {
   const okEntries = perUrl.filter((item) => item.status === "ok");
   let pagesWithoutCsp = 0;
@@ -2322,6 +2362,27 @@ export function renderMarkdown(report) {
   lines.push(`- Pages with lazy loading gap (< 50% of images lazy): ${report.mediaHintsSummary.pagesWithLazyLoadingGap}`);
 
   lines.push("");
+  lines.push("## WSG Success Criteria & Best Practices");
+  lines.push("");
+  lines.push(`- Assessed pages: ${report.wsgHighlightsSummary.assessedPages}`);
+  lines.push(`- Average WSG compliance score: ${formatPercentScore(report.wsgHighlightsSummary.averageScore)}`);
+
+  for (const h of report.wsgHighlightsSummary.highlights) {
+    lines.push("");
+    lines.push(`### [${h.urgency.toUpperCase()}] ${h.title}`);
+    lines.push(h.detail);
+    lines.push(`- Recurs on ${h.pageCount} page(s).`);
+    if (h.criteria) {
+      lines.push("");
+      lines.push("**Best Practice Example:**");
+      lines.push("```javascript");
+      lines.push(h.criteria.example || "// Implementation details in documentation");
+      lines.push("```");
+      lines.push(`- [WSG Guideline ${h.criteria.guideline.id}](${h.criteria.guideline.url})`);
+    }
+  }
+
+  lines.push("");
   lines.push("## WSG Third-Party JavaScript Assessment");
   lines.push("");
   lines.push(`- WSG reference: ${report.thirdPartyJsSummary.wsgReference.title} (${report.thirdPartyJsSummary.wsgReference.url})`);
@@ -2849,6 +2910,15 @@ export function renderHtml(report, markdownText) {
     .copy-btn { margin-block-start: 0.5rem; padding: 0.45rem 0.7rem; border: 1px solid var(--accent); background: var(--accent); color: #fff; border-radius: 8px; cursor: pointer; }
     .copy-btn:focus, a:focus { outline: 3px solid #ffd166; outline-offset: 2px; }
     .muted { color: var(--muted); }
+    .wsg-item { margin-block: 1.5rem; border-block-start: 1px solid var(--border); padding-block-start: 1rem; }
+    .wsg-item:first-child { border-block-start: none; padding-block-start: 0; }
+    .best-practice { background: rgba(11, 110, 79, 0.05); border-left: 4px solid var(--accent); padding: 1rem; border-radius: 0 8px 8px 0; margin-block: 0.75rem; }
+    .best-practice h4 { margin-block: 0 0.5rem; color: var(--accent); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .best-practice pre { margin: 0; font-family: ui-monospace, Menlo, monospace; font-size: 0.85rem; overflow-x: auto; white-space: pre-wrap; }
+    .urgency-badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+    .urgency-high { background: #fee2e2; color: #991b1b; }
+    .urgency-medium { background: #fef3c7; color: #92400e; }
+    .urgency-low { background: #ecfdf5; color: #065f46; }
     @media (max-width: 700px) {
       th:nth-child(3), td:nth-child(3), th:nth-child(6), td:nth-child(6) { display: none; }
       .snippet textarea { min-height: 220px; }
@@ -3008,6 +3078,16 @@ export function renderHtml(report, markdownText) {
         <li><strong>Pages without dark mode support:</strong> ${report.mediaHintsSummary.pagesWithoutDarkMode}</li>
         <li><strong>Pages with lazy loading gap (&lt;50% of images lazy):</strong> ${report.mediaHintsSummary.pagesWithLazyLoadingGap}</li>
       </ul>
+    </section>
+
+    <section class="card" aria-labelledby="wsg-highlights-heading">
+      <h2 id="wsg-highlights-heading">WSG Success Criteria &amp; Best Practices</h2>
+      <p class="muted">Automated validation of specific Web Sustainability Guidelines with actionable best practice examples and resource links.</p>
+      <ul>
+        <li><strong>Assessed pages:</strong> ${report.wsgHighlightsSummary.assessedPages}</li>
+        <li><strong>Average WSG compliance score:</strong> ${formatPercentScore(report.wsgHighlightsSummary.averageScore)}</li>
+      </ul>
+      ${renderWsgHighlights(report.wsgHighlightsSummary.highlights)}
     </section>
 
     <section class="card" aria-labelledby="language-version-heading">
@@ -3305,6 +3385,35 @@ function renderThirdPartyProviders(providers) {
       ${providers.slice(0, 10).map((provider) => `<li><strong>${escapeHtml(provider.hostname)}</strong>: ${escapeHtml(formatGreenStatus(provider.status))}${provider.hostedBy ? ` (${escapeHtml(provider.hostedBy)})` : ""}; ${provider.pageCount} page(s), ${provider.requestCount} request(s), ${escapeHtml(formatBytes(provider.transferBytes))}</li>`).join("")}
     </ul>
   `;
+}
+
+function renderWsgHighlights(highlights) {
+  if (!highlights || highlights.length === 0) {
+    return "<p>No recurring WSG criteria failures detected in this sample.</p>";
+  }
+
+  return highlights.map(h => `
+    <div class="wsg-item">
+      <h3>
+        <span class="urgency-badge urgency-${h.urgency}">${h.urgency}</span>
+        ${escapeHtml(h.title)}
+      </h3>
+      <p>${escapeHtml(h.detail)}</p>
+      <p class="muted">Recurs on ${h.pageCount} pages.</p>
+      
+      ${(h.criteria?.example || h.example) ? `
+        <div class="best-practice">
+          <h4>Best Practice Example</h4>
+          <pre><code>${escapeHtml(h.criteria?.example || h.example || "// Refer to documentation for implementation details")}</code></pre>
+          ${h.criteria ? `
+          <p class="muted" style="margin-top: 0.5rem; font-size: 0.8rem;">
+            Source: <a href="${escapeAttr(h.criteria.guideline.url)}" target="_blank">WSG Guideline ${h.criteria.guideline.id}</a>
+          </p>
+          ` : ""}
+        </div>
+      ` : ""}
+    </div>
+  `).join("");
 }
 
 function renderFormValidationSummary(summary) {

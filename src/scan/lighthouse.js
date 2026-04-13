@@ -2,6 +2,7 @@ import lighthouse from "lighthouse";
 import { co2 as co2Factory } from "@tgwf/co2";
 import puppeteer from "puppeteer";
 import { checkGreenWebHostnames } from "../greenweb/client.js";
+import { buildWsgCustomAssessment } from "./wsg.js";
 
 const co2Model = new co2Factory({ model: "swd" });
 
@@ -64,6 +65,11 @@ export async function scanUrls(urls) {
           browser,
           pageUrl: lhr.finalDisplayedUrl || lhr.finalUrl || url
         });
+        const wsgCustom = await buildWsgCustomAssessment({
+          browser,
+          pageUrl: lhr.finalDisplayedUrl || lhr.finalUrl || url,
+          lighthouseAudits: lhr.audits
+        });
 
         results.push({
           url,
@@ -91,7 +97,8 @@ export async function scanUrls(urls) {
             layoutAdaptation,
             securityLight,
             expectedFiles,
-            mediaHints
+            mediaHints,
+            wsgCustom
           }
         });
       } catch (error) {

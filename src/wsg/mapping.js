@@ -53,7 +53,7 @@ export function prioritizedFindingsFromLighthouse(lhr, wsgIndex) {
 
     const impact = score === null ? "investigate" : score < 0.5 ? "high" : "medium";
     const wsgUrl = mapAuditToWsg(auditId);
-    const wsg = wsgUrl ? wsgIndex.get(wsgUrl) : null;
+    const wsg = wsgUrl ? wsgIndex.guidelines.get(wsgUrl) : null;
 
     findings.push({
       auditId,
@@ -100,7 +100,7 @@ export function analyzeRedundancyFromLighthouse(lhr, wsgIndex) {
   const score = Math.round(weighted * 100);
   const urgency = redundancyUrgency(score, totalRedundantBytes);
   const wsgUrl = "https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information";
-  const wsg = wsgIndex.get(wsgUrl) || null;
+  const wsg = wsgIndex.guidelines.get(wsgUrl) || null;
 
   return {
     score,
@@ -140,7 +140,7 @@ export function analyzeModularizationFromLighthouse(lhr, wsgIndex) {
   const weighted = (0.4 * heavyRatio) + (0.2 * lazyMediaRatio) + (0.2 * codeSplitRatio) + (0.1 * renderBlockingRatio) + (0.1 * requestDensityPenalty);
   const score = Math.round(weighted * 100);
   const urgency = modularizationUrgency(score, heavyBytes, heavyRequests.length);
-  const wsg = wsgIndex.get(MODULARIZATION_WSG_URL) || null;
+  const wsg = wsgIndex.guidelines.get(MODULARIZATION_WSG_URL) || null;
 
   return {
     score,
@@ -179,7 +179,7 @@ export function analyzeDeadCodeFromLighthouse(lhr, wsgIndex) {
   const weighted = (0.35 * cssRatio) + (0.45 * jsRatio) + (0.2 * htmlPenalty);
   const score = Math.round(weighted * 100);
   const urgency = deadCodeUrgency(score, cssUnusedBytes + jsUnusedBytes + duplicatedJsBytes, domStats.totalBodyElements);
-  const wsg = wsgIndex.get(DEAD_CODE_WSG_URL) || null;
+  const wsg = wsgIndex.guidelines.get(DEAD_CODE_WSG_URL) || null;
 
   return {
     score,
@@ -234,7 +234,7 @@ export function analyzeNonCriticalResourcesFromLighthouse(lhr, wsgIndex) {
   const weighted = (0.35 * imageRatio) + (0.3 * jsRatio) + (0.2 * cssRatio) + (0.15 * renderBlockingPenalty);
   const score = Math.round(weighted * 100);
   const urgency = nonCriticalUrgency({ score, deferrableBytes: offscreenImageSavings + unusedJavascriptSavings + unusedCssSavings, renderBlockingMs });
-  const wsg = wsgIndex.get(NON_CRITICAL_WSG_URL) || null;
+  const wsg = wsgIndex.guidelines.get(NON_CRITICAL_WSG_URL) || null;
 
   return {
     score,

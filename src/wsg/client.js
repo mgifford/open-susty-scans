@@ -9,7 +9,10 @@ export async function fetchWsgGuidelines() {
 }
 
 export function indexGuidelinesByUrl(wsgData) {
-  const index = new Map();
+  const index = {
+    guidelines: new Map(),
+    criteria: new Map()
+  };
   const categories = wsgData?.category || [];
 
   for (const category of categories) {
@@ -18,14 +21,29 @@ export function indexGuidelinesByUrl(wsgData) {
       if (!guideline.url) {
         continue;
       }
-      index.set(guideline.url, {
+
+      const guidelineData = {
         categoryId: category.id,
         categoryName: category.name,
         id: guideline.id,
         title: guideline.guideline,
         url: guideline.url,
-        subheading: guideline.subheading || "",
-      });
+        subheading: guideline.subheading || ""
+      };
+
+      index.guidelines.set(guideline.url, guidelineData);
+
+      const criteria = guideline.criteria || [];
+      for (const criterion of criteria) {
+        // We use a combination of title and guideline ID as a key for mapping audits
+        const key = `${guideline.id}.${criterion.title}`.toLowerCase();
+        index.criteria.set(key, {
+          ...criterion,
+          guideline: guidelineData,
+          benefits: guideline.benefits || [],
+          example: guideline.example || null
+        });
+      }
     }
   }
 
