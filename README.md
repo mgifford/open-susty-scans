@@ -20,7 +20,7 @@ It is designed to support WSG SC 3.1:
 
 ## Prerequisites
 
-- Node.js 20+
+- Node.js 24+
 - npm 10+
 - Linux dependencies needed for headless Chromium (already installed in many CI/dev containers)
 
