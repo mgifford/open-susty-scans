@@ -1,17 +1,17 @@
 const AUDIT_TO_WSG = {
-  "largest-contentful-paint": "https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact",
-  "speed-index": "https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact",
-  "unused-javascript": "https://www.w3.org/TR/web-sustainability-guidelines/#use-dependencies-appropriately-and-ensure-maintenance",
-  "unused-css-rules": "https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information",
-  "modern-image-formats": "https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use",
-  "uses-optimized-images": "https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use",
-  "offscreen-images": "https://www.w3.org/TR/web-sustainability-guidelines/#modularize-bandwidth-heavy-components",
-  "render-blocking-resources": "https://www.w3.org/TR/web-sustainability-guidelines/#use-the-most-efficient-solution-for-your-service",
-  "uses-text-compression": "https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information",
-  "uses-rel-preconnect": "https://www.w3.org/TR/web-sustainability-guidelines/#use-the-most-efficient-solution-for-your-service",
-  "server-response-time": "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-infrastructure-fits-project-requirements",
-  "total-byte-weight": "https://www.w3.org/TR/web-sustainability-guidelines/#define-performance-and-environmental-budgets",
-  "dom-size": "https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information"
+  "largest-contentful-paint": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact", assessor: "script" },
+  "speed-index": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact", assessor: "script" },
+  "unused-javascript": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#use-dependencies-appropriately-and-ensure-maintenance", assessor: "script" },
+  "unused-css-rules": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information", assessor: "script" },
+  "modern-image-formats": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use", assessor: "script" },
+  "uses-optimized-images": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use", assessor: "script" },
+  "offscreen-images": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#modularize-bandwidth-heavy-components", assessor: "script" },
+  "render-blocking-resources": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#use-the-most-efficient-solution-for-your-service", assessor: "script" },
+  "uses-text-compression": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information", assessor: "script" },
+  "uses-rel-preconnect": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#use-the-most-efficient-solution-for-your-service", assessor: "script" },
+  "server-response-time": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-infrastructure-fits-project-requirements", assessor: "script" },
+  "total-byte-weight": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#define-performance-and-environmental-budgets", assessor: "script" },
+  "dom-size": { url: "https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information", assessor: "script" }
 };
 
 const REDUNDANCY_AUDITS = [
@@ -33,7 +33,13 @@ const REDUNDANCY_RELATED_AUDITS = [
 ];
 
 export function mapAuditToWsg(auditId) {
-  return AUDIT_TO_WSG[auditId] || null;
+  const entry = AUDIT_TO_WSG[auditId];
+  return entry ? entry.url : null;
+}
+
+export function mapAuditToAssessor(auditId) {
+  const entry = AUDIT_TO_WSG[auditId];
+  return entry ? entry.assessor : "script";
 }
 
 export function prioritizedFindingsFromLighthouse(lhr, wsgIndex) {
@@ -53,6 +59,7 @@ export function prioritizedFindingsFromLighthouse(lhr, wsgIndex) {
 
     const impact = score === null ? "investigate" : score < 0.5 ? "high" : "medium";
     const wsgUrl = mapAuditToWsg(auditId);
+    const assessor = mapAuditToAssessor(auditId);
     const wsg = wsgUrl ? wsgIndex.guidelines.get(wsgUrl) : null;
 
     findings.push({
@@ -63,6 +70,7 @@ export function prioritizedFindingsFromLighthouse(lhr, wsgIndex) {
       displayValue: audit.displayValue || "",
       impact,
       wsg,
+      assessor,
       issueTemplate: buildIssueTemplate(auditId, audit, wsg)
     });
   }
