@@ -37,7 +37,8 @@ async function main() {
   scanTitle = scanTitle || issueDerivedTitle || "WSG Sustainability Scan";
 
   // When no explicit URLs were provided, attempt automatic discovery from the
-  // base URL embedded in the issue title (e.g. "SCAN: https://www.gsa.gov/").
+  // base URL embedded in the issue title (e.g. "SCAN: https://www.gsa.gov/"
+  // or "SCAN: gsa.gov").
   if (urls.length === 0 && issueDerivedTitle) {
     const baseUrl = extractBaseUrlFromTitle(issueDerivedTitle);
     if (baseUrl) {

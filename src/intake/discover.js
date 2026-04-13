@@ -15,6 +15,7 @@
 const DEFAULT_LIMIT = 100;
 const MAX_LIMIT = 500;
 const FETCH_TIMEOUT_MS = 15000;
+const TITLE_DOMAIN_PATTERN = /\b(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}(?:\/\S*)?/i;
 
 /** File extensions that are never HTML pages. */
 const NON_HTML_EXTS = new Set([
@@ -90,13 +91,18 @@ export function parseCountHint(body) {
 
 /**
  * Extract the first http/https URL from a string such as
- * "SCAN: https://www.gsa.gov/".  Returns the origin + "/" or null.
+ * "SCAN: https://www.gsa.gov/".
+ * Also accepts bare domains such as "SCAN: gsa.gov".
+ * Returns the origin + "/" or null.
  */
 export function extractBaseUrlFromTitle(title) {
   if (!title) return null;
   const match = title.match(/https?:\/\/\S+/);
-  if (!match) return null;
-  const candidate = match[0].replace(/[.,!?;:'")\]>]+$/, "");
+  // Matches DNS-safe domains with an optional path, e.g. "example.gov/path".
+  const domainMatch = title.match(TITLE_DOMAIN_PATTERN);
+  if (!match && !domainMatch) return null;
+  const candidateWithProtocol = (match ? match[0] : `https://${domainMatch[0]}`);
+  const candidate = candidateWithProtocol.replace(/[.,!?;:'")\]>]+$/, "");
   try {
     const u = new URL(candidate);
     return `${u.origin}/`;
