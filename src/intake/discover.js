@@ -90,13 +90,17 @@ export function parseCountHint(body) {
 
 /**
  * Extract the first http/https URL from a string such as
- * "SCAN: https://www.gsa.gov/".  Returns the origin + "/" or null.
+ * "SCAN: https://www.gsa.gov/".
+ * Also accepts bare domains such as "SCAN: gsa.gov".
+ * Returns the origin + "/" or null.
  */
 export function extractBaseUrlFromTitle(title) {
   if (!title) return null;
   const match = title.match(/https?:\/\/\S+/);
-  if (!match) return null;
-  const candidate = match[0].replace(/[.,!?;:'")\]>]+$/, "");
+  const domainMatch = title.match(/\b(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}(?:\/\S*)?/i);
+  if (!match && !domainMatch) return null;
+  const rawCandidate = (match ? match[0] : `https://${domainMatch[0]}`);
+  const candidate = rawCandidate.replace(/[.,!?;:'")\]>]+$/, "");
   try {
     const u = new URL(candidate);
     return `${u.origin}/`;
