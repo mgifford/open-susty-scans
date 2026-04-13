@@ -1,37 +1,37 @@
 {
   "version": "0.1.0",
-  "scanTitle": "Verification: Assessor Types",
+  "scanTitle": "Verify: AI+Human WSG Catalog",
   "issueNumber": null,
-  "generatedAt": "2026-04-13T16:09:15.680Z",
+  "generatedAt": "2026-04-13T20:14:12.067Z",
   "requestedUrls": [
-    "https://google.com"
+    "https://www.gov.uk"
   ],
   "summary": {
     "okCount": 1,
     "errorCount": 0,
-    "averagePerformanceScore": 0.7,
+    "averagePerformanceScore": 0.77,
     "averageBestPracticesScore": 1,
-    "totalTransferBytes": 759779,
-    "totalCo2Grams": 0.29105720301060006,
-    "averageTransferBytes": 759779,
-    "averageCo2GramsPerPage": 0.29105720301060006,
-    "averageRedundancyScore": 23,
+    "totalTransferBytes": 196723,
+    "totalCo2Grams": 0.07536092225220001,
+    "averageTransferBytes": 196723,
+    "averageCo2GramsPerPage": 0.07536092225220001,
+    "averageRedundancyScore": 17,
     "highUrgencyRedundancyCount": 0,
-    "averageModularizationScore": 37,
+    "averageModularizationScore": 3,
     "highUrgencyModularizationCount": 0,
-    "averageDeadCodeScore": 19,
-    "highUrgencyDeadCodeCount": 1,
-    "averageNonCriticalResourcesScore": 12,
+    "averageDeadCodeScore": 12,
+    "highUrgencyDeadCodeCount": 0,
+    "averageNonCriticalResourcesScore": 7,
     "highUrgencyNonCriticalResourcesCount": 0,
-    "averageFormValidationScore": 55,
+    "averageFormValidationScore": 42.5,
     "highUrgencyFormValidationCount": 0,
-    "averageMetadataScore": 45,
+    "averageMetadataScore": 20,
     "highUrgencyMetadataCount": 0,
-    "averageLayoutAdaptationScore": 28,
+    "averageLayoutAdaptationScore": 30,
     "highUrgencyLayoutAdaptationCount": 0,
-    "averageSecurityLightScore": 54,
+    "averageSecurityLightScore": 19,
     "highUrgencySecurityLightCount": 0,
-    "averageDependencyMaintenanceScore": 2,
+    "averageDependencyMaintenanceScore": 0,
     "highUrgencyDependencyMaintenanceCount": 0,
     "averageExpectedFilesScore": 10,
     "highUrgencyExpectedFilesCount": 0,
@@ -43,17 +43,17 @@
     "highUrgencyOfflineSupportCount": 1,
     "averageLanguageVersionScore": 0,
     "highUrgencyLanguageVersionCount": 0,
-    "averageMediaHintsScore": 30,
+    "averageMediaHintsScore": 20,
     "highUrgencyMediaHintsCount": 0,
     "distinctSiteCount": 1,
     "singleSiteScan": true,
     "greenWeb": {
       "pageHostsChecked": 1,
-      "pageHostsGreen": 1,
-      "pageHostsNotGreen": 0,
+      "pageHostsGreen": 0,
+      "pageHostsNotGreen": 1,
       "pageHostsUnknown": 0,
-      "externalOriginsChecked": 1,
-      "externalOriginsGreen": 1,
+      "externalOriginsChecked": 0,
+      "externalOriginsGreen": 0,
       "externalOriginsNotGreen": 0,
       "externalOriginsUnknown": 0
     }
@@ -69,10 +69,10 @@
       "url": "https://sustainablewebdesign.org/digital-carbon-ratings/"
     },
     "current": {
-      "averageTransferBytes": 759779,
-      "averageCo2GramsPerPage": 0.29105720301060006,
-      "transferRating": "B",
-      "co2Rating": "E"
+      "averageTransferBytes": 196723,
+      "averageCo2GramsPerPage": 0.07536092225220001,
+      "transferRating": "A+",
+      "co2Rating": "A"
     },
     "recommendedBudget": {
       "targetRating": "B",
@@ -86,9 +86,9 @@
         "needsReduction": false
       },
       "co2GramsPerPage": {
-        "absolute": 0.14605720301060007,
-        "percent": 50.181614301186286,
-        "needsReduction": true
+        "absolute": 0,
+        "percent": 0,
+        "needsReduction": false
       }
     },
     "stretchBudget": {
@@ -102,19 +102,10 @@
       "title": "Give third parties the same priority as first parties during assessment",
       "url": "https://www.w3.org/TR/web-sustainability-guidelines/#give-third-parties-the-same-priority-as-first-parties-during-assessment"
     },
-    "averageScore": 11,
+    "averageScore": 0,
     "highUrgencyPages": 0,
     "assessedPages": 1,
-    "providers": [
-      {
-        "hostname": "www.gstatic.com",
-        "pageCount": 1,
-        "transferBytes": 82965,
-        "requestCount": 1,
-        "status": "green",
-        "hostedBy": "Google Cloud"
-      }
-    ]
+    "providers": []
   },
   "externalProviderRiskSummary": {
     "recurringNonGreenProviders": [],
@@ -126,8 +117,8 @@
       "title": "Validate form errors and account for tooling requirements",
       "url": "https://www.w3.org/TR/web-sustainability-guidelines/#validate-form-errors-and-account-for-tooling-requirements"
     },
-    "uniqueElementSignaturesAssessed": 2,
-    "totalOccurrences": 2,
+    "uniqueElementSignaturesAssessed": 4,
+    "totalOccurrences": 5,
     "reusedFromCacheCount": 0,
     "recurringElements": [],
     "recurringSearchElements": []
@@ -138,12 +129,12 @@
       "url": "https://www.w3.org/TR/web-sustainability-guidelines/#structure-metadata-for-machine-readability"
     },
     "assessedPages": 1,
-    "averageScore": 45,
+    "averageScore": 20,
     "highUrgencyPages": 0,
     "missing": {
       "missingLang": 0,
-      "missingDescription": 1,
-      "missingCanonical": 1,
+      "missingDescription": 0,
+      "missingCanonical": 0,
       "missingOpenGraphCore": 1,
       "missingTwitterCard": 1,
       "invalidStructuredData": 0
@@ -155,12 +146,12 @@
       "url": "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-layouts-work-for-different-devices-and-requirements"
     },
     "assessedPages": 1,
-    "averageScore": 28,
+    "averageScore": 30,
     "highUrgencyPages": 0,
     "mobileOverflowPages": 0,
     "tabletOverflowPages": 0,
-    "totalMobileSmallTapTargets": 11,
-    "totalTabletSmallTapTargets": 11,
+    "totalMobileSmallTapTargets": 80,
+    "totalTabletSmallTapTargets": 66,
     "totalFixedWidthOffenders": 0
   },
   "securityLightSummary": {
@@ -169,12 +160,12 @@
       "url": "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-that-your-code-is-secure"
     },
     "assessedPages": 1,
-    "averageScore": 54,
+    "averageScore": 19,
     "highUrgencyPages": 0,
-    "pagesWithoutCsp": 1,
+    "pagesWithoutCsp": 0,
     "pagesWithoutHsts": 1,
     "pagesWithVulnerableLibraries": 0,
-    "totalExternalScriptsWithoutIntegrity": 1
+    "totalExternalScriptsWithoutIntegrity": 0
   },
   "dependencyMaintenanceSummary": {
     "wsgReference": {
@@ -182,7 +173,7 @@
       "url": "https://www.w3.org/TR/web-sustainability-guidelines/#use-dependencies-appropriately-and-ensure-maintenance"
     },
     "assessedPages": 1,
-    "averageScore": 2,
+    "averageScore": 0,
     "highUrgencyPages": 0,
     "pagesWithVulnerableDependencies": 0,
     "totalVulnerableDependencies": 0,
@@ -224,7 +215,7 @@
     "assessedPages": 1,
     "averageScore": 100,
     "highUrgencyPages": 1,
-    "totalEstimatedSavingsBytes": 316701,
+    "totalEstimatedSavingsBytes": 59251,
     "totalEstimatedBlockingMs": 0,
     "recurringOpportunities": []
   },
@@ -259,67 +250,17 @@
       "url": "https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use"
     },
     "assessedPages": 1,
-    "averageScore": 30,
+    "averageScore": 20,
     "highUrgencyPages": 0,
     "pagesWithAutoplay": 0,
     "pagesWithUnmutedAutoplay": 0,
-    "pagesWithoutDarkMode": 0,
-    "pagesWithLazyLoadingGap": 1
+    "pagesWithoutDarkMode": 1,
+    "pagesWithLazyLoadingGap": 0
   },
   "wsgHighlightsSummary": {
     "assessedPages": 1,
-    "averageScore": 70,
+    "averageScore": 95,
     "highlights": [
-      {
-        "guideline": "17.1",
-        "title": "Missing print style sheet",
-        "urgency": "low",
-        "detail": "Add a @media print stylesheet to ensure the page is optimized for paper-saving printing.",
-        "wsid": "17.printed documents",
-        "assessor": "script",
-        "example": "@media print {\n  /* Hide non-critical navigation and backgrounds */\n  nav, .ads, header, footer { display: none; }\n  body { font-size: 12pt; color: #000; background: #fff; }\n  a::after { content: \" (\" attr(href) \") \"; } /* Show URLs */\n}",
-        "pageCount": 1,
-        "pages": {},
-        "criteria": {
-          "title": "Printed documents",
-          "description": "Design your process to reduce the need for paper documents. Where the production of paper documents is essential, it should be designed to have the lowest impact possible. Include a CSS print style sheet and test it with different types of content. Encourage saving documents in digital formats over paper-based storage and archiving.",
-          "resources": [
-            {
-              "A Guide To The State Of Print Stylesheets In 2018": "https://www.smashingmagazine.com/2018/05/print-stylesheets-in-2018/",
-              "Changing Paper Consumption": "http://www.greenschools.net/article.php-id=75.html",
-              "CSS Design: Going to Print": "https://alistapart.com/article/goingtoprint/",
-              "GR491 - 6-3044 - Paper Printing": "https://gr491.isit-europe.org/en/crit.php?id=6-3044-uxui-the-flows-of-dematerialization-are-sometimes-broken",
-              "GR491 - 9-5076 - Ink Saving": "https://gr491.isit-europe.org/en/crit.php?id=9-5076-frontend-the-flows-of-dematerialization-are-sometimes-broken",
-              "GreenIT - 0031 - Provide a print CSS": "https://rweb.greenit.fr/en/fiches/RWEB_0031-provide-a-css-print",
-              "How to Become an Eco Web Designer": "https://onextrapixel.com/how-to-become-an-eco-web-designer/",
-              "OpQuast - 190 - The website offers styles dedicated to printing.": "https://checklists.opquast.com/en/digital-quality/the-site-provides-at-least-one-style-sheet-for-printing",
-              "OpQuast - 191 - The content of each page can be printed without printing the navigation blocks.": "https://checklists.opquast.com/en/digital-quality/the-content-of-each-page-can-be-printed-without-navigation-blocks",
-              "Printed - Print Friendly CSS Library": "https://printedcss.com/",
-              "UI Tools": "https://designsustainably.eu/uitools/",
-              "United Nations SDGS - Goal 11 - Human Habitats": "https://sdgs.un.org/goals/goal11#targets_and_indicators",
-              "United Nations SDGS - Goal 12 - Consumption & Production": "https://sdgs.un.org/goals/goal12#targets_and_indicators",
-              "Using UX Design to Build a Sustainable Future": "https://uxmag.com/articles/using-ux-design-to-build-a-sustainable-future",
-              "Which Fonts Use The Least Ink & Toner?": "https://www.tonerbuzz.com/blog/which-fonts-use-the-least-ink-toner/"
-            }
-          ],
-          "guideline": {
-            "categoryId": "2",
-            "categoryName": "User Experience Design",
-            "id": "17",
-            "title": "Reduce the impact of downloadable and physical documents",
-            "url": "https://www.w3.org/TR/web-sustainability-guidelines/#reduce-the-impact-of-downloadable-and-physical-documents",
-            "subheading": "Reduce the need for physical documents as much as possible by allowing the saving of well-labeled, optimized digital downloads. Include a print style sheet to avoid resource waste."
-          },
-          "benefits": [
-            {
-              "Accessibility": "Providing a range of inclusively designed downloadable documents in a variety of formats benefits those with accessibility needs as they can choose the ideal format for their device and use case.",
-              "Environment": "Reducing the need to print documents or providing a print friendly style sheet reduces emissions associated with paper, ink, and the act of printing.",
-              "Performance": "Compressing or otherwise optimizing documents means they can be downloaded faster, avoiding users needing to wait to view documents prepared for offline viewing."
-            }
-          ],
-          "example": null
-        }
-      },
       {
         "guideline": "12.3",
         "title": "No reduced motion support",
@@ -366,73 +307,145 @@
         }
       },
       {
-        "guideline": "11.3",
-        "title": "Incomplete media lazy loading",
-        "urgency": "medium",
-        "detail": "Only 0/9 images use loading=\"lazy\". Global lazy loading reduces initial data transfer and energy consumption.",
-        "wsid": "11.lazy loading",
-        "assessor": "script",
-        "example": "<img src=\"image.webp\" alt=\"Description\" loading=\"lazy\" width=\"800\" height=\"600\">\n<!-- Works for iframes too -->\n<iframe src=\"video.html\" loading=\"lazy\"></iframe>",
-        "pageCount": 1,
-        "pages": {},
-        "criteria": {
-          "title": "Lazy loading",
-          "description": "Incorporate lazy/deferred loading from the start: Consider which media elements are immediately required, and which would be better relegated to loading on specific user interaction. Load data-intensive media on the client side, including the media itself, behind a facade - a non-functional and static representational element.",
-          "resources": [
-            {
-              "Avoid hotlinking images with Cross-Origin-Resource-Policy": "https://www.sjoerdlangkemper.nl/2024/11/27/avoid-hotlinking-images-with-corp-cross-origin-resource-policy/",
-              "Fast load times: Optimize Your Images": "https://web.dev/explore/fast?hl=en#optimize-your-images",
-              "GPF - General Policy Framework (PDF) - 4.1 - UX and UI (Autoplay)": "https://www.arcep.fr/uploads/tx_gspublication/general_policy_framework_for_the_ecodesign_of_digital_services_version_2024.pdf",
-              "GR491 - 9-5071 - Autoplay": "https://gr491.isit-europe.org/en/crit.php?id=9-5071-frontend-active-content-uses-technical-resources-to-function.",
-              "GR491 - 9-5068 - Lazy Loading": "https://gr491.isit-europe.org/en/crit.php?id=9-5068-frontend-when-loading-the-service-on-the-user",
-              "GreenIT - 0051 - Use lazy loading": "https://rweb.greenit.fr/en/fiches/RWEB_0051-use-lazy-loading",
-              "How to Defer Offscreen Images and Background Images": "https://www.debugbear.com/blog/defer-offscreen-images",
-              "Lazy Load Background Images with the IntersectionObserver API": "https://www.debugbear.com/blog/lazy-load-background-images-intersection-observer",
-              "Lazy load third-party resources with facades": "https://developer.chrome.com/docs/lighthouse/performance/third-party-facades?hl=en",
-              "Lazy loading (Wikipedia)": "https://en.wikipedia.org/wiki/Lazy_loading",
-              "Lazy loading (Performance)": "https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/Lazy_loading",
-              "Lazy Loading Images Based on Screen Size": "https://www.aaron-gustafson.com/notebook/lazy-loading-images-based-on-screen-size/",
-              "Non-blocking cross-browser image rendering on the canvas": "https://calendar.perfplanet.com/2025/non-blocking-image-canvas/",
-              "Web Almanac: Sustainability": "https://almanac.httparchive.org/en/2024/sustainability"
-            }
-          ],
-          "guideline": {
-            "categoryId": "2",
-            "categoryName": "User Experience Design",
-            "id": "11",
-            "title": "Optimize media to reduce resource use",
-            "url": "https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use",
-            "subheading": "Ensure all media - including audio, video, animation, images, and other novel formats, when deemed necessary in the design, are optimized, correctly sized and formatted, use lazy loading where appropriate, with a usage policy in place."
-          },
-          "benefits": [
-            {
-              "Economic": "Eliminating data-intensive media entirely and using alternatives such as transcripts reduce costs associated with hosting and data transfer.",
-              "Environment": "Reducing the battery drain associated with loading data-intensive content by preventing auto-loading or delaying it until the moment it is required reduces energy emissions associated with data transfer and renering.",
-              "Performance": "Tailoring user experience to the device, situation, and environment of the user by having different resolutions and quality formats available reduces wasted bandwidth. This can boost performance for users who make choices to reduce the data downloaded.",
-              "Social Equity": "Providing alternatives to data-intensive media allows with limited bandwidth or older devices to access content."
-            }
-          ],
-          "example": "<picture> \n  <source type=\"image/avif\" srcset=\"image.avif\">\n  <source type=\"image/webp\" srcset=\"image.webp\">\n  <img width=\"100px\" height=\"100px\" src=\"image.jpg\" alt=\"\" loading=\"lazy\"/>\n</picture>"
-        }
-      },
-      {
-        "guideline": "2.15",
+        "guideline": "2.4",
         "title": "Review User Journey Efficiency",
         "urgency": "investigate",
-        "detail": "Have a human evaluate the main user journeys to ensure they require the minimum number of steps. Reducing friction decreases user time and energy expended.",
-        "wsid": "2.user experience",
+        "detail": "Have a human walk through the main user journeys and verify they require the fewest steps possible. Unnecessary steps waste user time and device energy. Look for redundant confirmations, forced account creation, and non-essential interstitials.",
+        "wsid": "2.minimize non-essential content",
+        "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#minimize-non-essential-content-interactivity-or-journeys",
         "assessor": "human",
         "pageCount": 1,
         "pages": {},
         "criteria": null
       },
       {
-        "guideline": "2.1",
+        "guideline": "2.6",
+        "title": "Check for Engagement Traps",
+        "urgency": "investigate",
+        "detail": "Manually review the page for patterns that artificially prolong engagement: infinite scroll, autoplay carousels, sticky overlays, and notification permission prompts. These waste user attention and device energy.",
+        "wsid": "2.design to assist not distract",
+        "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#design-to-assist-and-not-to-distract",
+        "assessor": "human",
+        "pageCount": 1,
+        "pages": {},
+        "criteria": null
+      },
+      {
+        "guideline": "2.7",
+        "title": "Audit for Deceptive Design Patterns",
+        "urgency": "investigate",
+        "detail": "Have a human identify dark patterns: misleading consent dialogs, hidden unsubscribe links, forced continuity, and bait-and-switch flows. Deceptive patterns waste user time and undermine trust.",
+        "wsid": "2.avoid manipulative deceptive",
+        "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#avoid-being-manipulative-or-deceptive",
+        "assessor": "human",
+        "pageCount": 1,
+        "pages": {},
+        "criteria": null
+      },
+      {
+        "guideline": "2.14",
+        "title": "Verify Accessible Alternatives for All Media",
+        "urgency": "investigate",
+        "detail": "Manually check that every video has captions, every audio file has a transcript, every image has meaningful alt text, and every PDF has an accessible HTML alternative. Alternatives let assistive technology users avoid re-downloading heavy formats.",
+        "wsid": "2.offer suitable alternatives",
+        "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#offer-suitable-alternatives-for-every-format-used",
+        "assessor": "human",
+        "pageCount": 1,
+        "pages": {},
+        "criteria": null
+      },
+      {
+        "guideline": "2.18",
+        "title": "Confirm User Research Was Conducted",
+        "urgency": "investigate",
+        "detail": "Verify that genuine user research or usability testing has informed the design. Research-driven design reduces wasted iterations, removes unnecessary features, and ensures the product meets real needs efficiently.",
+        "wsid": "2.involve users early",
+        "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#involve-users-early-in-the-project",
+        "assessor": "human",
+        "pageCount": 1,
+        "pages": {},
+        "criteria": null
+      },
+      {
+        "guideline": "2.10",
         "title": "Review Content Conciseness",
         "urgency": "investigate",
-        "detail": "Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload and reading time.",
-        "wsid": "2.content strategy",
+        "detail": "Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload, reading time, and inference energy for search engines and AI crawlers indexing this content.",
+        "wsid": "2.provide clear inclusive content",
+        "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#provide-clear-inclusive-content-with-purpose",
         "assessor": "ai",
+        "pageCount": 1,
+        "pages": {},
+        "criteria": null
+      },
+      {
+        "guideline": "2.5",
+        "title": "Evaluate Navigation and Wayfinding Quality",
+        "urgency": "investigate",
+        "detail": "Ask an LLM to assess whether the navigation labels, headings, and page hierarchy allow a user to locate content in as few steps as possible. Poor information architecture forces repeat page loads and increases server and user energy costs.",
+        "wsid": "2.navigation wayfinding",
+        "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-that-navigation-and-wayfinding-are-well-structured",
+        "assessor": "ai",
+        "pageCount": 1,
+        "pages": {},
+        "criteria": null
+      },
+      {
+        "guideline": "3.7",
+        "title": "Evaluate HTML Semantic Correctness",
+        "urgency": "investigate",
+        "detail": "Use an LLM or structured analysis tool to verify that HTML uses semantic elements (article, nav, main, section, aside) correctly. Proper semantics reduces duplicate markup, improves accessibility, and allows browsers and crawlers to process pages more efficiently.",
+        "wsid": "3.ensure code follows good semantic practices",
+        "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-code-follows-good-semantic-practices",
+        "assessor": "ai",
+        "pageCount": 1,
+        "pages": {},
+        "criteria": null
+      },
+      {
+        "guideline": "4.4",
+        "title": "Verify Error Pages and Redirects Are Configured",
+        "urgency": "investigate",
+        "detail": "Have a human check that custom 404 and 500 error pages exist and that there are no redirect chains longer than one hop. Broken links force wasted round-trips. Redirect chains multiply transfer costs.",
+        "wsid": "4.error pages redirection",
+        "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#setup-necessary-error-pages-and-redirection-links",
+        "assessor": "human",
+        "pageCount": 1,
+        "pages": {},
+        "criteria": null
+      },
+      {
+        "guideline": "4.10",
+        "title": "Review CDN Usage and Geographic Distribution",
+        "urgency": "investigate",
+        "detail": "Confirm that static assets are served from a CDN and that the CDN edge nodes are geographically close to the primary audience. CDN misuse—or absence—increases last-mile transfer distance and the associated energy cost of data delivery.",
+        "wsid": "4.content delivery networks",
+        "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#use-content-delivery-networks-cdns-appropriately",
+        "assessor": "human",
+        "pageCount": 1,
+        "pages": {},
+        "criteria": null
+      },
+      {
+        "guideline": "5.2",
+        "title": "Confirm a Sustainability Advocate Is Assigned",
+        "urgency": "investigate",
+        "detail": "Verify that someone on the team has explicit responsibility for web sustainability. Without a designated advocate, sustainability improvements tend to be deprioritized and never reach the backlog.",
+        "wsid": "5.assign sustainability advocate",
+        "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#assign-a-sustainability-advocate",
+        "assessor": "human",
+        "pageCount": 1,
+        "pages": {},
+        "criteria": null
+      },
+      {
+        "guideline": "5.8",
+        "title": "Check for a Public Sustainability Statement",
+        "urgency": "investigate",
+        "detail": "Look for a publicly accessible sustainability statement, disclosure page, or environmental policy. Mandatory disclosure requirements are growing globally and transparency builds user trust. The statement should include measurable targets and dates.",
+        "wsid": "5.support mandatory disclosures",
+        "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#support-mandatory-disclosures-and-reporting",
+        "assessor": "human",
         "pageCount": 1,
         "pages": {},
         "criteria": null
@@ -444,32 +457,26 @@
     "singleSiteScan": true,
     "sites": [
       {
-        "origin": "https://www.google.com",
+        "origin": "https://www.gov.uk",
         "pageCount": 1,
         "sharedRecommendations": [
           {
             "area": "security-headers",
-            "urgency": "high",
-            "title": "Apply Content-Security-Policy site-wide",
-            "detail": "CSP is absent across all sampled pages on https://www.google.com."
-          },
-          {
-            "area": "security-headers",
             "urgency": "medium",
             "title": "Enable Strict-Transport-Security site-wide",
-            "detail": "HSTS is missing across all sampled HTTPS pages on https://www.google.com."
+            "detail": "HSTS is missing across all sampled HTTPS pages on https://www.gov.uk."
           },
           {
             "area": "offline-support",
             "urgency": "high",
             "title": "Introduce service worker support",
-            "detail": "No sampled pages on https://www.google.com indicate service worker support for offline resilience."
+            "detail": "No sampled pages on https://www.gov.uk indicate service worker support for offline resilience."
           },
           {
             "area": "offline-support",
             "urgency": "high",
             "title": "Support offline fallback behavior",
-            "detail": "Offline page behavior was not detected across sampled pages on https://www.google.com."
+            "detail": "Offline page behavior was not detected across sampled pages on https://www.gov.uk."
           }
         ],
         "recurringCompression": [],
@@ -479,15 +486,15 @@
         "recurringRuntimeSignals": [],
         "pageSpecific": [
           {
-            "url": "https://google.com",
-            "securityScore": 54,
-            "dependencyScore": 2,
+            "url": "https://www.gov.uk",
+            "securityScore": 19,
+            "dependencyScore": 0,
             "expectedFilesScore": 10,
             "compressionScore": 0,
             "optimizationScore": 100,
             "offlineScore": 90,
             "languageScore": 0,
-            "mediaHintsScore": 30,
+            "mediaHintsScore": 20,
             "urgency": "high",
             "topRecommendations": [
               {
@@ -496,14 +503,14 @@
                 "detail": "Compression signals look healthy in current Lighthouse audits; continue enforcing compression and asset encoding in CI/CD."
               },
               {
-                "title": "Remove unused JavaScript",
-                "urgency": "high",
-                "detail": "Reduce dead JS and split bundles to avoid shipping non-critical code. Estimated byte savings: 298.91 KB."
+                "title": "Remove unused CSS",
+                "urgency": "medium",
+                "detail": "Trim unused selectors and split CSS so only needed styles are shipped. Estimated byte savings: 31.91 KB."
               },
               {
-                "title": "Remove unused CSS",
+                "title": "Remove unused JavaScript",
                 "urgency": "low",
-                "detail": "Trim unused selectors and split CSS so only needed styles are shipped. Estimated byte savings: 10.37 KB."
+                "detail": "Reduce dead JS and split bundles to avoid shipping non-critical code. Estimated byte savings: 25.96 KB."
               },
               {
                 "title": "Add service worker support",
@@ -526,222 +533,134 @@
   },
   "results": [
     {
-      "url": "https://google.com",
+      "url": "https://www.gov.uk",
       "status": "ok",
-      "finalUrl": "https://www.google.com/",
-      "performanceScore": 0.7,
+      "finalUrl": "https://www.gov.uk/",
+      "performanceScore": 0.77,
       "bestPracticesScore": 1,
-      "transferBytes": 759779,
-      "co2Grams": 0.29105720301060006,
+      "transferBytes": 196723,
+      "co2Grams": 0.07536092225220001,
       "greenWeb": {
         "page": {
-          "hostname": "www.google.com",
+          "hostname": "www.gov.uk",
           "checked": true,
-          "status": "green",
-          "green": true,
-          "hostedBy": "Google Cloud",
-          "hostedByWebsite": "https://cloud.google.com",
-          "listedProvider": true,
+          "status": "not-green",
+          "green": false,
+          "hostedBy": null,
+          "hostedByWebsite": null,
+          "listedProvider": null,
           "partner": null,
-          "modified": "2026-03-17T09:47:17",
-          "supportingDocuments": [
-            {
-              "id": 108,
-              "title": "Sustainability at Google",
-              "link": "https://sustainability.google"
-            },
-            {
-              "id": 1364,
-              "title": "Google 2024 Environmental Report",
-              "link": "https://www.gstatic.com/gumdrop/sustainability/google-2024-environmental-report.pdf"
-            },
-            {
-              "id": 1365,
-              "title": "Alphabet 2024 CDP Climate Change Response",
-              "link": "https://www.gstatic.com/gumdrop/sustainability/alphabet-2024-cdp-climate-change-response.pdf"
-            },
-            {
-              "id": 1366,
-              "title": "Google 2024 Supplier Responsibility Report.",
-              "link": "https://www.gstatic.com/gumdrop/sustainability/google-2024-supplier-responsibility-report.pdf"
-            },
-            {
-              "id": 1367,
-              "title": "Alphabet FY2023 Environmental Indicators Assurance Letter",
-              "link": "https://www.gstatic.com/gumdrop/sustainability/alphabet-fy2023-environmental-indicators-assurance-letter.pdf"
-            },
-            {
-              "id": 1368,
-              "title": "3Degrees Cloud Services Review Statement",
-              "link": "https://services.google.com/fh/files/misc/3degrees_cloud_services_review_statement_final.pdf"
-            }
-          ],
-          "source": "https://api.thegreenwebfoundation.org/api/v3/greencheck/www.google.com",
+          "modified": "2026-04-13T10:29:39.315939",
+          "supportingDocuments": [],
+          "source": "https://api.thegreenwebfoundation.org/api/v3/greencheck/www.gov.uk",
           "error": null
         },
-        "externalAssets": [
-          {
-            "hostname": "www.gstatic.com",
-            "resourceType": "script",
-            "requestCount": 1,
-            "transferBytes": 82965,
-            "sampleUrl": "https://www.gstatic.com/og/_/js/k=og.qtm.en_US.zjX-30hS8Qs.2019.O/rt=j/m=qabr,q_d,qcwid,qapid,qads/exm=qaaw,qadd,qaid,qein,qhaw,qhba,qhbr,qhch,qhga,qhid,qhin/d=1/ed=1/rs=AA2YrTucmdoM-K37tXdym3rIL1akIo3o5A",
-            "greenCheck": {
-              "hostname": "www.gstatic.com",
-              "checked": true,
-              "status": "green",
-              "green": true,
-              "hostedBy": "Google Cloud",
-              "hostedByWebsite": "https://cloud.google.com",
-              "listedProvider": true,
-              "partner": null,
-              "modified": "2025-11-25T09:52:50",
-              "supportingDocuments": [
-                {
-                  "id": 108,
-                  "title": "Sustainability at Google",
-                  "link": "https://sustainability.google"
-                },
-                {
-                  "id": 1364,
-                  "title": "Google 2024 Environmental Report",
-                  "link": "https://www.gstatic.com/gumdrop/sustainability/google-2024-environmental-report.pdf"
-                },
-                {
-                  "id": 1365,
-                  "title": "Alphabet 2024 CDP Climate Change Response",
-                  "link": "https://www.gstatic.com/gumdrop/sustainability/alphabet-2024-cdp-climate-change-response.pdf"
-                },
-                {
-                  "id": 1366,
-                  "title": "Google 2024 Supplier Responsibility Report.",
-                  "link": "https://www.gstatic.com/gumdrop/sustainability/google-2024-supplier-responsibility-report.pdf"
-                },
-                {
-                  "id": 1367,
-                  "title": "Alphabet FY2023 Environmental Indicators Assurance Letter",
-                  "link": "https://www.gstatic.com/gumdrop/sustainability/alphabet-fy2023-environmental-indicators-assurance-letter.pdf"
-                },
-                {
-                  "id": 1368,
-                  "title": "3Degrees Cloud Services Review Statement",
-                  "link": "https://services.google.com/fh/files/misc/3degrees_cloud_services_review_statement_final.pdf"
-                }
-              ],
-              "source": "https://api.thegreenwebfoundation.org/api/v3/greencheck/www.gstatic.com",
-              "error": null
-            }
-          },
-          {
-            "hostname": "www.gstatic.com",
-            "resourceType": "stylesheet",
-            "requestCount": 1,
-            "transferBytes": 3376,
-            "sampleUrl": "https://www.gstatic.com/og/_/ss/k=og.qtm.X1b2EYnrFYI.L.W.O/m=qcwid,d_b_gm3,d_wi_gm3,d_lo_gm3/excm=qaaw,qadd,qaid,qein,qhaw,qhba,qhbr,qhch,qhga,qhid,qhin/d=1/ed=1/ct=zgms/rs=AA2YrTtyk93HpnNWYm0mzlHLn_ktAeDUsg",
-            "greenCheck": {
-              "hostname": "www.gstatic.com",
-              "checked": true,
-              "status": "green",
-              "green": true,
-              "hostedBy": "Google Cloud",
-              "hostedByWebsite": "https://cloud.google.com",
-              "listedProvider": true,
-              "partner": null,
-              "modified": "2025-11-25T09:52:50",
-              "supportingDocuments": [
-                {
-                  "id": 108,
-                  "title": "Sustainability at Google",
-                  "link": "https://sustainability.google"
-                },
-                {
-                  "id": 1364,
-                  "title": "Google 2024 Environmental Report",
-                  "link": "https://www.gstatic.com/gumdrop/sustainability/google-2024-environmental-report.pdf"
-                },
-                {
-                  "id": 1365,
-                  "title": "Alphabet 2024 CDP Climate Change Response",
-                  "link": "https://www.gstatic.com/gumdrop/sustainability/alphabet-2024-cdp-climate-change-response.pdf"
-                },
-                {
-                  "id": 1366,
-                  "title": "Google 2024 Supplier Responsibility Report.",
-                  "link": "https://www.gstatic.com/gumdrop/sustainability/google-2024-supplier-responsibility-report.pdf"
-                },
-                {
-                  "id": 1367,
-                  "title": "Alphabet FY2023 Environmental Indicators Assurance Letter",
-                  "link": "https://www.gstatic.com/gumdrop/sustainability/alphabet-fy2023-environmental-indicators-assurance-letter.pdf"
-                },
-                {
-                  "id": 1368,
-                  "title": "3Degrees Cloud Services Review Statement",
-                  "link": "https://services.google.com/fh/files/misc/3degrees_cloud_services_review_statement_final.pdf"
-                }
-              ],
-              "source": "https://api.thegreenwebfoundation.org/api/v3/greencheck/www.gstatic.com",
-              "error": null
-            }
-          }
-        ],
+        "externalAssets": [],
         "summary": {
-          "pageStatus": "green",
-          "externalOriginCount": 2,
-          "greenCount": 3,
-          "notGreenCount": 0,
+          "pageStatus": "not-green",
+          "externalOriginCount": 0,
+          "greenCount": 0,
+          "notGreenCount": 1,
           "unknownCount": 0
         }
       },
       "formValidation": {
-        "score": 55,
+        "score": 42.5,
         "urgency": "medium",
-        "pageElementOccurrences": 2,
-        "uniqueElementsAssessed": 2,
+        "pageElementOccurrences": 5,
+        "uniqueElementsAssessed": 4,
         "reusedFromCacheCount": 0,
         "components": [
           {
-            "signature": "search|get|/search|textarea|textarea|q|off|optional|no-pattern|no-minlength",
+            "signature": "search|get|/search/all|input|search|keywords|off|optional|no-pattern|no-minlength",
             "role": "search",
-            "controlType": "textarea",
-            "fieldName": "q",
-            "formContext": "search|get|/search",
+            "controlType": "search",
+            "fieldName": "keywords",
+            "formContext": "search|get|/search/all",
+            "hasLabel": true,
+            "hasValidationRule": false,
+            "hasErrorMessagingHook": true,
+            "toolingFriendly": false,
+            "assessment": {
+              "score": 40,
+              "urgency": "medium",
+              "issues": [
+                "No explicit validation rule",
+                "Missing autocomplete for tooling support"
+              ],
+              "recommendations": [
+                "Define validation constraints (required, pattern, min/max, or semantic input type).",
+                "Provide meaningful autocomplete values to support browsers and assistive tooling."
+              ]
+            },
+            "reusedFromCache": false
+          },
+          {
+            "signature": "form|post|/contact/govuk/problem_reports|input|text|giraffe|off|optional|pattern|no-minlength",
+            "role": "form",
+            "controlType": "text",
+            "fieldName": "giraffe",
+            "formContext": "form|post|/contact/govuk/problem_reports",
             "hasLabel": true,
             "hasValidationRule": true,
             "hasErrorMessagingHook": false,
+            "toolingFriendly": false,
+            "assessment": {
+              "score": 30,
+              "urgency": "medium",
+              "issues": [
+                "No error messaging hook",
+                "Missing autocomplete for tooling support"
+              ],
+              "recommendations": [
+                "Add aria-errormessage/aria-describedby and a visible error region for invalid input.",
+                "Provide meaningful autocomplete values to support browsers and assistive tooling."
+              ]
+            },
+            "reusedFromCache": false
+          },
+          {
+            "signature": "form|post|/contact/govuk/problem_reports|textarea|textarea|what_doing|no-autocomplete|optional|no-pattern|no-minlength",
+            "role": "form",
+            "controlType": "textarea",
+            "fieldName": "what_doing",
+            "formContext": "form|post|/contact/govuk/problem_reports",
+            "hasLabel": true,
+            "hasValidationRule": false,
+            "hasErrorMessagingHook": false,
             "toolingFriendly": true,
             "assessment": {
-              "score": 20,
-              "urgency": "low",
+              "score": 50,
+              "urgency": "medium",
               "issues": [
+                "No explicit validation rule",
                 "No error messaging hook"
               ],
               "recommendations": [
+                "Define validation constraints (required, pattern, min/max, or semantic input type).",
                 "Add aria-errormessage/aria-describedby and a visible error region for invalid input."
               ]
             },
             "reusedFromCache": false
           },
           {
-            "signature": "no-form|textarea|textarea|csi|no-autocomplete|optional|no-pattern|no-minlength",
+            "signature": "form|post|/contact/govuk/problem_reports|textarea|textarea|what_wrong|no-autocomplete|optional|no-pattern|no-minlength",
             "role": "form",
             "controlType": "textarea",
-            "fieldName": "csi",
-            "formContext": "no-form",
-            "hasLabel": false,
+            "fieldName": "what_wrong",
+            "formContext": "form|post|/contact/govuk/problem_reports",
+            "hasLabel": true,
             "hasValidationRule": false,
             "hasErrorMessagingHook": false,
             "toolingFriendly": true,
             "assessment": {
-              "score": 90,
-              "urgency": "high",
+              "score": 50,
+              "urgency": "medium",
               "issues": [
-                "Missing associated label",
                 "No explicit validation rule",
                 "No error messaging hook"
               ],
               "recommendations": [
-                "Add a programmatic label using <label>, aria-label, or aria-labelledby.",
                 "Define validation constraints (required, pattern, min/max, or semantic input type).",
                 "Add aria-errormessage/aria-describedby and a visible error region for invalid input."
               ]
@@ -751,47 +670,47 @@
         ],
         "recommendations": [
           {
-            "title": "No error messaging hook",
-            "urgency": "medium",
-            "detail": "2 unique form control signature(s) on this page include this issue."
-          },
-          {
-            "title": "Missing associated label",
-            "urgency": "high",
-            "detail": "1 unique form control signature(s) on this page include this issue."
-          },
-          {
             "title": "No explicit validation rule",
             "urgency": "medium",
-            "detail": "1 unique form control signature(s) on this page include this issue."
+            "detail": "3 unique form control signature(s) on this page include this issue."
+          },
+          {
+            "title": "No error messaging hook",
+            "urgency": "medium",
+            "detail": "3 unique form control signature(s) on this page include this issue."
+          },
+          {
+            "title": "Missing autocomplete for tooling support",
+            "urgency": "medium",
+            "detail": "2 unique form control signature(s) on this page include this issue."
           }
         ]
       },
       "metadata": {
-        "score": 45,
-        "urgency": "medium",
+        "score": 20,
+        "urgency": "low",
         "checks": {
           "hasTitle": true,
           "hasLang": true,
-          "hasDescription": false,
-          "hasCanonical": false,
+          "hasDescription": true,
+          "hasCanonical": true,
           "hasOpenGraphCore": false,
           "hasTwitterCard": false,
-          "hasViewport": false,
+          "hasViewport": true,
           "hasCharset": true,
           "hasValidStructuredData": true,
           "hasInvalidStructuredData": false
         },
         "observed": {
-          "title": "Google",
-          "lang": "en-CA",
-          "charset": "UTF-8",
-          "viewport": "",
-          "description": "",
+          "title": "Welcome to GOV.UK",
+          "lang": "en",
+          "charset": "utf-8",
+          "viewport": "width=device-width, initial-scale=1",
+          "description": "GOV.UK - The best place to find government services and information.",
           "robots": "",
-          "canonical": "",
-          "ogTitle": "",
-          "ogDescription": "",
+          "canonical": "https://www.gov.uk/",
+          "ogTitle": "Welcome to GOV.UK",
+          "ogDescription": "GOV.UK - The best place to find government services and information.",
           "ogType": "",
           "ogUrl": "",
           "twitterCard": "",
@@ -800,16 +719,6 @@
           "invalidLdJsonCount": 0
         },
         "recommendations": [
-          {
-            "title": "Add canonical URL metadata",
-            "urgency": "medium",
-            "detail": "Use rel=canonical to reduce duplicate URL ambiguity for crawlers and tooling."
-          },
-          {
-            "title": "Add meta description",
-            "urgency": "medium",
-            "detail": "Provide a concise description to improve machine interpretation and preview quality."
-          },
           {
             "title": "Complete Open Graph metadata",
             "urgency": "medium",
@@ -823,15 +732,15 @@
         ]
       },
       "layoutAdaptation": {
-        "score": 28,
-        "urgency": "low",
+        "score": 30,
+        "urgency": "medium",
         "checks": {
           "testedMobile": true,
           "testedTablet": true,
           "horizontalOverflowOnMobile": false,
           "horizontalOverflowOnTablet": false,
-          "mobileSmallTapTargets": 11,
-          "tabletSmallTapTargets": 11,
+          "mobileSmallTapTargets": 80,
+          "tabletSmallTapTargets": 66,
           "fixedWidthOffenders": 0,
           "oversizedMedia": 0,
           "scanErrors": 0
@@ -839,66 +748,79 @@
         "perDevice": [
           {
             "device": "mobile",
-            "viewportWidth": 980,
-            "viewportHeight": 2121,
-            "contentWidth": 980,
+            "viewportWidth": 390,
+            "viewportHeight": 844,
+            "contentWidth": 390,
             "horizontalOverflowPx": 0,
             "hasHorizontalOverflow": false,
             "fixedWidthOffenders": 0,
-            "smallTapTargets": 11,
+            "smallTapTargets": 80,
             "oversizedMedia": 0
           },
           {
             "device": "tablet",
-            "viewportWidth": 980,
-            "viewportHeight": 1411,
-            "contentWidth": 980,
+            "viewportWidth": 820,
+            "viewportHeight": 1180,
+            "contentWidth": 820,
             "horizontalOverflowPx": 0,
             "hasHorizontalOverflow": false,
             "fixedWidthOffenders": 0,
-            "smallTapTargets": 11,
+            "smallTapTargets": 66,
             "oversizedMedia": 0
           }
         ],
         "recommendations": [
           {
             "title": "Increase touch target sizes",
-            "urgency": "medium",
-            "detail": "Ensure interactive controls are at least 44x44 CSS px. Detected 11 small targets on mobile and 11 on tablet."
+            "urgency": "high",
+            "detail": "Ensure interactive controls are at least 44x44 CSS px. Detected 80 small targets on mobile and 66 on tablet."
           }
         ]
       },
       "securityLight": {
-        "score": 54,
-        "urgency": "medium",
+        "score": 19,
+        "urgency": "low",
         "checks": {
           "isHttps": true,
           "hasHsts": false,
-          "hasCsp": false,
-          "hasXContentTypeOptions": false,
-          "hasReferrerPolicy": false,
+          "hasCsp": true,
+          "hasXContentTypeOptions": true,
+          "hasReferrerPolicy": true,
           "hasPermissionsPolicy": true,
           "exposesServerFingerprint": true,
-          "externalScriptCount": 1,
-          "externalScriptsWithoutIntegrity": 1,
+          "externalScriptCount": 0,
+          "externalScriptsWithoutIntegrity": 0,
           "vulnerableLibraryCount": 0
         },
         "observed": {
           "headers": {
-            "accept-ch": "Sec-CH-Prefers-Color-Scheme\nDownlink\nRTT\nSec-CH-UA-Form-Factors\nSec-CH-UA-Platform\nSec-CH-UA-Platform-Version\nSec-CH-UA-Full-Version\nSec-CH-UA-Arch\nSec-CH-UA-Model\nSec-CH-UA-Bitness\nSec-CH-UA-Full-Version-List\nSec-CH-UA-WoW64",
-            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
-            "cache-control": "private, max-age=0",
-            "content-encoding": "gzip",
-            "content-security-policy-report-only": "object-src 'none';base-uri 'self';script-src 'nonce-QavWywKLXt6Fq2Plyc_GKQ' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other-hp",
-            "content-type": "text/html; charset=UTF-8",
-            "cross-origin-opener-policy": "same-origin-allow-popups; report-to=\"gws\"",
-            "date": "Mon, 13 Apr 2026 16:09:11 GMT",
-            "expires": "-1",
-            "permissions-policy": "unload=()",
-            "report-to": "{\"group\":\"gws\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/gws/other\"}]}",
-            "server": "gws",
-            "set-cookie": "__Secure-STRP=AEEP7gKoha9HIWopvlofZmT_JgI5B6rl-UDLt3LXuUxKhuqAlLc-22uitc7ttli9b7VnH4lE_HZOuH-sl-zXhra5rTnXMU4Me_R6; expires=Mon, 13-Apr-2026 16:14:11 GMT; path=/; domain=.google.com; Secure; SameSite=strict\n__Secure-STRP=; expires=Mon, 01-Jan-1990 00:00:00 GMT; path=/; domain=www.google.com; Secure\n__Secure-STRP=; expires=Mon, 01-Jan-1990 00:00:00 GMT; path=/; domain=.www.google.com; Secure\n__Secure-STRP=; expires=Mon, 01-Jan-1990 00:00:00 GMT; path=/; domain=google.com; Secure\n__Secure-STRP=; expires=Mon, 01-Jan-1990 00:00:00 GMT; path=/; domain=.google.com; Secure",
+            "accept-ranges": "bytes",
+            "age": "286",
+            "alt-svc": "h3=\":443\";ma=86400,h3-29=\":443\";ma=86400,h3-27=\":443\";ma=86400",
+            "cache-control": "max-age=300, public",
+            "content-encoding": "br",
+            "content-length": "11292",
+            "content-security-policy": "default-src 'self'; base-uri 'none'; img-src 'self' *.publishing.service.gov.uk www.gov.uk *.dev.gov.uk www.google-analytics.com ssl.google-analytics.com stats.g.doubleclick.net www.googletagmanager.com www.region1.google-analytics.com region1.google-analytics.com www.google.co.uk analytics.google.com *.analytics.google.com www.google.com lux.speedcurve.com assets.digital.cabinet-office.gov.uk https://img.youtube.com https://i.ytimg.com; script-src 'self' www.google-analytics.com ssl.google-analytics.com stats.g.doubleclick.net www.googletagmanager.com www.region1.google-analytics.com region1.google-analytics.com www.google.co.uk analytics.google.com *.analytics.google.com www.google.com www.gstatic.com *.ytimg.com www.youtube.com www.youtube-nocookie.com 'nonce-9FBGYTvdcvQrAyJQf0/eTQ=='; style-src 'self' www.gstatic.com; font-src 'self'; connect-src 'self' *.publishing.service.gov.uk www.gov.uk *.dev.gov.uk www.google-analytics.com ssl.google-analytics.com stats.g.doubleclick.net www.googletagmanager.com www.region1.google-analytics.com region1.google-analytics.com www.google.co.uk analytics.google.com *.analytics.google.com www.google.com lux.speedcurve.com; object-src 'none'; frame-src 'self' *.publishing.service.gov.uk www.gov.uk *.dev.gov.uk www.youtube.com www.youtube-nocookie.com; frame-ancestors 'self' *.publishing.service.gov.uk www.gov.uk *.dev.gov.uk; report-uri https://csp-reporter.publishing.service.gov.uk/report",
+            "content-type": "text/html; charset=utf-8",
+            "date": "Mon, 13 Apr 2026 20:13:58 GMT",
+            "etag": "W/\"e733e989fe9ab2b51e5c4bd2dbd29667\"",
+            "fastly-backend-name": "origin",
+            "link": "</assets/frontend/views/_homepage-64a9f4f542bbda5bcdae1df09ea442583c3981460eb5cd3be12e18ba1885ba31.css>; rel=preload; as=style; nopush,</assets/frontend/govuk_publishing_components/vendor/lux/lux-measurer-d66192b1b665d415e1874e49a48138b7ae339548aa6cdb8687c7f9933e72b969.js>; rel=preload; as=script; nopush,</assets/frontend/govuk_publishing_components/rum-custom-data-b9e1806d1da2fa8ef1855d01aa71ba5eb0afc010dd2c4de3672cc7c7a39b0c8c.js>; rel=modulepreload; as=script; nopush,</assets/frontend/govuk_publishing_components/rum-loader-a65b10e18ceeba3bd8a2eac507c7f2c513cdc82f35097df903fdea87f1dc2e33.js>; rel=preload; as=script; nopush,</assets/frontend/govuk_publishing_components/load-analytics-79a977bd852f5a521fd985f15017e47a032bab5cc877b5ac11678a2d40d99f49.js>; rel=modulepreload; as=script; nopush,</assets/frontend/application-789ebb0336a94dd0b160a55233201019ce8a2fc01d1ee2fabea7562adb2b6078.css>; rel=preload; as=style; nopush",
+            "permissions-policy": "interest-cohort=()",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "server": "nginx",
+            "server-timing": "cacheHit",
+            "vary": "Accept-Encoding",
+            "via": "1.1 router, 1.1 varnish",
+            "x-cache": "HIT",
+            "x-cache-hits": "1",
+            "x-content-type-options": "nosniff",
             "x-frame-options": "SAMEORIGIN",
+            "x-permitted-cross-domain-policies": "none",
+            "x-request-id": "3cf1e243-87a8-4495-98e0-c453995de4a9",
+            "x-runtime": "0.021948",
+            "x-served-by": "cache-iad-kiad7000063-IAD",
+            "x-timer": "S1776111239.657673,VS0,VE1",
             "x-xss-protection": "0"
           },
           "vulnerableLibrariesAuditScore": null,
@@ -906,57 +828,37 @@
         },
         "recommendations": [
           {
-            "title": "Add a Content-Security-Policy header",
-            "urgency": "high",
-            "detail": "Add an appropriate CSP to reduce script injection and resource loading risk."
-          },
-          {
             "title": "Enable Strict-Transport-Security",
             "urgency": "medium",
             "detail": "Set a Strict-Transport-Security header to enforce HTTPS on repeat visits."
-          },
-          {
-            "title": "Set X-Content-Type-Options: nosniff",
-            "urgency": "medium",
-            "detail": "Prevent MIME type sniffing by adding the nosniff response header."
-          },
-          {
-            "title": "Define a Referrer-Policy",
-            "urgency": "low",
-            "detail": "Set a referrer policy to reduce unnecessary URL data leakage."
-          },
-          {
-            "title": "Add SRI to external scripts",
-            "urgency": "medium",
-            "detail": "1 external script tag(s) are missing integrity attributes."
           }
         ]
       },
       "expectedFiles": {
         "score": 10,
         "urgency": "low",
-        "origin": "https://www.google.com",
+        "origin": "https://www.gov.uk",
         "checks": [
           {
             "path": "/robots.txt",
             "kind": "expected",
-            "url": "https://www.google.com/robots.txt",
+            "url": "https://www.gov.uk/robots.txt",
             "found": true,
             "status": 200,
-            "contentType": "text/plain"
+            "contentType": "text/plain; charset=utf-8"
           },
           {
             "path": "/sitemap.xml",
             "kind": "beneficial",
-            "url": "https://www.google.com/sitemap.xml",
+            "url": "https://www.gov.uk/sitemap.xml",
             "found": true,
             "status": 200,
-            "contentType": "text/xml"
+            "contentType": "application/xml"
           },
           {
             "path": "/.well-known/security.txt",
             "kind": "beneficial",
-            "url": "https://www.google.com/.well-known/security.txt",
+            "url": "https://www.gov.uk/.well-known/security.txt",
             "found": true,
             "status": 200,
             "contentType": "text/plain"
@@ -964,18 +866,18 @@
           {
             "path": "/manifest.webmanifest",
             "kind": "beneficial",
-            "url": "https://www.google.com/manifest.webmanifest",
+            "url": "https://www.gov.uk/manifest.webmanifest",
             "found": false,
             "status": 404,
-            "contentType": "text/html; charset=UTF-8"
+            "contentType": "text/html; charset=utf-8"
           },
           {
             "path": "/favicon.ico",
             "kind": "beneficial",
-            "url": "https://www.google.com/favicon.ico",
+            "url": "https://www.gov.uk/favicon.ico",
             "found": true,
             "status": 200,
-            "contentType": "image/x-icon"
+            "contentType": "image/vnd.microsoft.icon"
           }
         ],
         "recommendations": [
@@ -987,41 +889,41 @@
         ]
       },
       "mediaHints": {
-        "score": 30,
-        "urgency": "medium",
+        "score": 20,
+        "urgency": "low",
         "checks": {
-          "hasDarkMode": true,
+          "hasDarkMode": false,
           "hasMetaColorScheme": false,
-          "hasDarkModeQuery": true,
+          "hasDarkModeQuery": false,
           "autoplayingMedia": [],
           "autoplayCount": 0,
           "unmutedAutoplayCount": 0,
-          "totalImages": 9,
-          "imagesWithLazy": 0,
-          "imagesWithoutLazy": 9
+          "totalImages": 4,
+          "imagesWithLazy": 4,
+          "imagesWithoutLazy": 0
         },
         "recommendations": [
           {
-            "title": "Add loading=\"lazy\" to images",
+            "title": "Add dark mode support",
             "urgency": "medium",
-            "detail": "9 of 9 image(s) lack an explicit loading=\"lazy\" attribute. Lazy loading defers below-fold images and reduces initial page weight."
+            "detail": "No prefers-color-scheme: dark media query or color-scheme meta tag was found. Dark mode reduces energy use on OLED screens and improves user choice."
           }
         ]
       },
       "wsgCustom": {
-        "score": 70,
-        "urgency": "medium",
+        "score": 95,
+        "urgency": "low",
         "data": {
-          "hasPrintStyles": false,
+          "hasPrintStyles": true,
           "hasReducedMotion": false,
           "media": {
-            "totalImages": 9,
-            "lazyImages": 0,
+            "totalImages": 4,
+            "lazyImages": 4,
             "totalIframes": 0,
             "lazyIframes": 0
           },
           "typography": {
-            "primaryFont": "Arial, sans-serif",
+            "primaryFont": "\"GDS Transport\", arial, sans-serif",
             "usesSystemFont": true
           },
           "tracking": {
@@ -1030,15 +932,6 @@
           }
         },
         "recommendations": [
-          {
-            "guideline": "17.1",
-            "title": "Missing print style sheet",
-            "urgency": "low",
-            "detail": "Add a @media print stylesheet to ensure the page is optimized for paper-saving printing.",
-            "wsid": "17.printed documents",
-            "assessor": "script",
-            "example": "@media print {\n  /* Hide non-critical navigation and backgrounds */\n  nav, .ads, header, footer { display: none; }\n  body { font-size: 12pt; color: #000; background: #fff; }\n  a::after { content: \" (\" attr(href) \") \"; } /* Show URLs */\n}"
-          },
           {
             "guideline": "12.3",
             "title": "No reduced motion support",
@@ -1049,29 +942,112 @@
             "example": "@media (prefers-reduced-motion: reduce) {\n  *, ::before, ::after {\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n    transition-duration: 0.01ms !important;\n    scroll-behavior: auto !important;\n  }\n}"
           },
           {
-            "guideline": "11.3",
-            "title": "Incomplete media lazy loading",
-            "urgency": "medium",
-            "detail": "Only 0/9 images use loading=\"lazy\". Global lazy loading reduces initial data transfer and energy consumption.",
-            "wsid": "11.lazy loading",
-            "assessor": "script",
-            "example": "<img src=\"image.webp\" alt=\"Description\" loading=\"lazy\" width=\"800\" height=\"600\">\n<!-- Works for iframes too -->\n<iframe src=\"video.html\" loading=\"lazy\"></iframe>"
-          },
-          {
-            "guideline": "2.15",
+            "guideline": "2.4",
             "title": "Review User Journey Efficiency",
             "urgency": "investigate",
-            "detail": "Have a human evaluate the main user journeys to ensure they require the minimum number of steps. Reducing friction decreases user time and energy expended.",
-            "wsid": "2.user experience",
+            "detail": "Have a human walk through the main user journeys and verify they require the fewest steps possible. Unnecessary steps waste user time and device energy. Look for redundant confirmations, forced account creation, and non-essential interstitials.",
+            "wsid": "2.minimize non-essential content",
+            "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#minimize-non-essential-content-interactivity-or-journeys",
             "assessor": "human"
           },
           {
-            "guideline": "2.1",
+            "guideline": "2.6",
+            "title": "Check for Engagement Traps",
+            "urgency": "investigate",
+            "detail": "Manually review the page for patterns that artificially prolong engagement: infinite scroll, autoplay carousels, sticky overlays, and notification permission prompts. These waste user attention and device energy.",
+            "wsid": "2.design to assist not distract",
+            "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#design-to-assist-and-not-to-distract",
+            "assessor": "human"
+          },
+          {
+            "guideline": "2.7",
+            "title": "Audit for Deceptive Design Patterns",
+            "urgency": "investigate",
+            "detail": "Have a human identify dark patterns: misleading consent dialogs, hidden unsubscribe links, forced continuity, and bait-and-switch flows. Deceptive patterns waste user time and undermine trust.",
+            "wsid": "2.avoid manipulative deceptive",
+            "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#avoid-being-manipulative-or-deceptive",
+            "assessor": "human"
+          },
+          {
+            "guideline": "2.14",
+            "title": "Verify Accessible Alternatives for All Media",
+            "urgency": "investigate",
+            "detail": "Manually check that every video has captions, every audio file has a transcript, every image has meaningful alt text, and every PDF has an accessible HTML alternative. Alternatives let assistive technology users avoid re-downloading heavy formats.",
+            "wsid": "2.offer suitable alternatives",
+            "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#offer-suitable-alternatives-for-every-format-used",
+            "assessor": "human"
+          },
+          {
+            "guideline": "2.18",
+            "title": "Confirm User Research Was Conducted",
+            "urgency": "investigate",
+            "detail": "Verify that genuine user research or usability testing has informed the design. Research-driven design reduces wasted iterations, removes unnecessary features, and ensures the product meets real needs efficiently.",
+            "wsid": "2.involve users early",
+            "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#involve-users-early-in-the-project",
+            "assessor": "human"
+          },
+          {
+            "guideline": "2.10",
             "title": "Review Content Conciseness",
             "urgency": "investigate",
-            "detail": "Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload and reading time.",
-            "wsid": "2.content strategy",
+            "detail": "Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload, reading time, and inference energy for search engines and AI crawlers indexing this content.",
+            "wsid": "2.provide clear inclusive content",
+            "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#provide-clear-inclusive-content-with-purpose",
             "assessor": "ai"
+          },
+          {
+            "guideline": "2.5",
+            "title": "Evaluate Navigation and Wayfinding Quality",
+            "urgency": "investigate",
+            "detail": "Ask an LLM to assess whether the navigation labels, headings, and page hierarchy allow a user to locate content in as few steps as possible. Poor information architecture forces repeat page loads and increases server and user energy costs.",
+            "wsid": "2.navigation wayfinding",
+            "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-that-navigation-and-wayfinding-are-well-structured",
+            "assessor": "ai"
+          },
+          {
+            "guideline": "3.7",
+            "title": "Evaluate HTML Semantic Correctness",
+            "urgency": "investigate",
+            "detail": "Use an LLM or structured analysis tool to verify that HTML uses semantic elements (article, nav, main, section, aside) correctly. Proper semantics reduces duplicate markup, improves accessibility, and allows browsers and crawlers to process pages more efficiently.",
+            "wsid": "3.ensure code follows good semantic practices",
+            "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-code-follows-good-semantic-practices",
+            "assessor": "ai"
+          },
+          {
+            "guideline": "4.4",
+            "title": "Verify Error Pages and Redirects Are Configured",
+            "urgency": "investigate",
+            "detail": "Have a human check that custom 404 and 500 error pages exist and that there are no redirect chains longer than one hop. Broken links force wasted round-trips. Redirect chains multiply transfer costs.",
+            "wsid": "4.error pages redirection",
+            "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#setup-necessary-error-pages-and-redirection-links",
+            "assessor": "human"
+          },
+          {
+            "guideline": "4.10",
+            "title": "Review CDN Usage and Geographic Distribution",
+            "urgency": "investigate",
+            "detail": "Confirm that static assets are served from a CDN and that the CDN edge nodes are geographically close to the primary audience. CDN misuse—or absence—increases last-mile transfer distance and the associated energy cost of data delivery.",
+            "wsid": "4.content delivery networks",
+            "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#use-content-delivery-networks-cdns-appropriately",
+            "assessor": "human"
+          },
+          {
+            "guideline": "5.2",
+            "title": "Confirm a Sustainability Advocate Is Assigned",
+            "urgency": "investigate",
+            "detail": "Verify that someone on the team has explicit responsibility for web sustainability. Without a designated advocate, sustainability improvements tend to be deprioritized and never reach the backlog.",
+            "wsid": "5.assign sustainability advocate",
+            "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#assign-a-sustainability-advocate",
+            "assessor": "human"
+          },
+          {
+            "guideline": "5.8",
+            "title": "Check for a Public Sustainability Statement",
+            "urgency": "investigate",
+            "detail": "Look for a publicly accessible sustainability statement, disclosure page, or environmental policy. Mandatory disclosure requirements are growing globally and transparency builds user trust. The statement should include measurable targets and dates.",
+            "wsid": "5.support mandatory disclosures",
+            "wsgUrl": "https://www.w3.org/TR/web-sustainability-guidelines/#support-mandatory-disclosures-and-reporting",
+            "assessor": "human"
           }
         ]
       },
@@ -1102,40 +1078,40 @@
         },
         "score": 100,
         "urgency": "high",
-        "totalEstimatedSavingsBytes": 316701,
+        "totalEstimatedSavingsBytes": 59251,
         "totalEstimatedBlockingMs": 0,
         "opportunities": [
-          {
-            "id": "unused-javascript",
-            "title": "Remove unused JavaScript",
-            "detail": "Reduce dead JS and split bundles to avoid shipping non-critical code.",
-            "estimatedSavingsBytes": 306085,
-            "estimatedBlockingMs": 0,
-            "displayValue": "Est savings of 299 KiB",
-            "urgency": "high",
-            "sourceAuditId": "unused-javascript"
-          },
           {
             "id": "unused-css-rules",
             "title": "Remove unused CSS",
             "detail": "Trim unused selectors and split CSS so only needed styles are shipped.",
-            "estimatedSavingsBytes": 10616,
+            "estimatedSavingsBytes": 32673,
             "estimatedBlockingMs": 0,
-            "displayValue": "Est savings of 10 KiB",
-            "urgency": "low",
+            "displayValue": "Est savings of 32 KiB",
+            "urgency": "medium",
             "sourceAuditId": "unused-css-rules"
+          },
+          {
+            "id": "unused-javascript",
+            "title": "Remove unused JavaScript",
+            "detail": "Reduce dead JS and split bundles to avoid shipping non-critical code.",
+            "estimatedSavingsBytes": 26578,
+            "estimatedBlockingMs": 0,
+            "displayValue": "Est savings of 26 KiB",
+            "urgency": "low",
+            "sourceAuditId": "unused-javascript"
           }
         ],
         "recommendations": [
           {
-            "title": "Remove unused JavaScript",
-            "urgency": "high",
-            "detail": "Reduce dead JS and split bundles to avoid shipping non-critical code. Estimated byte savings: 298.91 KB."
+            "title": "Remove unused CSS",
+            "urgency": "medium",
+            "detail": "Trim unused selectors and split CSS so only needed styles are shipped. Estimated byte savings: 31.91 KB."
           },
           {
-            "title": "Remove unused CSS",
+            "title": "Remove unused JavaScript",
             "urgency": "low",
-            "detail": "Trim unused selectors and split CSS so only needed styles are shipped. Estimated byte savings: 10.37 KB."
+            "detail": "Reduce dead JS and split bundles to avoid shipping non-critical code. Estimated byte savings: 25.96 KB."
           }
         ]
       },
@@ -1144,16 +1120,16 @@
           "title": "Use dependencies appropriately and ensure maintenance",
           "url": "https://www.w3.org/TR/web-sustainability-guidelines/#use-dependencies-appropriately-and-ensure-maintenance"
         },
-        "score": 2,
-        "urgency": "medium",
+        "score": 0,
+        "urgency": "low",
         "vulnerableLibraryCount": 0,
         "vulnerableLibraries": [],
-        "externalScriptsWithoutIntegrity": 1,
+        "externalScriptsWithoutIntegrity": 0,
         "recommendations": [
           {
-            "title": "Add integrity attributes for external dependencies",
-            "urgency": "medium",
-            "detail": "1 external script dependency URL(s) are missing SRI integrity attributes."
+            "title": "No dependency maintenance warnings detected",
+            "urgency": "low",
+            "detail": "No vulnerable dependency flags were found for this page in the current lightweight checks."
           }
         ]
       },
@@ -1240,18 +1216,18 @@
         ]
       },
       "deadCode": {
-        "score": 19,
-        "urgency": "high",
-        "transferBytes": 759779,
+        "score": 12,
+        "urgency": "low",
+        "transferBytes": 196723,
         "css": {
-          "unusedBytes": 10616,
-          "ratio": 0.013972484103930222,
+          "unusedBytes": 32673,
+          "ratio": 0.16608632442571536,
           "auditId": "unused-css-rules"
         },
         "javascript": {
-          "unusedBytes": 306085,
+          "unusedBytes": 26578,
           "duplicatedBytes": 0,
-          "ratio": 0.4028605686653619,
+          "ratio": 0.13510367369346746,
           "auditIds": [
             "unused-javascript",
             "duplicated-javascript"
@@ -1269,7 +1245,7 @@
             "area": "css",
             "title": "Remove unused CSS selectors and component styles",
             "urgency": "medium",
-            "estimatedSavingsBytes": 10616,
+            "estimatedSavingsBytes": 32673,
             "strategy": "Trim styles that never match rendered markup and split component CSS so only used styles are shipped.",
             "wsg": {
               "categoryId": "3",
@@ -1283,8 +1259,8 @@
           {
             "area": "javascript",
             "title": "Remove unused JavaScript and feature bundles",
-            "urgency": "high",
-            "estimatedSavingsBytes": 306085,
+            "urgency": "medium",
+            "estimatedSavingsBytes": 26578,
             "strategy": "Drop unused packages and feature code, or move them behind route-level or interaction-triggered imports.",
             "wsg": {
               "categoryId": "3",
@@ -1306,22 +1282,22 @@
         }
       },
       "nonCriticalResources": {
-        "score": 12,
-        "urgency": "medium",
-        "transferBytes": 759779,
-        "estimatedDeferrableBytes": 316701,
+        "score": 7,
+        "urgency": "low",
+        "transferBytes": 196723,
+        "estimatedDeferrableBytes": 59251,
         "renderBlockingMs": 0,
         "breakdown": {
           "offscreenImageSavings": 0,
-          "unusedJavascriptSavings": 306085,
-          "unusedCssSavings": 10616
+          "unusedJavascriptSavings": 26578,
+          "unusedCssSavings": 32673
         },
         "candidates": [
           {
             "title": "Defer non-critical JavaScript",
             "area": "javascript",
-            "urgency": "high",
-            "estimatedSavingsBytes": 306085,
+            "urgency": "medium",
+            "estimatedSavingsBytes": 26578,
             "strategy": "Split bundles and load feature code on interaction or route transition.",
             "wsg": {
               "categoryId": "3",
@@ -1336,40 +1312,8 @@
             "title": "Inline critical CSS and defer remainder",
             "area": "stylesheet",
             "urgency": "medium",
-            "estimatedSavingsBytes": 10616,
+            "estimatedSavingsBytes": 32673,
             "strategy": "Ship only above-the-fold CSS in initial render path and defer non-critical styles.",
-            "wsg": {
-              "categoryId": "3",
-              "categoryName": "Web Development",
-              "id": "8",
-              "title": "Defer the loading of non-critical resources",
-              "url": "https://www.w3.org/TR/web-sustainability-guidelines/#defer-the-loading-of-non-critical-resources",
-              "subheading": "Avoid render-blocking slowdowns by asynchronously loading, deferring, or prioritizing external resources as appropriate."
-            }
-          },
-          {
-            "title": "Evaluate deferred loading for heavy script from www.google.com",
-            "area": "script",
-            "urgency": "high",
-            "estimatedSavingsBytes": 344269,
-            "url": "https://www.google.com/xjs/_/js/k=xjs.hm.en.WhKZpFOsO3Q.2019.O/am=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgACAAAAAEgAAAAAAAAAAAgAAAAAAAAAAAAAAAAIAEIgAAAAAAAAAAADAAAAAAIAAAAAAAAAwACAAAAogAgAAwAAAAAAAAAAAAAAAAAAAAACCIAAAAAQCAfwAwAgAAAABIAACYADQAAAAAAQgAAAAAAAABAAAIAAAAQAAAAAAAAAAAAEAAAAAAAAAAEAAAQQEAAAAQAAAAAAAACAAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAAAAABwAgEAAAAABwEGEEAAABAAAAADQAPBAYIigAAAAAAAAAAAAAAAAAAAAAAAAcwABnEEAACAAAAAAAAAAAAAAAAAAAAAAAAAAAkBB0CQAAAAAAGAQ/d=1/ed=1/dg=4/br=1/rs=ACT90oH11uzhf-ZpGZPHsZP8luhOKa7GBg/ee=ALeJib:B8gLwd;AfeaP:TkrAjf;BMxAGc:E5bFse;BgS6mb:fidj5d;BjwMce:cXX2Wb;CIZTGb:Kqhykb;CxXAWb:YyRLvc;DQEued:Fevhcf;DULqB:RKfG5c;Dkk6ge:JZmW9e;DpcR3d:zL72xf;Du7NI:C6zLgf;EABSZ:MXZt9d;EVNhjf:pw70Gc;EjXHpb:pSHqh;EmZ2Bf:zr1jrb;EnlcNd:WeHg4;F54IAe:ZgsFh;F9mqte:rlHKFc;FSxmUe:fiZR8b;Fkukfc:i8H2c;Fmv9Nc:O1Tzwc;G0KhTb:LIaoZ;GEkGdd:e1RzQd;GleZL:J1A7Od;HMDDWe:G8QUdb;HgsCtf:jLgnvd;IBADCc:RYquRb;IoGlCf:b5lhvb;JXJSm:ii1RGf;JXS8fb:k0T3Ub;JqSq7d:y9ePhe;JsbNhc:Xd8iUd;K5nYTd:ZDZcre;KA3P2:C3JnCe;KDb6nb:fE9n2;KOxcK:OZqGte;KQzWid:ZMKkN;KpRAue:Tia57b;LBgRLc:SdcwHb,XVMNvd;LBn8Cf:bJ9L0c;LEikZe:byfTOb,lsjVmc;LXA8b:q7OdKd;LsNahb:ucGLNb;NJ1rfe:qTnoBf;NPKaK:SdcwHb;NSEoX:lazG7b;NjIwef:YVgi7d;Np8Qkd:Dpx6qc;Nyt6ic:jn2sGd;OIfWUb:qfOYcd;OgagBe:cNTe0;OiqE2c:TFpEK;OoK5v:Sp69O;OohIYe:mpEAQb;Pjplud:PoEs9b;PpTLXd:pJYjx;Q1Ow7b:x5CSu;QE20Be:gIltO;QFOGlf:PQ2Aoe;QGR0gd:Mlhmy;QYLF2b:pAQYUd;Qw8Feb:jpavUe;R4IIIb:QWfeKf;R9Ulx:CR7Ufe;RCF5Sd:X1kBmd;SLtqO:Kh1xYe;SMDL4c:fTfGO;SNUn3:ZwDk9d,xD8Kp;ScI3Yc:e7Hzgb,e7Hzgb;ShpF6e:N0pvGc;Snahre:mGCtob;SwCqAd:fXbCZc;SzQQ3e:dNhofb;TIUVQd:lWTJwd;TroZ1d:vVVzjb;U96pRd:FsR04;UBKJZ:LGDJGb;UDrY1c:N0F29d,W50NVd,eps46d,rw5jGd,wciyUe;UVmjEd:EesRsb;UVzb9c:IvPZ6d;UYRIEb:HzTAQc;UyG7Kb:wQd0G;V2HTTe:RolTY;VGRfx:VFqbr;VMuEm:pL7sBc;VN6jIc:ddQyuf;VOcgDe:YquhTb;VhA7bd:vAmQFf;VsAqSb:PGf2Re;WDGyFe:jcVOxd;WXtNeb:QU9BMd;Wfmdue:g3MJlb;Wl55ib:vgbiKb;Y3c5sd:FGbfLe;YIZmRd:A1yn5d;YV5bee:IvPZ6d;YnHUBf:sNsSob;ZSH6tc:QAvyLe;ZWEUA:afR4Cf;ZlOOMb:P0I0Ec;a56pNe:JEfCwb;aAJE9c:WHW6Ef;aCJ9tf:qKftvc;aVZq3e:EMeVIb;aZ61od:arTwJ;aci7y:Z5Tr6c;bDXwRe:UsyOtc;bUIkwb:WMwEHe;bcPXSc:gSZLJb;cEt90b:ws9Tlc;cFTWae:gT8qnd;dIoSBb:ZgGg9b;dLlj2:Qqt3Gf;dXdZV:a7QTqd;dowIGb:ebZ3mb,ebZ3mb;dtl0hd:lLQWFe;eBAeSb:Ck63tb;eBZ5Nd:audvde;eHDfl:ofjVkb;eJKchc:ATg1be;eO3lse:UefOmb;euOXY:OZjbQ;g8nkx:U4MzKc;gaub4:TN6bMe;gtVSi:ekUOYd;h3MYod:ws9Tlc;hK67qb:QWEO5b;hVic1b:Kqhykb;heHB1:sFczq;hjRo6e:F62sG;hlqGX:FWz1ic;hsLsYc:Vl118;hwoVHd:zw4U8c;iFQyKf:QIhFr;iySzae:a6xXfd;jJj2G:kF2o2b;k1O0rf:pnOULd;k2Qxcb:XY51pe;kbAm9d:MkHyGd;lOO0Vd:OTA3Ae;lbfkyf:MqGdUd;liAz7d:kF2o2b;lkq0A:JyBE3e;mWzs9c:fz5ukf;nBZnZe:CvErjb;nJw4Gd:dPFZH;nrDcw:SuEoDe;oGtAuc:sOXFj;oSUNyd:fTfGO,fTfGO;oUlnpc:BO43gd;okUaUd:wItadb;pKJiXd:VCenhc;pNsl2d:j9Yuyc;pXdRYb:JKoKVe;pj82le:ww04Df;qGV2uc:HHi04c;qQEoOc:KUM7Z,d7YSfd;qZx2Fc:j0xrE;qaS3gd:yiLg6e;qafBPd:sgY6Zb;qavrXe:I0C9u;qddgKe:d7YSfd,x4FYXe;rmWaj:PMS6Sd;ropkZ:UT1DG;sTsDMc:kHVSUb;sZmdvc:rdGEfc;tH4IIe:Ymry6;teSRSb:BMLai;tosKvd:ZCqP3;trZL0b:qY8PFe;uuQkY:u2V3ud;vEYCNb:FaqsVd;vRlMvf:Iw9Xo;vfVwPd:lcrkwe;w3bZCb:ZPGaIb;w4rSdf:XKiZ9;w9w86d:XwhUEb,dt4g2b,gKD90c,lWVZVe;wQlYve:aLUfP;wR5FRb:O1Gjze,TtcOte;wV5Pjc:L8KGxe;x9N9ie:KH4Qof;xBbsrc:NEW1Qc;ysNiMc:CpIBjd;yxTchf:KUM7Z;z97YGf:oug9te;zOsCQe:Ko78Df;zaIgPb:Sl0pxd/m=bct,cdos,hsm,jsa,qim,rr4R9e,cEt90b,SNUn3,qddgKe,sTsDMc,dtl0hd,eHDfl,YV5bee,d,csi?cb=121509378",
-            "strategy": "Confirm this asset is required for first paint; defer or lazy-load if not critical.",
-            "wsg": {
-              "categoryId": "3",
-              "categoryName": "Web Development",
-              "id": "8",
-              "title": "Defer the loading of non-critical resources",
-              "url": "https://www.w3.org/TR/web-sustainability-guidelines/#defer-the-loading-of-non-critical-resources",
-              "subheading": "Avoid render-blocking slowdowns by asynchronously loading, deferring, or prioritizing external resources as appropriate."
-            }
-          },
-          {
-            "title": "Evaluate deferred loading for heavy script from www.gstatic.com",
-            "area": "script",
-            "urgency": "medium",
-            "estimatedSavingsBytes": 82965,
-            "url": "https://www.gstatic.com/og/_/js/k=og.qtm.en_US.zjX-30hS8Qs.2019.O/rt=j/m=qabr,q_d,qcwid,qapid,qads/exm=qaaw,qadd,qaid,qein,qhaw,qhba,qhbr,qhch,qhga,qhid,qhin/d=1/ed=1/rs=AA2YrTucmdoM-K37tXdym3rIL1akIo3o5A",
-            "strategy": "Confirm this asset is required for first paint; defer or lazy-load if not critical.",
             "wsg": {
               "categoryId": "3",
               "categoryName": "Web Development",
@@ -1394,81 +1338,28 @@
           "title": "Give third parties the same priority as first parties during assessment",
           "url": "https://www.w3.org/TR/web-sustainability-guidelines/#give-third-parties-the-same-priority-as-first-parties-during-assessment"
         },
-        "score": 11,
+        "score": 0,
         "urgency": "low",
-        "providerCount": 1,
-        "requestCount": 1,
-        "transferBytes": 82965,
+        "providerCount": 0,
+        "requestCount": 0,
+        "transferBytes": 0,
         "notGreenCount": 0,
         "unknownCount": 0,
-        "scripts": [
-          {
-            "hostname": "www.gstatic.com",
-            "resourceType": "script",
-            "requestCount": 1,
-            "transferBytes": 82965,
-            "sampleUrl": "https://www.gstatic.com/og/_/js/k=og.qtm.en_US.zjX-30hS8Qs.2019.O/rt=j/m=qabr,q_d,qcwid,qapid,qads/exm=qaaw,qadd,qaid,qein,qhaw,qhba,qhbr,qhch,qhga,qhid,qhin/d=1/ed=1/rs=AA2YrTucmdoM-K37tXdym3rIL1akIo3o5A",
-            "greenCheck": {
-              "hostname": "www.gstatic.com",
-              "checked": true,
-              "status": "green",
-              "green": true,
-              "hostedBy": "Google Cloud",
-              "hostedByWebsite": "https://cloud.google.com",
-              "listedProvider": true,
-              "partner": null,
-              "modified": "2025-11-25T09:52:50",
-              "supportingDocuments": [
-                {
-                  "id": 108,
-                  "title": "Sustainability at Google",
-                  "link": "https://sustainability.google"
-                },
-                {
-                  "id": 1364,
-                  "title": "Google 2024 Environmental Report",
-                  "link": "https://www.gstatic.com/gumdrop/sustainability/google-2024-environmental-report.pdf"
-                },
-                {
-                  "id": 1365,
-                  "title": "Alphabet 2024 CDP Climate Change Response",
-                  "link": "https://www.gstatic.com/gumdrop/sustainability/alphabet-2024-cdp-climate-change-response.pdf"
-                },
-                {
-                  "id": 1366,
-                  "title": "Google 2024 Supplier Responsibility Report.",
-                  "link": "https://www.gstatic.com/gumdrop/sustainability/google-2024-supplier-responsibility-report.pdf"
-                },
-                {
-                  "id": 1367,
-                  "title": "Alphabet FY2023 Environmental Indicators Assurance Letter",
-                  "link": "https://www.gstatic.com/gumdrop/sustainability/alphabet-fy2023-environmental-indicators-assurance-letter.pdf"
-                },
-                {
-                  "id": 1368,
-                  "title": "3Degrees Cloud Services Review Statement",
-                  "link": "https://services.google.com/fh/files/misc/3degrees_cloud_services_review_statement_final.pdf"
-                }
-              ],
-              "source": "https://api.thegreenwebfoundation.org/api/v3/greencheck/www.gstatic.com",
-              "error": null
-            }
-          }
-        ],
+        "scripts": [],
         "recommendations": [
           {
-            "title": "Maintain a third-party JavaScript inventory",
+            "title": "No major third-party JavaScript risk signals",
             "urgency": "low",
-            "detail": "Track 1 third-party script origin(s) and assign an owner plus business justification for each."
+            "detail": "Continue periodic reviews so third-party additions are assessed with the same rigor as first-party code."
           }
         ]
       },
       "redundancy": {
-        "score": 23,
-        "urgency": "medium",
-        "transferBytes": 759779,
-        "estimatedRedundantBytes": 316701,
-        "redundancyRatio": 0.4168330527692921,
+        "score": 17,
+        "urgency": "low",
+        "transferBytes": 196723,
+        "estimatedRedundantBytes": 59251,
+        "redundancyRatio": 0.3011899981191828,
         "relatedAuditIds": [
           "unused-css-rules",
           "unused-javascript",
@@ -1480,24 +1371,24 @@
         ],
         "wasteByAudit": [
           {
-            "auditId": "unused-javascript",
-            "title": "Reduce unused JavaScript",
-            "savingsBytes": 306085,
-            "displayValue": "Est savings of 299 KiB"
-          },
-          {
             "auditId": "unused-css-rules",
             "title": "Reduce unused CSS",
-            "savingsBytes": 10616,
-            "displayValue": "Est savings of 10 KiB"
+            "savingsBytes": 32673,
+            "displayValue": "Est savings of 32 KiB"
+          },
+          {
+            "auditId": "unused-javascript",
+            "title": "Reduce unused JavaScript",
+            "savingsBytes": 26578,
+            "displayValue": "Est savings of 26 KiB"
           }
         ],
         "recommendations": [
           {
-            "title": "Reduce unused javascript",
-            "urgency": "high",
-            "estimatedSavingsBytes": 306085,
-            "auditId": "unused-javascript",
+            "title": "Reduce unused css",
+            "urgency": "medium",
+            "estimatedSavingsBytes": 32673,
+            "auditId": "unused-css-rules",
             "wsg": {
               "categoryId": "3",
               "categoryName": "Web Development",
@@ -1508,10 +1399,10 @@
             }
           },
           {
-            "title": "Reduce unused css",
+            "title": "Reduce unused javascript",
             "urgency": "medium",
-            "estimatedSavingsBytes": 10616,
-            "auditId": "unused-css-rules",
+            "estimatedSavingsBytes": 26578,
+            "auditId": "unused-javascript",
             "wsg": {
               "categoryId": "3",
               "categoryName": "Web Development",
@@ -1532,100 +1423,16 @@
         }
       },
       "modularization": {
-        "score": 37,
-        "urgency": "medium",
-        "totalTransferBytes": 759779,
-        "heavyRequestCount": 3,
-        "heavyBytes": 501895,
-        "heavyRatio": 0.6605802476772851,
-        "heavyRequests": [
-          {
-            "url": "https://www.google.com/xjs/_/js/k=xjs.hm.en.WhKZpFOsO3Q.2019.O/am=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgACAAAAAEgAAAAAAAAAAAgAAAAAAAAAAAAAAAAIAEIgAAAAAAAAAAADAAAAAAIAAAAAAAAAwACAAAAogAgAAwAAAAAAAAAAAAAAAAAAAAACCIAAAAAQCAfwAwAgAAAABIAACYADQAAAAAAQgAAAAAAAABAAAIAAAAQAAAAAAAAAAAAEAAAAAAAAAAEAAAQQEAAAAQAAAAAAAACAAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAAAAABwAgEAAAAABwEGEEAAABAAAAADQAPBAYIigAAAAAAAAAAAAAAAAAAAAAAAAcwABnEEAACAAAAAAAAAAAAAAAAAAAAAAAAAAAkBB0CQAAAAAAGAQ/d=1/ed=1/dg=4/br=1/rs=ACT90oH11uzhf-ZpGZPHsZP8luhOKa7GBg/ee=ALeJib:B8gLwd;AfeaP:TkrAjf;BMxAGc:E5bFse;BgS6mb:fidj5d;BjwMce:cXX2Wb;CIZTGb:Kqhykb;CxXAWb:YyRLvc;DQEued:Fevhcf;DULqB:RKfG5c;Dkk6ge:JZmW9e;DpcR3d:zL72xf;Du7NI:C6zLgf;EABSZ:MXZt9d;EVNhjf:pw70Gc;EjXHpb:pSHqh;EmZ2Bf:zr1jrb;EnlcNd:WeHg4;F54IAe:ZgsFh;F9mqte:rlHKFc;FSxmUe:fiZR8b;Fkukfc:i8H2c;Fmv9Nc:O1Tzwc;G0KhTb:LIaoZ;GEkGdd:e1RzQd;GleZL:J1A7Od;HMDDWe:G8QUdb;HgsCtf:jLgnvd;IBADCc:RYquRb;IoGlCf:b5lhvb;JXJSm:ii1RGf;JXS8fb:k0T3Ub;JqSq7d:y9ePhe;JsbNhc:Xd8iUd;K5nYTd:ZDZcre;KA3P2:C3JnCe;KDb6nb:fE9n2;KOxcK:OZqGte;KQzWid:ZMKkN;KpRAue:Tia57b;LBgRLc:SdcwHb,XVMNvd;LBn8Cf:bJ9L0c;LEikZe:byfTOb,lsjVmc;LXA8b:q7OdKd;LsNahb:ucGLNb;NJ1rfe:qTnoBf;NPKaK:SdcwHb;NSEoX:lazG7b;NjIwef:YVgi7d;Np8Qkd:Dpx6qc;Nyt6ic:jn2sGd;OIfWUb:qfOYcd;OgagBe:cNTe0;OiqE2c:TFpEK;OoK5v:Sp69O;OohIYe:mpEAQb;Pjplud:PoEs9b;PpTLXd:pJYjx;Q1Ow7b:x5CSu;QE20Be:gIltO;QFOGlf:PQ2Aoe;QGR0gd:Mlhmy;QYLF2b:pAQYUd;Qw8Feb:jpavUe;R4IIIb:QWfeKf;R9Ulx:CR7Ufe;RCF5Sd:X1kBmd;SLtqO:Kh1xYe;SMDL4c:fTfGO;SNUn3:ZwDk9d,xD8Kp;ScI3Yc:e7Hzgb,e7Hzgb;ShpF6e:N0pvGc;Snahre:mGCtob;SwCqAd:fXbCZc;SzQQ3e:dNhofb;TIUVQd:lWTJwd;TroZ1d:vVVzjb;U96pRd:FsR04;UBKJZ:LGDJGb;UDrY1c:N0F29d,W50NVd,eps46d,rw5jGd,wciyUe;UVmjEd:EesRsb;UVzb9c:IvPZ6d;UYRIEb:HzTAQc;UyG7Kb:wQd0G;V2HTTe:RolTY;VGRfx:VFqbr;VMuEm:pL7sBc;VN6jIc:ddQyuf;VOcgDe:YquhTb;VhA7bd:vAmQFf;VsAqSb:PGf2Re;WDGyFe:jcVOxd;WXtNeb:QU9BMd;Wfmdue:g3MJlb;Wl55ib:vgbiKb;Y3c5sd:FGbfLe;YIZmRd:A1yn5d;YV5bee:IvPZ6d;YnHUBf:sNsSob;ZSH6tc:QAvyLe;ZWEUA:afR4Cf;ZlOOMb:P0I0Ec;a56pNe:JEfCwb;aAJE9c:WHW6Ef;aCJ9tf:qKftvc;aVZq3e:EMeVIb;aZ61od:arTwJ;aci7y:Z5Tr6c;bDXwRe:UsyOtc;bUIkwb:WMwEHe;bcPXSc:gSZLJb;cEt90b:ws9Tlc;cFTWae:gT8qnd;dIoSBb:ZgGg9b;dLlj2:Qqt3Gf;dXdZV:a7QTqd;dowIGb:ebZ3mb,ebZ3mb;dtl0hd:lLQWFe;eBAeSb:Ck63tb;eBZ5Nd:audvde;eHDfl:ofjVkb;eJKchc:ATg1be;eO3lse:UefOmb;euOXY:OZjbQ;g8nkx:U4MzKc;gaub4:TN6bMe;gtVSi:ekUOYd;h3MYod:ws9Tlc;hK67qb:QWEO5b;hVic1b:Kqhykb;heHB1:sFczq;hjRo6e:F62sG;hlqGX:FWz1ic;hsLsYc:Vl118;hwoVHd:zw4U8c;iFQyKf:QIhFr;iySzae:a6xXfd;jJj2G:kF2o2b;k1O0rf:pnOULd;k2Qxcb:XY51pe;kbAm9d:MkHyGd;lOO0Vd:OTA3Ae;lbfkyf:MqGdUd;liAz7d:kF2o2b;lkq0A:JyBE3e;mWzs9c:fz5ukf;nBZnZe:CvErjb;nJw4Gd:dPFZH;nrDcw:SuEoDe;oGtAuc:sOXFj;oSUNyd:fTfGO,fTfGO;oUlnpc:BO43gd;okUaUd:wItadb;pKJiXd:VCenhc;pNsl2d:j9Yuyc;pXdRYb:JKoKVe;pj82le:ww04Df;qGV2uc:HHi04c;qQEoOc:KUM7Z,d7YSfd;qZx2Fc:j0xrE;qaS3gd:yiLg6e;qafBPd:sgY6Zb;qavrXe:I0C9u;qddgKe:d7YSfd,x4FYXe;rmWaj:PMS6Sd;ropkZ:UT1DG;sTsDMc:kHVSUb;sZmdvc:rdGEfc;tH4IIe:Ymry6;teSRSb:BMLai;tosKvd:ZCqP3;trZL0b:qY8PFe;uuQkY:u2V3ud;vEYCNb:FaqsVd;vRlMvf:Iw9Xo;vfVwPd:lcrkwe;w3bZCb:ZPGaIb;w4rSdf:XKiZ9;w9w86d:XwhUEb,dt4g2b,gKD90c,lWVZVe;wQlYve:aLUfP;wR5FRb:O1Gjze,TtcOte;wV5Pjc:L8KGxe;x9N9ie:KH4Qof;xBbsrc:NEW1Qc;ysNiMc:CpIBjd;yxTchf:KUM7Z;z97YGf:oug9te;zOsCQe:Ko78Df;zaIgPb:Sl0pxd/m=bct,cdos,hsm,jsa,qim,rr4R9e,cEt90b,SNUn3,qddgKe,sTsDMc,dtl0hd,eHDfl,YV5bee,d,csi?cb=121509378",
-            "transferSize": 344269,
-            "resourceType": "script",
-            "mimeType": "text/javascript",
-            "domain": "www.google.com"
-          },
-          {
-            "url": "https://www.gstatic.com/og/_/js/k=og.qtm.en_US.zjX-30hS8Qs.2019.O/rt=j/m=qabr,q_d,qcwid,qapid,qads/exm=qaaw,qadd,qaid,qein,qhaw,qhba,qhbr,qhch,qhga,qhid,qhin/d=1/ed=1/rs=AA2YrTucmdoM-K37tXdym3rIL1akIo3o5A",
-            "transferSize": 82965,
-            "resourceType": "script",
-            "mimeType": "text/javascript",
-            "domain": "www.gstatic.com"
-          },
-          {
-            "url": "https://www.google.com/xjs/_/js/k=xjs.hm.en.WhKZpFOsO3Q.2019.O/ck=xjs.hm.iGt15jyttLw.L.B1.O/am=ABAgAAAAAgAAAAAAQAAAAAAAAAAAAAAAAAIAAAAAAAAAACAAAAAgACIAAAEkgAAAAAAACAAZgABADAAAAAAAAAAAAIAEIgAAABAAAAAAADAAAAAAIAAAAAAAAAwAGAAAAogAgAAwAAAAAAAAAAEAAAAAAAAAACCIAAAAAQCAfwAwAgAAADBIDACYADQAAAAAAQiGIAAEAAihECAIAgAAQAAAEAAAAAAAAEAAAAAAAAAAEAAAQQECAAAQAAAAAAAACABAAABQIwMAABggABAAA0EAAAQAAAAIAAAAAAAAFwAgEAAAwABwEGEEAAABAAAAADQAPBAYIigAAAAAAAAAAAAAAAAAAAAAAAAcwABnEEAACAAAAAAAAAAAAAAAAAAAAAAAAAAAkBB0CQAAAAAAGAQ/d=0/dg=0/br=1/ujg=1/rs=ACT90oHN-eVFmCeV_9Z_AO55ZIumxoK8vQ/m=U9EYge,sy1sg,loL8vb,sy1sh,sy1sc,sy1be,sy102,sy105,sy104,sygi,sy101,sy103,syzt,syzw,sy10m,syv3,syfk,sy10i,syd1,syd2,sycx,sy10p,sygh,sy10l,sy10q,sy10o,sy10n,sy10r,sy100,sy107,syzr,sy10h,sy109,sy10e,sy10a,syvb,syva,sy108,sy10b,sy10d,syzs,syzi,syw8,syw7,syzu,ms4mZb,sy1q0,HoZvlf,sy1r0,eT8Xz,syff,syfe,mI3LFb,syfl,lazG7b,syti,xRxDld,syg1,Wq6lxf,syty,sytx,sytv,sypm,syka,syk9,syl8,sykb,syke,syjz,syk0,syhf,syhg,syi6,syhx,syhc,syhb,syhd,sypn,OZLguc,sy1b7,syu4,syry,syp9,syrz,Mbif2,ipWLfe,sy1b9,QVaUhf,sy8n,sy8m,syh0,sygz,sygx,sygw,syh5,syh3,sygv,syd0,sycc,syby,sycb,syc3,syc6,syc2,sybr,syc0,syc9,sybz,sybk,sybm,sycf,syce,sycy,sycr,sycm,syaw,syav,syck,sycq,sycn,sybt,sybu,sybv,sybw,sybs,sybx,syd5,sybn,syba,sybi,syax,sydd,syb0,syb8,sybh,sybq,syco,sygq,sygu,sy96,sy92,sy95,sygs,sygr,sygp,sygm,sygk,sy9a,uxMpU,syg8,syd9,syd8,syct,sycs,sydc,sybp,sych,syd7,sydf,sy9t,sy9q,sy9p,sy9o,sy9n,sy9m,Mlhmy,QGR0gd,PoEs9b,Pjplud,OTA3Ae,sy9j,A1yn5d,YIZmRd,sy8x,sy8v,sy8u,sy8w,sy8s,sy8r,byfTOb,lsjVmc,LEikZe,sy8p,kWgXee,ovKuLd,sgY6Zb,qafBPd,ebZ3mb,dowIGb,sy1bd,sy1bc,sy1ba,sy1bb,SJpD2c,sy1l1,sy1k5,EgWzsb,sy1l3,sy1l2,sywa?cb=121509378&xjs=s3",
-            "transferSize": 74661,
-            "resourceType": "script",
-            "mimeType": "text/javascript",
-            "domain": "www.google.com"
-          }
-        ],
-        "groupedByType": [
-          {
-            "resourceType": "script",
-            "count": 3,
-            "transferBytes": 501895
-          }
-        ],
-        "groupedByOrigin": [
-          {
-            "domain": "www.google.com",
-            "count": 2,
-            "transferBytes": 418930
-          },
-          {
-            "domain": "www.gstatic.com",
-            "count": 1,
-            "transferBytes": 82965
-          }
-        ],
-        "onDemandCandidates": [
-          {
-            "title": "Split JavaScript by route or interaction",
-            "urgency": "high",
-            "estimatedSavingsBytes": 306085,
-            "strategy": "Move non-critical bundles behind route-level or event-driven imports so they are only fetched on demand.",
-            "wsg": {
-              "categoryId": "3",
-              "categoryName": "Web Development",
-              "id": "3",
-              "title": "Modularize bandwidth-heavy components",
-              "url": "https://www.w3.org/TR/web-sustainability-guidelines/#modularize-bandwidth-heavy-components",
-              "subheading": "Break down large components into smaller, self-contained pieces that can be requested only when required to save bandwidth."
-            }
-          },
-          {
-            "title": "Modularize heavy script asset from www.google.com",
-            "urgency": "high",
-            "estimatedSavingsBytes": 344269,
-            "strategy": "Load this script only on pages or interactions that require it; prefer dynamic import and feature-level bundles.",
-            "url": "https://www.google.com/xjs/_/js/k=xjs.hm.en.WhKZpFOsO3Q.2019.O/am=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgACAAAAAEgAAAAAAAAAAAgAAAAAAAAAAAAAAAAIAEIgAAAAAAAAAAADAAAAAAIAAAAAAAAAwACAAAAogAgAAwAAAAAAAAAAAAAAAAAAAAACCIAAAAAQCAfwAwAgAAAABIAACYADQAAAAAAQgAAAAAAAABAAAIAAAAQAAAAAAAAAAAAEAAAAAAAAAAEAAAQQEAAAAQAAAAAAAACAAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAAAAABwAgEAAAAABwEGEEAAABAAAAADQAPBAYIigAAAAAAAAAAAAAAAAAAAAAAAAcwABnEEAACAAAAAAAAAAAAAAAAAAAAAAAAAAAkBB0CQAAAAAAGAQ/d=1/ed=1/dg=4/br=1/rs=ACT90oH11uzhf-ZpGZPHsZP8luhOKa7GBg/ee=ALeJib:B8gLwd;AfeaP:TkrAjf;BMxAGc:E5bFse;BgS6mb:fidj5d;BjwMce:cXX2Wb;CIZTGb:Kqhykb;CxXAWb:YyRLvc;DQEued:Fevhcf;DULqB:RKfG5c;Dkk6ge:JZmW9e;DpcR3d:zL72xf;Du7NI:C6zLgf;EABSZ:MXZt9d;EVNhjf:pw70Gc;EjXHpb:pSHqh;EmZ2Bf:zr1jrb;EnlcNd:WeHg4;F54IAe:ZgsFh;F9mqte:rlHKFc;FSxmUe:fiZR8b;Fkukfc:i8H2c;Fmv9Nc:O1Tzwc;G0KhTb:LIaoZ;GEkGdd:e1RzQd;GleZL:J1A7Od;HMDDWe:G8QUdb;HgsCtf:jLgnvd;IBADCc:RYquRb;IoGlCf:b5lhvb;JXJSm:ii1RGf;JXS8fb:k0T3Ub;JqSq7d:y9ePhe;JsbNhc:Xd8iUd;K5nYTd:ZDZcre;KA3P2:C3JnCe;KDb6nb:fE9n2;KOxcK:OZqGte;KQzWid:ZMKkN;KpRAue:Tia57b;LBgRLc:SdcwHb,XVMNvd;LBn8Cf:bJ9L0c;LEikZe:byfTOb,lsjVmc;LXA8b:q7OdKd;LsNahb:ucGLNb;NJ1rfe:qTnoBf;NPKaK:SdcwHb;NSEoX:lazG7b;NjIwef:YVgi7d;Np8Qkd:Dpx6qc;Nyt6ic:jn2sGd;OIfWUb:qfOYcd;OgagBe:cNTe0;OiqE2c:TFpEK;OoK5v:Sp69O;OohIYe:mpEAQb;Pjplud:PoEs9b;PpTLXd:pJYjx;Q1Ow7b:x5CSu;QE20Be:gIltO;QFOGlf:PQ2Aoe;QGR0gd:Mlhmy;QYLF2b:pAQYUd;Qw8Feb:jpavUe;R4IIIb:QWfeKf;R9Ulx:CR7Ufe;RCF5Sd:X1kBmd;SLtqO:Kh1xYe;SMDL4c:fTfGO;SNUn3:ZwDk9d,xD8Kp;ScI3Yc:e7Hzgb,e7Hzgb;ShpF6e:N0pvGc;Snahre:mGCtob;SwCqAd:fXbCZc;SzQQ3e:dNhofb;TIUVQd:lWTJwd;TroZ1d:vVVzjb;U96pRd:FsR04;UBKJZ:LGDJGb;UDrY1c:N0F29d,W50NVd,eps46d,rw5jGd,wciyUe;UVmjEd:EesRsb;UVzb9c:IvPZ6d;UYRIEb:HzTAQc;UyG7Kb:wQd0G;V2HTTe:RolTY;VGRfx:VFqbr;VMuEm:pL7sBc;VN6jIc:ddQyuf;VOcgDe:YquhTb;VhA7bd:vAmQFf;VsAqSb:PGf2Re;WDGyFe:jcVOxd;WXtNeb:QU9BMd;Wfmdue:g3MJlb;Wl55ib:vgbiKb;Y3c5sd:FGbfLe;YIZmRd:A1yn5d;YV5bee:IvPZ6d;YnHUBf:sNsSob;ZSH6tc:QAvyLe;ZWEUA:afR4Cf;ZlOOMb:P0I0Ec;a56pNe:JEfCwb;aAJE9c:WHW6Ef;aCJ9tf:qKftvc;aVZq3e:EMeVIb;aZ61od:arTwJ;aci7y:Z5Tr6c;bDXwRe:UsyOtc;bUIkwb:WMwEHe;bcPXSc:gSZLJb;cEt90b:ws9Tlc;cFTWae:gT8qnd;dIoSBb:ZgGg9b;dLlj2:Qqt3Gf;dXdZV:a7QTqd;dowIGb:ebZ3mb,ebZ3mb;dtl0hd:lLQWFe;eBAeSb:Ck63tb;eBZ5Nd:audvde;eHDfl:ofjVkb;eJKchc:ATg1be;eO3lse:UefOmb;euOXY:OZjbQ;g8nkx:U4MzKc;gaub4:TN6bMe;gtVSi:ekUOYd;h3MYod:ws9Tlc;hK67qb:QWEO5b;hVic1b:Kqhykb;heHB1:sFczq;hjRo6e:F62sG;hlqGX:FWz1ic;hsLsYc:Vl118;hwoVHd:zw4U8c;iFQyKf:QIhFr;iySzae:a6xXfd;jJj2G:kF2o2b;k1O0rf:pnOULd;k2Qxcb:XY51pe;kbAm9d:MkHyGd;lOO0Vd:OTA3Ae;lbfkyf:MqGdUd;liAz7d:kF2o2b;lkq0A:JyBE3e;mWzs9c:fz5ukf;nBZnZe:CvErjb;nJw4Gd:dPFZH;nrDcw:SuEoDe;oGtAuc:sOXFj;oSUNyd:fTfGO,fTfGO;oUlnpc:BO43gd;okUaUd:wItadb;pKJiXd:VCenhc;pNsl2d:j9Yuyc;pXdRYb:JKoKVe;pj82le:ww04Df;qGV2uc:HHi04c;qQEoOc:KUM7Z,d7YSfd;qZx2Fc:j0xrE;qaS3gd:yiLg6e;qafBPd:sgY6Zb;qavrXe:I0C9u;qddgKe:d7YSfd,x4FYXe;rmWaj:PMS6Sd;ropkZ:UT1DG;sTsDMc:kHVSUb;sZmdvc:rdGEfc;tH4IIe:Ymry6;teSRSb:BMLai;tosKvd:ZCqP3;trZL0b:qY8PFe;uuQkY:u2V3ud;vEYCNb:FaqsVd;vRlMvf:Iw9Xo;vfVwPd:lcrkwe;w3bZCb:ZPGaIb;w4rSdf:XKiZ9;w9w86d:XwhUEb,dt4g2b,gKD90c,lWVZVe;wQlYve:aLUfP;wR5FRb:O1Gjze,TtcOte;wV5Pjc:L8KGxe;x9N9ie:KH4Qof;xBbsrc:NEW1Qc;ysNiMc:CpIBjd;yxTchf:KUM7Z;z97YGf:oug9te;zOsCQe:Ko78Df;zaIgPb:Sl0pxd/m=bct,cdos,hsm,jsa,qim,rr4R9e,cEt90b,SNUn3,qddgKe,sTsDMc,dtl0hd,eHDfl,YV5bee,d,csi?cb=121509378",
-            "wsg": {
-              "categoryId": "3",
-              "categoryName": "Web Development",
-              "id": "3",
-              "title": "Modularize bandwidth-heavy components",
-              "url": "https://www.w3.org/TR/web-sustainability-guidelines/#modularize-bandwidth-heavy-components",
-              "subheading": "Break down large components into smaller, self-contained pieces that can be requested only when required to save bandwidth."
-            }
-          },
-          {
-            "title": "Modularize heavy script asset from www.gstatic.com",
-            "urgency": "medium",
-            "estimatedSavingsBytes": 82965,
-            "strategy": "Load this script only on pages or interactions that require it; prefer dynamic import and feature-level bundles.",
-            "url": "https://www.gstatic.com/og/_/js/k=og.qtm.en_US.zjX-30hS8Qs.2019.O/rt=j/m=qabr,q_d,qcwid,qapid,qads/exm=qaaw,qadd,qaid,qein,qhaw,qhba,qhbr,qhch,qhga,qhid,qhin/d=1/ed=1/rs=AA2YrTucmdoM-K37tXdym3rIL1akIo3o5A",
-            "wsg": {
-              "categoryId": "3",
-              "categoryName": "Web Development",
-              "id": "3",
-              "title": "Modularize bandwidth-heavy components",
-              "url": "https://www.w3.org/TR/web-sustainability-guidelines/#modularize-bandwidth-heavy-components",
-              "subheading": "Break down large components into smaller, self-contained pieces that can be requested only when required to save bandwidth."
-            }
-          }
-        ],
+        "score": 3,
+        "urgency": "low",
+        "totalTransferBytes": 196723,
+        "heavyRequestCount": 0,
+        "heavyBytes": 0,
+        "heavyRatio": 0,
+        "heavyRequests": [],
+        "groupedByType": [],
+        "groupedByOrigin": [],
+        "onDemandCandidates": [],
         "wsg": {
           "categoryId": "3",
           "categoryName": "Web Development",
@@ -1637,29 +1444,11 @@
       },
       "findings": [
         {
-          "auditId": "largest-contentful-paint",
-          "title": "Largest Contentful Paint",
-          "description": "Largest Contentful Paint marks the time at which the largest text or image is painted. [Learn more about the Largest Contentful Paint metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/)",
-          "score": 0.08,
-          "displayValue": "6.6 s",
-          "impact": "high",
-          "wsg": {
-            "categoryId": "3",
-            "categoryName": "Web Development",
-            "id": "1",
-            "title": "Set goals based on performance and energy impact",
-            "url": "https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact",
-            "subheading": "Account for the difference in energy intensity that different types of content may have on a project and set goals based on what you would like to achieve."
-          },
-          "assessor": "script",
-          "issueTemplate": "## Improve Largest Contentful Paint\n\n- Lighthouse audit: largest-contentful-paint\n- Current value: 6.6 s\n- WSG guideline: 1 Set goals based on performance and energy impact\n- WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact\n\n### Why this matters\nLargest Contentful Paint marks the time at which the largest text or image is painted. [Learn more about the Largest Contentful Paint metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/)\n\n### Definition of done\n- [ ] Metric improves in Lighthouse on key templates\n- [ ] Changes documented in release notes\n- [ ] Re-scan confirms improvement"
-        },
-        {
           "auditId": "unused-javascript",
           "title": "Reduce unused JavaScript",
           "description": "Reduce unused JavaScript and defer loading scripts until they are required to decrease bytes consumed by network activity. [Learn how to reduce unused JavaScript](https://developer.chrome.com/docs/lighthouse/performance/unused-javascript/).",
           "score": 0,
-          "displayValue": "Est savings of 299 KiB",
+          "displayValue": "Est savings of 26 KiB",
           "impact": "high",
           "wsg": {
             "categoryId": "3",
@@ -1670,51 +1459,15 @@
             "subheading": "Use libraries and frameworks only where necessary, when plain code or smaller packages are inappropriate for the use case, and they are kept up to date."
           },
           "assessor": "script",
-          "issueTemplate": "## Improve Reduce unused JavaScript\n\n- Lighthouse audit: unused-javascript\n- Current value: Est savings of 299 KiB\n- WSG guideline: 16 Use dependencies appropriately and ensure maintenance\n- WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#use-dependencies-appropriately-and-ensure-maintenance\n\n### Why this matters\nReduce unused JavaScript and defer loading scripts until they are required to decrease bytes consumed by network activity. [Learn how to reduce unused JavaScript](https://developer.chrome.com/docs/lighthouse/performance/unused-javascript/).\n\n### Definition of done\n- [ ] Metric improves in Lighthouse on key templates\n- [ ] Changes documented in release notes\n- [ ] Re-scan confirms improvement"
-        },
-        {
-          "auditId": "uses-rel-preconnect",
-          "title": "Preconnect to required origins",
-          "description": "Consider adding `preconnect` or `dns-prefetch` resource hints to establish early connections to important third-party origins. [Learn how to preconnect to required origins](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/).",
-          "score": 0,
-          "displayValue": "Est savings of 310 ms",
-          "impact": "high",
-          "wsg": {
-            "categoryId": "3",
-            "categoryName": "Web Development",
-            "id": "18",
-            "title": "Use the most efficient solution for your service",
-            "url": "https://www.w3.org/TR/web-sustainability-guidelines/#use-the-most-efficient-solution-for-your-service",
-            "subheading": "Identify the project requirements, use the most efficient approach, aim for static over dynamic where possible, and consider the impact of extensions and components."
-          },
-          "assessor": "script",
-          "issueTemplate": "## Improve Preconnect to required origins\n\n- Lighthouse audit: uses-rel-preconnect\n- Current value: Est savings of 310 ms\n- WSG guideline: 18 Use the most efficient solution for your service\n- WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#use-the-most-efficient-solution-for-your-service\n\n### Why this matters\nConsider adding `preconnect` or `dns-prefetch` resource hints to establish early connections to important third-party origins. [Learn how to preconnect to required origins](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/).\n\n### Definition of done\n- [ ] Metric improves in Lighthouse on key templates\n- [ ] Changes documented in release notes\n- [ ] Re-scan confirms improvement"
-        },
-        {
-          "auditId": "speed-index",
-          "title": "Speed Index",
-          "description": "Speed Index shows how quickly the contents of a page are visibly populated. [Learn more about the Speed Index metric](https://developer.chrome.com/docs/lighthouse/performance/speed-index/).",
-          "score": 0.88,
-          "displayValue": "3.5 s",
-          "impact": "medium",
-          "wsg": {
-            "categoryId": "3",
-            "categoryName": "Web Development",
-            "id": "1",
-            "title": "Set goals based on performance and energy impact",
-            "url": "https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact",
-            "subheading": "Account for the difference in energy intensity that different types of content may have on a project and set goals based on what you would like to achieve."
-          },
-          "assessor": "script",
-          "issueTemplate": "## Improve Speed Index\n\n- Lighthouse audit: speed-index\n- Current value: 3.5 s\n- WSG guideline: 1 Set goals based on performance and energy impact\n- WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact\n\n### Why this matters\nSpeed Index shows how quickly the contents of a page are visibly populated. [Learn more about the Speed Index metric](https://developer.chrome.com/docs/lighthouse/performance/speed-index/).\n\n### Definition of done\n- [ ] Metric improves in Lighthouse on key templates\n- [ ] Changes documented in release notes\n- [ ] Re-scan confirms improvement"
+          "issueTemplate": "## Improve Reduce unused JavaScript\n\n- Lighthouse audit: unused-javascript\n- Current value: Est savings of 26 KiB\n- WSG guideline: 16 Use dependencies appropriately and ensure maintenance\n- WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#use-dependencies-appropriately-and-ensure-maintenance\n\n### Why this matters\nReduce unused JavaScript and defer loading scripts until they are required to decrease bytes consumed by network activity. [Learn how to reduce unused JavaScript](https://developer.chrome.com/docs/lighthouse/performance/unused-javascript/).\n\n### Definition of done\n- [ ] Metric improves in Lighthouse on key templates\n- [ ] Changes documented in release notes\n- [ ] Re-scan confirms improvement"
         },
         {
           "auditId": "unused-css-rules",
           "title": "Reduce unused CSS",
           "description": "Reduce unused rules from stylesheets and defer CSS not used for above-the-fold content to decrease bytes consumed by network activity. [Learn how to reduce unused CSS](https://developer.chrome.com/docs/lighthouse/performance/unused-css-rules/).",
-          "score": 0.5,
-          "displayValue": "Est savings of 10 KiB",
-          "impact": "medium",
+          "score": 0,
+          "displayValue": "Est savings of 32 KiB",
+          "impact": "high",
           "wsg": {
             "categoryId": "3",
             "categoryName": "Web Development",
@@ -1724,7 +1477,7 @@
             "subheading": "Remove redundant characters from code to reduce the amount of data being stored and transferred to devices."
           },
           "assessor": "script",
-          "issueTemplate": "## Improve Reduce unused CSS\n\n- Lighthouse audit: unused-css-rules\n- Current value: Est savings of 10 KiB\n- WSG guideline: 2 Remove unnecessary or redundant information\n- WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information\n\n### Why this matters\nReduce unused rules from stylesheets and defer CSS not used for above-the-fold content to decrease bytes consumed by network activity. [Learn how to reduce unused CSS](https://developer.chrome.com/docs/lighthouse/performance/unused-css-rules/).\n\n### Definition of done\n- [ ] Metric improves in Lighthouse on key templates\n- [ ] Changes documented in release notes\n- [ ] Re-scan confirms improvement"
+          "issueTemplate": "## Improve Reduce unused CSS\n\n- Lighthouse audit: unused-css-rules\n- Current value: Est savings of 32 KiB\n- WSG guideline: 2 Remove unnecessary or redundant information\n- WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information\n\n### Why this matters\nReduce unused rules from stylesheets and defer CSS not used for above-the-fold content to decrease bytes consumed by network activity. [Learn how to reduce unused CSS](https://developer.chrome.com/docs/lighthouse/performance/unused-css-rules/).\n\n### Definition of done\n- [ ] Metric improves in Lighthouse on key templates\n- [ ] Changes documented in release notes\n- [ ] Re-scan confirms improvement"
         }
       ]
     }

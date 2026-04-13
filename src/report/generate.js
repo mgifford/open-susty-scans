@@ -2380,6 +2380,8 @@ export function renderMarkdown(report) {
       lines.push(h.criteria.example || "// Implementation details in documentation");
       lines.push("```");
       lines.push(`- [WSG Guideline ${h.criteria.guideline.id}](${h.criteria.guideline.url})`);
+    } else if (h.wsgUrl) {
+      lines.push(`- [WSG ${h.guideline} Reference](${h.wsgUrl})`);
     }
   }
 
@@ -3417,9 +3419,15 @@ function renderWsgHighlights(highlights) {
           <p class="muted" style="margin-top: 0.5rem; font-size: 0.8rem;">
             Source: <a href="${escapeAttr(h.criteria.guideline.url)}" target="_blank">WSG Guideline ${h.criteria.guideline.id}</a>
           </p>
-          ` : ""}
+          ` : (h.wsgUrl ? `
+          <p class="muted" style="margin-top: 0.5rem; font-size: 0.8rem;">
+            Reference: <a href="${escapeAttr(h.wsgUrl)}" target="_blank">WSG ${h.guideline}</a>
+          </p>` : "")}
         </div>
-      ` : ""}
+      ` : (h.wsgUrl ? `
+        <p class="muted" style="font-size: 0.85rem; margin-block-start: 0.5rem;">
+          Reference: <a href="${escapeAttr(h.wsgUrl)}" target="_blank">WSG ${h.guideline} ↗</a>
+        </p>` : "")}
     </div>
   `;}).join("");
 }

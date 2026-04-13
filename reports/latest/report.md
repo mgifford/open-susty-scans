@@ -1,32 +1,32 @@
-# Sustainability Scan Report: Verification: Assessor Types
+# Sustainability Scan Report: Verify: AI+Human WSG Catalog
 
-- Generated at: 2026-04-13T16:09:15.680Z
+- Generated at: 2026-04-13T20:14:12.067Z
 - URLs requested: 1
 - URLs scanned: 1
 - Distinct sites scanned: 1
 - Scan errors: 0
-- Average performance score: 70/100
-- Total transfer: 741.97 KB
-- Estimated CO2: 0.2911 g
-- Average transfer per page: 741.97 KB
-- Average CO2 per page: 0.2911 g
-- Average redundancy score: 23/100
+- Average performance score: 77/100
+- Total transfer: 192.11 KB
+- Estimated CO2: 0.0754 g
+- Average transfer per page: 192.11 KB
+- Average CO2 per page: 0.0754 g
+- Average redundancy score: 17/100
 - Pages with high redundancy urgency: 0
-- Average modularization score: 37/100
+- Average modularization score: 3/100
 - Pages with high modularization urgency: 0
-- Average dead-code score: 19/100
-- Pages with high dead-code urgency: 1
-- Average non-critical resources score: 12/100
+- Average dead-code score: 12/100
+- Pages with high dead-code urgency: 0
+- Average non-critical resources score: 7/100
 - Pages with high non-critical resource urgency: 0
-- Average form validation score: 55/100
+- Average form validation score: 43/100
 - Pages with high form validation urgency: 0
-- Average metadata score: 45/100
+- Average metadata score: 20/100
 - Pages with high metadata urgency: 0
-- Average layout adaptation score: 28/100
+- Average layout adaptation score: 30/100
 - Pages with high layout urgency: 0
-- Average lightweight security score: 54/100
+- Average lightweight security score: 19/100
 - Pages with high security urgency: 0
-- Average dependency maintenance score: 2/100
+- Average dependency maintenance score: 0/100
 - Pages with high dependency maintenance urgency: 0
 - Average expected-files score: 10/100
 - Pages with high expected-files urgency: 0
@@ -36,7 +36,7 @@
 - Pages with high optimization urgency: 1
 - Average offline support score: 90/100
 - Pages with high offline support urgency: 1
-- Average media hints score: 30/100
+- Average media hints score: 20/100
 - Pages with high media hints urgency: 0
 - Average language version score: 0/100
 - Pages with high language version urgency: 0
@@ -44,20 +44,20 @@
 ## WSG Form Validation and Tooling
 
 - WSG reference: Validate form errors and account for tooling requirements (https://www.w3.org/TR/web-sustainability-guidelines/#validate-form-errors-and-account-for-tooling-requirements)
-- Unique form element signatures assessed: 2
-- Total form element occurrences observed: 2
+- Unique form element signatures assessed: 4
+- Total form element occurrences observed: 5
 - Reused assessments (not re-scanned repeats): 0
 
 ## WSG Metadata for Machine Readability
 
 - WSG reference: Structure metadata for machine readability (https://www.w3.org/TR/web-sustainability-guidelines/#structure-metadata-for-machine-readability)
 - Assessed pages: 1
-- Average metadata score: 45/100
+- Average metadata score: 20/100
 - Pages with high urgency: 0
 - Missing metadata across pages:
   - Missing html lang: 0
-  - Missing meta description: 1
-  - Missing canonical URL: 1
+  - Missing meta description: 0
+  - Missing canonical URL: 0
   - Missing Open Graph core tags: 1
   - Missing twitter:card: 1
   - Invalid or missing JSON-LD: 0
@@ -66,30 +66,30 @@
 
 - WSG reference: Ensure layouts work for different devices and requirements (https://www.w3.org/TR/web-sustainability-guidelines/#ensure-layouts-work-for-different-devices-and-requirements)
 - Assessed pages: 1
-- Average layout adaptation score: 28/100
+- Average layout adaptation score: 30/100
 - High urgency pages: 0
 - Pages with mobile overflow: 0
 - Pages with tablet overflow: 0
-- Total small tap targets on mobile: 11
-- Total small tap targets on tablet: 11
+- Total small tap targets on mobile: 80
+- Total small tap targets on tablet: 66
 - Total fixed-width offenders: 0
 
 ## WSG Lightweight Security Review
 
 - WSG reference: Ensure that your code is secure (https://www.w3.org/TR/web-sustainability-guidelines/#ensure-that-your-code-is-secure)
 - Assessed pages: 1
-- Average lightweight security score: 54/100
+- Average lightweight security score: 19/100
 - High urgency pages: 0
-- Pages missing Content-Security-Policy: 1
+- Pages missing Content-Security-Policy: 0
 - HTTPS pages missing Strict-Transport-Security: 1
 - Pages with vulnerable JS library findings: 0
-- External scripts missing SRI (total): 1
+- External scripts missing SRI (total): 0
 
 ## WSG Dependency Maintenance Review
 
 - WSG reference: Use dependencies appropriately and ensure maintenance (https://www.w3.org/TR/web-sustainability-guidelines/#use-dependencies-appropriately-and-ensure-maintenance)
 - Assessed pages: 1
-- Average dependency maintenance score: 2/100
+- Average dependency maintenance score: 0/100
 - High urgency pages: 0
 - Pages with vulnerable dependencies: 0
 - Total vulnerable dependency findings: 0
@@ -122,7 +122,7 @@
 - Assessed pages: 1
 - Average optimization score: 100/100
 - High urgency pages: 1
-- Aggregate potential byte savings: 309.28 KB
+- Aggregate potential byte savings: 57.86 KB
 - Aggregate render-blocking reduction potential: 0 ms
 
 ## WSG Offline Access and Caching Support
@@ -148,27 +148,17 @@
 
 - WSG reference: Optimize media to reduce resource use (https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use)
 - Assessed pages: 1
-- Average media hints score: 30/100
+- Average media hints score: 20/100
 - High urgency pages: 0
 - Pages with autoplay media: 0
 - Pages with unmuted autoplay: 0
-- Pages without dark mode support: 0
-- Pages with lazy loading gap (< 50% of images lazy): 1
+- Pages without dark mode support: 1
+- Pages with lazy loading gap (< 50% of images lazy): 0
 
 ## WSG Success Criteria & Best Practices
 
 - Assessed pages: 1
-- Average WSG compliance score: 70/100
-
-### [LOW] [SCRIPT] Missing print style sheet
-Add a @media print stylesheet to ensure the page is optimized for paper-saving printing.
-- Recurs on 1 page(s).
-
-**Best Practice Example:**
-```javascript
-// Implementation details in documentation
-```
-- [WSG Guideline 17](https://www.w3.org/TR/web-sustainability-guidelines/#reduce-the-impact-of-downloadable-and-physical-documents)
+- Average WSG compliance score: 95/100
 
 ### [LOW] [SCRIPT] No reduced motion support
 Implement prefers-reduced-motion to allow users to disable animations, reducing compute and improving accessibility.
@@ -192,38 +182,72 @@ Implement prefers-reduced-motion to allow users to disable animations, reducing 
 ```
 - [WSG Guideline 12](https://www.w3.org/TR/web-sustainability-guidelines/#ensure-animation-is-proportionate-and-easy-to-control)
 
-### [MEDIUM] [SCRIPT] Incomplete media lazy loading
-Only 0/9 images use loading="lazy". Global lazy loading reduces initial data transfer and energy consumption.
-- Recurs on 1 page(s).
-
-**Best Practice Example:**
-```javascript
-<picture> 
-  <source type="image/avif" srcset="image.avif">
-  <source type="image/webp" srcset="image.webp">
-  <img width="100px" height="100px" src="image.jpg" alt="" loading="lazy"/>
-</picture>
-```
-- [WSG Guideline 11](https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use)
-
 ### [INVESTIGATE] [HUMAN] Review User Journey Efficiency
-Have a human evaluate the main user journeys to ensure they require the minimum number of steps. Reducing friction decreases user time and energy expended.
+Have a human walk through the main user journeys and verify they require the fewest steps possible. Unnecessary steps waste user time and device energy. Look for redundant confirmations, forced account creation, and non-essential interstitials.
 - Recurs on 1 page(s).
+- [WSG 2.4 Reference](https://www.w3.org/TR/web-sustainability-guidelines/#minimize-non-essential-content-interactivity-or-journeys)
+
+### [INVESTIGATE] [HUMAN] Check for Engagement Traps
+Manually review the page for patterns that artificially prolong engagement: infinite scroll, autoplay carousels, sticky overlays, and notification permission prompts. These waste user attention and device energy.
+- Recurs on 1 page(s).
+- [WSG 2.6 Reference](https://www.w3.org/TR/web-sustainability-guidelines/#design-to-assist-and-not-to-distract)
+
+### [INVESTIGATE] [HUMAN] Audit for Deceptive Design Patterns
+Have a human identify dark patterns: misleading consent dialogs, hidden unsubscribe links, forced continuity, and bait-and-switch flows. Deceptive patterns waste user time and undermine trust.
+- Recurs on 1 page(s).
+- [WSG 2.7 Reference](https://www.w3.org/TR/web-sustainability-guidelines/#avoid-being-manipulative-or-deceptive)
+
+### [INVESTIGATE] [HUMAN] Verify Accessible Alternatives for All Media
+Manually check that every video has captions, every audio file has a transcript, every image has meaningful alt text, and every PDF has an accessible HTML alternative. Alternatives let assistive technology users avoid re-downloading heavy formats.
+- Recurs on 1 page(s).
+- [WSG 2.14 Reference](https://www.w3.org/TR/web-sustainability-guidelines/#offer-suitable-alternatives-for-every-format-used)
+
+### [INVESTIGATE] [HUMAN] Confirm User Research Was Conducted
+Verify that genuine user research or usability testing has informed the design. Research-driven design reduces wasted iterations, removes unnecessary features, and ensures the product meets real needs efficiently.
+- Recurs on 1 page(s).
+- [WSG 2.18 Reference](https://www.w3.org/TR/web-sustainability-guidelines/#involve-users-early-in-the-project)
 
 ### [INVESTIGATE] [AI] Review Content Conciseness
-Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload and reading time.
+Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload, reading time, and inference energy for search engines and AI crawlers indexing this content.
 - Recurs on 1 page(s).
+- [WSG 2.10 Reference](https://www.w3.org/TR/web-sustainability-guidelines/#provide-clear-inclusive-content-with-purpose)
+
+### [INVESTIGATE] [AI] Evaluate Navigation and Wayfinding Quality
+Ask an LLM to assess whether the navigation labels, headings, and page hierarchy allow a user to locate content in as few steps as possible. Poor information architecture forces repeat page loads and increases server and user energy costs.
+- Recurs on 1 page(s).
+- [WSG 2.5 Reference](https://www.w3.org/TR/web-sustainability-guidelines/#ensure-that-navigation-and-wayfinding-are-well-structured)
+
+### [INVESTIGATE] [AI] Evaluate HTML Semantic Correctness
+Use an LLM or structured analysis tool to verify that HTML uses semantic elements (article, nav, main, section, aside) correctly. Proper semantics reduces duplicate markup, improves accessibility, and allows browsers and crawlers to process pages more efficiently.
+- Recurs on 1 page(s).
+- [WSG 3.7 Reference](https://www.w3.org/TR/web-sustainability-guidelines/#ensure-code-follows-good-semantic-practices)
+
+### [INVESTIGATE] [HUMAN] Verify Error Pages and Redirects Are Configured
+Have a human check that custom 404 and 500 error pages exist and that there are no redirect chains longer than one hop. Broken links force wasted round-trips. Redirect chains multiply transfer costs.
+- Recurs on 1 page(s).
+- [WSG 4.4 Reference](https://www.w3.org/TR/web-sustainability-guidelines/#setup-necessary-error-pages-and-redirection-links)
+
+### [INVESTIGATE] [HUMAN] Review CDN Usage and Geographic Distribution
+Confirm that static assets are served from a CDN and that the CDN edge nodes are geographically close to the primary audience. CDN misuse—or absence—increases last-mile transfer distance and the associated energy cost of data delivery.
+- Recurs on 1 page(s).
+- [WSG 4.10 Reference](https://www.w3.org/TR/web-sustainability-guidelines/#use-content-delivery-networks-cdns-appropriately)
+
+### [INVESTIGATE] [HUMAN] Confirm a Sustainability Advocate Is Assigned
+Verify that someone on the team has explicit responsibility for web sustainability. Without a designated advocate, sustainability improvements tend to be deprioritized and never reach the backlog.
+- Recurs on 1 page(s).
+- [WSG 5.2 Reference](https://www.w3.org/TR/web-sustainability-guidelines/#assign-a-sustainability-advocate)
+
+### [INVESTIGATE] [HUMAN] Check for a Public Sustainability Statement
+Look for a publicly accessible sustainability statement, disclosure page, or environmental policy. Mandatory disclosure requirements are growing globally and transparency builds user trust. The statement should include measurable targets and dates.
+- Recurs on 1 page(s).
+- [WSG 5.8 Reference](https://www.w3.org/TR/web-sustainability-guidelines/#support-mandatory-disclosures-and-reporting)
 
 ## WSG Third-Party JavaScript Assessment
 
 - WSG reference: Give third parties the same priority as first parties during assessment (https://www.w3.org/TR/web-sustainability-guidelines/#give-third-parties-the-same-priority-as-first-parties-during-assessment)
-- Average third-party JS risk score: 11/100
+- Average third-party JS risk score: 0/100
 - Pages with high urgency: 0
-- Distinct third-party script providers: 1
-
-### Top Third-Party Script Providers
-
-- www.gstatic.com: GREEN (Google Cloud); on 1 page(s), 1 request(s), 81.02 KB
+- Distinct third-party script providers: 0
 
 ## Cross-Page Hosting Risk (Non-Green Providers)
 
@@ -234,11 +258,11 @@ Use a Large Language Model to evaluate page text for conciseness and clarity. Re
 
 - Source: https://www.thegreenwebfoundation.org/tools/green-web-dataset/
 - Submitted URL hosts checked: 1
-- Submitted URL hosts on green energy: 1
-- Submitted URL hosts not confirmed green: 0
+- Submitted URL hosts on green energy: 0
+- Submitted URL hosts not confirmed green: 1
 - Submitted URL hosts unknown: 0
-- External CSS/JS origins checked: 1
-- External CSS/JS origins on green energy: 1
+- External CSS/JS origins checked: 0
+- External CSS/JS origins on green energy: 0
 - External CSS/JS origins not confirmed green: 0
 - External CSS/JS origins unknown: 0
 
@@ -246,13 +270,13 @@ Use a Large Language Model to evaluate page text for conciseness and clarity. Re
 
 - WSG reference: Set goals based on performance and energy impact (https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact)
 - Sustainable Web Design benchmark: https://sustainablewebdesign.org/digital-carbon-ratings/
-- Current transfer rating: B
-- Current CO2 rating: E
+- Current transfer rating: A+
+- Current CO2 rating: A
 - Recommended budget target: rating B
 - Budget max transfer/page: 975.85 KB
 - Budget max CO2/page: 0.1450 g
 - Transfer reduction needed: none (already within target budget)
-- CO2 reduction needed: 0.1461 g (50.2%)
+- CO2 reduction needed: none (already within target budget)
 - Stretch budget (rating A): 531.15 KB and 0.0790 g per page
 
 ## WSG SC 3.2 Redundancy Analysis
@@ -287,55 +311,53 @@ Use a Large Language Model to evaluate page text for conciseness and clarity. Re
 
 - This scan appears to target a single site. Shared recommendations below should typically be fixed once at platform/template level.
 
-### https://www.google.com
+### https://www.gov.uk
 - Sampled pages: 1
 - Shared recommendations:
-  - [HIGH] Apply Content-Security-Policy site-wide
-    - CSP is absent across all sampled pages on https://www.google.com.
   - [MEDIUM] Enable Strict-Transport-Security site-wide
-    - HSTS is missing across all sampled HTTPS pages on https://www.google.com.
+    - HSTS is missing across all sampled HTTPS pages on https://www.gov.uk.
   - [HIGH] Introduce service worker support
-    - No sampled pages on https://www.google.com indicate service worker support for offline resilience.
+    - No sampled pages on https://www.gov.uk indicate service worker support for offline resilience.
   - [HIGH] Support offline fallback behavior
-    - Offline page behavior was not detected across sampled pages on https://www.google.com.
+    - Offline page behavior was not detected across sampled pages on https://www.gov.uk.
 
 ## Page-Specific Guidance
 
 - Use this section for page-level exceptions after site-wide/platform fixes are planned.
 
-### https://www.google.com
-- https://google.com
+### https://www.gov.uk
+- https://www.gov.uk
   - Combined urgency: HIGH
-  - Compression score: 0/100, optimization score: 100/100, offline score: 90/100, dependency score: 2/100, language score: 0/100, security score: 54/100, expected-files score: 10/100
+  - Compression score: 0/100, optimization score: 100/100, offline score: 90/100, dependency score: 0/100, language score: 0/100, security score: 19/100, expected-files score: 10/100
   - [LOW] No major compression opportunity detected
-  - [HIGH] Remove unused JavaScript
-  - [LOW] Remove unused CSS
+  - [MEDIUM] Remove unused CSS
+  - [LOW] Remove unused JavaScript
 
 ## Priority Improvements
 
-### https://google.com
-- Performance: 70/100
-- Transfer: 741.97 KB
-- CO2 estimate: 0.2911 g
-- Page host green energy status: GREEN (Google Cloud)
-- Redundancy score: 23/100
-- Redundancy urgency: MEDIUM
-- Modularization score: 37/100
-- Modularization urgency: MEDIUM
-- Dead-code score: 19/100
-- Dead-code urgency: HIGH
-- Non-critical resources score: 12/100
-- Non-critical resources urgency: MEDIUM
-- Form validation score: 55/100
+### https://www.gov.uk
+- Performance: 77/100
+- Transfer: 192.11 KB
+- CO2 estimate: 0.0754 g
+- Page host green energy status: NOT GREEN
+- Redundancy score: 17/100
+- Redundancy urgency: LOW
+- Modularization score: 3/100
+- Modularization urgency: LOW
+- Dead-code score: 12/100
+- Dead-code urgency: LOW
+- Non-critical resources score: 7/100
+- Non-critical resources urgency: LOW
+- Form validation score: 43/100
 - Form validation urgency: MEDIUM
-- Metadata score: 45/100
-- Metadata urgency: MEDIUM
-- Layout adaptation score: 28/100
-- Layout adaptation urgency: LOW
-- Lightweight security score: 54/100
-- Lightweight security urgency: MEDIUM
-- Dependency maintenance score: 2/100
-- Dependency maintenance urgency: MEDIUM
+- Metadata score: 20/100
+- Metadata urgency: LOW
+- Layout adaptation score: 30/100
+- Layout adaptation urgency: MEDIUM
+- Lightweight security score: 19/100
+- Lightweight security urgency: LOW
+- Dependency maintenance score: 0/100
+- Dependency maintenance urgency: LOW
 - Expected-files score: 10/100
 - Expected-files urgency: LOW
 - Compression score: 0/100
@@ -344,75 +366,48 @@ Use a Large Language Model to evaluate page text for conciseness and clarity. Re
 - Optimization urgency: HIGH
 - Offline support score: 90/100
 - Offline support urgency: HIGH
-- Media hints score: 30/100
-- Media hints urgency: MEDIUM
-- Third-party JS risk score: 11/100
+- Media hints score: 20/100
+- Media hints urgency: LOW
+- Third-party JS risk score: 0/100
 - Third-party JS urgency: LOW
-- Estimated redundant transfer: 309.28 KB (41.7% of transfer)
+- Estimated redundant transfer: 57.86 KB (30.1% of transfer)
 - Redundancy recommendations:
-  - [HIGH] Reduce unused javascript (est. 298.91 KB savings)
-  - [MEDIUM] Reduce unused css (est. 10.37 KB savings)
-- Heavy initial-load requests: 3 (490.13 KB total)
-- On-demand modularization candidates:
-  - [HIGH] Split JavaScript by route or interaction (est. 298.91 KB)
-    - Move non-critical bundles behind route-level or event-driven imports so they are only fetched on demand.
-  - [HIGH] Modularize heavy script asset from www.google.com (est. 336.20 KB)
-    - Load this script only on pages or interactions that require it; prefer dynamic import and feature-level bundles.
-  - [MEDIUM] Modularize heavy script asset from www.gstatic.com (est. 81.02 KB)
-    - Load this script only on pages or interactions that require it; prefer dynamic import and feature-level bundles.
-- External CSS/JS hosting checks:
-  - SCRIPT www.gstatic.com: GREEN (Google Cloud); 1 request(s), 81.02 KB
-  - STYLESHEET www.gstatic.com: GREEN (Google Cloud); 1 request(s), 3.30 KB
+  - [MEDIUM] Reduce unused css (est. 31.91 KB savings)
+  - [MEDIUM] Reduce unused javascript (est. 25.96 KB savings)
 - Third-party JS recommendations:
-  - [LOW] Maintain a third-party JavaScript inventory
-    - Track 1 third-party script origin(s) and assign an owner plus business justification for each.
+  - [LOW] No major third-party JavaScript risk signals
+    - Continue periodic reviews so third-party additions are assessed with the same rigor as first-party code.
 - Dead-code recommendations:
-  - [MEDIUM] Remove unused CSS selectors and component styles (est. 10.37 KB savings)
+  - [MEDIUM] Remove unused CSS selectors and component styles (est. 31.91 KB savings)
     - Trim styles that never match rendered markup and split component CSS so only used styles are shipped.
-  - [HIGH] Remove unused JavaScript and feature bundles (est. 298.91 KB savings)
+  - [MEDIUM] Remove unused JavaScript and feature bundles (est. 25.96 KB savings)
     - Drop unused packages and feature code, or move them behind route-level or interaction-triggered imports.
 - Non-critical loading candidates:
-  - [HIGH] Defer non-critical JavaScript (est. 298.91 KB deferrable)
+  - [MEDIUM] Defer non-critical JavaScript (est. 25.96 KB deferrable)
     - Split bundles and load feature code on interaction or route transition.
-  - [MEDIUM] Inline critical CSS and defer remainder (est. 10.37 KB deferrable)
+  - [MEDIUM] Inline critical CSS and defer remainder (est. 31.91 KB deferrable)
     - Ship only above-the-fold CSS in initial render path and defer non-critical styles.
-  - [HIGH] Evaluate deferred loading for heavy script from www.google.com (est. 336.20 KB deferrable)
-    - Confirm this asset is required for first paint; defer or lazy-load if not critical.
-  - [MEDIUM] Evaluate deferred loading for heavy script from www.gstatic.com (est. 81.02 KB deferrable)
-    - Confirm this asset is required for first paint; defer or lazy-load if not critical.
 - Form validation recommendations:
-  - [MEDIUM] No error messaging hook
-    - 2 unique form control signature(s) on this page include this issue.
-  - [HIGH] Missing associated label
-    - 1 unique form control signature(s) on this page include this issue.
   - [MEDIUM] No explicit validation rule
-    - 1 unique form control signature(s) on this page include this issue.
+    - 3 unique form control signature(s) on this page include this issue.
+  - [MEDIUM] No error messaging hook
+    - 3 unique form control signature(s) on this page include this issue.
+  - [MEDIUM] Missing autocomplete for tooling support
+    - 2 unique form control signature(s) on this page include this issue.
 - Metadata recommendations:
-  - [MEDIUM] Add canonical URL metadata
-    - Use rel=canonical to reduce duplicate URL ambiguity for crawlers and tooling.
-  - [MEDIUM] Add meta description
-    - Provide a concise description to improve machine interpretation and preview quality.
   - [MEDIUM] Complete Open Graph metadata
     - Include og:title, og:description, og:type, and og:url for robust machine-readable sharing metadata.
   - [LOW] Add twitter:card metadata
     - Include twitter card metadata to improve cross-platform machine-readable previews.
 - Layout adaptation recommendations:
-  - [MEDIUM] Increase touch target sizes
-    - Ensure interactive controls are at least 44x44 CSS px. Detected 11 small targets on mobile and 11 on tablet.
+  - [HIGH] Increase touch target sizes
+    - Ensure interactive controls are at least 44x44 CSS px. Detected 80 small targets on mobile and 66 on tablet.
 - Lightweight security recommendations:
-  - [HIGH] Add a Content-Security-Policy header
-    - Add an appropriate CSP to reduce script injection and resource loading risk.
   - [MEDIUM] Enable Strict-Transport-Security
     - Set a Strict-Transport-Security header to enforce HTTPS on repeat visits.
-  - [MEDIUM] Set X-Content-Type-Options: nosniff
-    - Prevent MIME type sniffing by adding the nosniff response header.
-  - [LOW] Define a Referrer-Policy
-    - Set a referrer policy to reduce unnecessary URL data leakage.
-  - [MEDIUM] Add SRI to external scripts
-    - 1 external script tag(s) are missing integrity attributes.
 - Dependency maintenance recommendations:
-  - [MEDIUM] Add integrity attributes for external dependencies
-    - 1 external script dependency URL(s) are missing SRI integrity attributes.
+  - [LOW] No dependency maintenance warnings detected
+    - No vulnerable dependency flags were found for this page in the current lightweight checks.
 - Language/runtime version recommendations:
   - [LOW] No obvious outdated runtime version disclosed
     - No clearly outdated runtime version signals were exposed in sampled HTTP headers. Verify language/runtime versions in source and CI since backend versions are not always externally visible.
@@ -423,10 +418,10 @@ Use a Large Language Model to evaluate page text for conciseness and clarity. Re
   - [LOW] No major compression opportunity detected
     - Compression signals look healthy in current Lighthouse audits; continue enforcing compression and asset encoding in CI/CD.
 - Optimization recommendations:
-  - [HIGH] Remove unused JavaScript
-    - Reduce dead JS and split bundles to avoid shipping non-critical code. Estimated byte savings: 298.91 KB.
-  - [LOW] Remove unused CSS
-    - Trim unused selectors and split CSS so only needed styles are shipped. Estimated byte savings: 10.37 KB.
+  - [MEDIUM] Remove unused CSS
+    - Trim unused selectors and split CSS so only needed styles are shipped. Estimated byte savings: 31.91 KB.
+  - [LOW] Remove unused JavaScript
+    - Reduce dead JS and split bundles to avoid shipping non-critical code. Estimated byte savings: 25.96 KB.
 - Offline/caching recommendations:
   - [HIGH] Add service worker support
     - Register a service worker to support resilient caching and offline behavior for key routes.
@@ -437,48 +432,22 @@ Use a Large Language Model to evaluate page text for conciseness and clarity. Re
   - [MEDIUM] Support offline start URL behavior
     - Ensure start URL and shell routing can load in disconnected conditions.
 - Media sustainability recommendations:
-  - [MEDIUM] Add loading="lazy" to images
-    - 9 of 9 image(s) lack an explicit loading="lazy" attribute. Lazy loading defers below-fold images and reduces initial page weight.
-- [HIGH] Largest Contentful Paint
-  - Current value: 6.6 s
-  - WSG: 1 Set goals based on performance and energy impact (https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact)
+  - [MEDIUM] Add dark mode support
+    - No prefers-color-scheme: dark media query or color-scheme meta tag was found. Dark mode reduces energy use on OLED screens and improves user choice.
 - [HIGH] Reduce unused JavaScript
-  - Current value: Est savings of 299 KiB
+  - Current value: Est savings of 26 KiB
   - WSG: 16 Use dependencies appropriately and ensure maintenance (https://www.w3.org/TR/web-sustainability-guidelines/#use-dependencies-appropriately-and-ensure-maintenance)
-- [HIGH] Preconnect to required origins
-  - Current value: Est savings of 310 ms
-  - WSG: 18 Use the most efficient solution for your service (https://www.w3.org/TR/web-sustainability-guidelines/#use-the-most-efficient-solution-for-your-service)
-- [MEDIUM] Speed Index
-  - Current value: 3.5 s
-  - WSG: 1 Set goals based on performance and energy impact (https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact)
-- [MEDIUM] Reduce unused CSS
-  - Current value: Est savings of 10 KiB
+- [HIGH] Reduce unused CSS
+  - Current value: Est savings of 32 KiB
   - WSG: 2 Remove unnecessary or redundant information (https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information)
 
 ## Copy/Paste Issue Snippets
 
 ```md
-## Improve Largest Contentful Paint
-
-- Lighthouse audit: largest-contentful-paint
-- Current value: 6.6 s
-- WSG guideline: 1 Set goals based on performance and energy impact
-- WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact
-
-### Why this matters
-Largest Contentful Paint marks the time at which the largest text or image is painted. [Learn more about the Largest Contentful Paint metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/)
-
-### Definition of done
-- [ ] Metric improves in Lighthouse on key templates
-- [ ] Changes documented in release notes
-- [ ] Re-scan confirms improvement
-```
-
-```md
 ## Improve Reduce unused JavaScript
 
 - Lighthouse audit: unused-javascript
-- Current value: Est savings of 299 KiB
+- Current value: Est savings of 26 KiB
 - WSG guideline: 16 Use dependencies appropriately and ensure maintenance
 - WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#use-dependencies-appropriately-and-ensure-maintenance
 
@@ -492,15 +461,15 @@ Reduce unused JavaScript and defer loading scripts until they are required to de
 ```
 
 ```md
-## Improve Preconnect to required origins
+## Improve Reduce unused CSS
 
-- Lighthouse audit: uses-rel-preconnect
-- Current value: Est savings of 310 ms
-- WSG guideline: 18 Use the most efficient solution for your service
-- WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#use-the-most-efficient-solution-for-your-service
+- Lighthouse audit: unused-css-rules
+- Current value: Est savings of 32 KiB
+- WSG guideline: 2 Remove unnecessary or redundant information
+- WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#remove-unnecessary-or-redundant-information
 
 ### Why this matters
-Consider adding `preconnect` or `dns-prefetch` resource hints to establish early connections to important third-party origins. [Learn how to preconnect to required origins](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/).
+Reduce unused rules from stylesheets and defer CSS not used for above-the-fold content to decrease bytes consumed by network activity. [Learn how to reduce unused CSS](https://developer.chrome.com/docs/lighthouse/performance/unused-css-rules/).
 
 ### Definition of done
 - [ ] Metric improves in Lighthouse on key templates

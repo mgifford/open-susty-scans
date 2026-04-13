@@ -139,22 +139,127 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
       });
     }
 
+    // --- Human review hints: UX -------------------------------------------------
     recommendations.push({
-      guideline: "2.15",
+      guideline: "2.4",
       title: "Review User Journey Efficiency",
       urgency: "investigate",
-      detail: "Have a human evaluate the main user journeys to ensure they require the minimum number of steps. Reducing friction decreases user time and energy expended.",
-      wsid: "2.user experience",
+      detail: "Have a human walk through the main user journeys and verify they require the fewest steps possible. Unnecessary steps waste user time and device energy. Look for redundant confirmations, forced account creation, and non-essential interstitials.",
+      wsid: "2.minimize non-essential content",
+      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#minimize-non-essential-content-interactivity-or-journeys",
       assessor: "human"
     });
 
     recommendations.push({
-      guideline: "2.1",
+      guideline: "2.6",
+      title: "Check for Engagement Traps",
+      urgency: "investigate",
+      detail: "Manually review the page for patterns that artificially prolong engagement: infinite scroll, autoplay carousels, sticky overlays, and notification permission prompts. These waste user attention and device energy.",
+      wsid: "2.design to assist not distract",
+      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#design-to-assist-and-not-to-distract",
+      assessor: "human"
+    });
+
+    recommendations.push({
+      guideline: "2.7",
+      title: "Audit for Deceptive Design Patterns",
+      urgency: "investigate",
+      detail: "Have a human identify dark patterns: misleading consent dialogs, hidden unsubscribe links, forced continuity, and bait-and-switch flows. Deceptive patterns waste user time and undermine trust.",
+      wsid: "2.avoid manipulative deceptive",
+      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#avoid-being-manipulative-or-deceptive",
+      assessor: "human"
+    });
+
+    recommendations.push({
+      guideline: "2.14",
+      title: "Verify Accessible Alternatives for All Media",
+      urgency: "investigate",
+      detail: "Manually check that every video has captions, every audio file has a transcript, every image has meaningful alt text, and every PDF has an accessible HTML alternative. Alternatives let assistive technology users avoid re-downloading heavy formats.",
+      wsid: "2.offer suitable alternatives",
+      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#offer-suitable-alternatives-for-every-format-used",
+      assessor: "human"
+    });
+
+    recommendations.push({
+      guideline: "2.18",
+      title: "Confirm User Research Was Conducted",
+      urgency: "investigate",
+      detail: "Verify that genuine user research or usability testing has informed the design. Research-driven design reduces wasted iterations, removes unnecessary features, and ensures the product meets real needs efficiently.",
+      wsid: "2.involve users early",
+      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#involve-users-early-in-the-project",
+      assessor: "human"
+    });
+
+    // --- AI review hints: UX & Content -----------------------------------------
+    recommendations.push({
+      guideline: "2.10",
       title: "Review Content Conciseness",
       urgency: "investigate",
-      detail: "Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload and reading time.",
-      wsid: "2.content strategy",
+      detail: "Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload, reading time, and inference energy for search engines and AI crawlers indexing this content.",
+      wsid: "2.provide clear inclusive content",
+      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#provide-clear-inclusive-content-with-purpose",
       assessor: "ai"
+    });
+
+    recommendations.push({
+      guideline: "2.5",
+      title: "Evaluate Navigation and Wayfinding Quality",
+      urgency: "investigate",
+      detail: "Ask an LLM to assess whether the navigation labels, headings, and page hierarchy allow a user to locate content in as few steps as possible. Poor information architecture forces repeat page loads and increases server and user energy costs.",
+      wsid: "2.navigation wayfinding",
+      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-that-navigation-and-wayfinding-are-well-structured",
+      assessor: "ai"
+    });
+
+    recommendations.push({
+      guideline: "3.7",
+      title: "Evaluate HTML Semantic Correctness",
+      urgency: "investigate",
+      detail: "Use an LLM or structured analysis tool to verify that HTML uses semantic elements (article, nav, main, section, aside) correctly. Proper semantics reduces duplicate markup, improves accessibility, and allows browsers and crawlers to process pages more efficiently.",
+      wsid: "3.ensure code follows good semantic practices",
+      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#ensure-code-follows-good-semantic-practices",
+      assessor: "ai"
+    });
+
+    // --- Human review hints: Infrastructure & Business -------------------------
+    recommendations.push({
+      guideline: "4.4",
+      title: "Verify Error Pages and Redirects Are Configured",
+      urgency: "investigate",
+      detail: "Have a human check that custom 404 and 500 error pages exist and that there are no redirect chains longer than one hop. Broken links force wasted round-trips. Redirect chains multiply transfer costs.",
+      wsid: "4.error pages redirection",
+      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#setup-necessary-error-pages-and-redirection-links",
+      assessor: "human"
+    });
+
+    recommendations.push({
+      guideline: "4.10",
+      title: "Review CDN Usage and Geographic Distribution",
+      urgency: "investigate",
+      detail: "Confirm that static assets are served from a CDN and that the CDN edge nodes are geographically close to the primary audience. CDN misuse—or absence—increases last-mile transfer distance and the associated energy cost of data delivery.",
+      wsid: "4.content delivery networks",
+      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#use-content-delivery-networks-cdns-appropriately",
+      assessor: "human"
+    });
+
+    recommendations.push({
+      guideline: "5.2",
+      title: "Confirm a Sustainability Advocate Is Assigned",
+      urgency: "investigate",
+      detail: "Verify that someone on the team has explicit responsibility for web sustainability. Without a designated advocate, sustainability improvements tend to be deprioritized and never reach the backlog.",
+      wsid: "5.assign sustainability advocate",
+      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#assign-a-sustainability-advocate",
+      assessor: "human"
+    });
+
+    recommendations.push({
+      guideline: "5.8",
+      title: "Check for a Public Sustainability Statement",
+      urgency: "investigate",
+      detail: "Look for a publicly accessible sustainability statement, disclosure page, or environmental policy. Mandatory disclosure requirements are growing globally and transparency builds user trust. The statement should include measurable targets and dates.",
+      wsid: "5.support mandatory disclosures",
+      wsgUrl: "https://www.w3.org/TR/web-sustainability-guidelines/#support-mandatory-disclosures-and-reporting",
+      assessor: "human"
     });
 
     return {
