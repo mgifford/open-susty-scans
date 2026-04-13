@@ -1,15 +1,15 @@
-# Sustainability Scan Report: Verification: WSG Best Practices
+# Sustainability Scan Report: Verification: Assessor Types
 
-- Generated at: 2026-04-13T15:37:22.273Z
+- Generated at: 2026-04-13T16:09:15.680Z
 - URLs requested: 1
 - URLs scanned: 1
 - Distinct sites scanned: 1
 - Scan errors: 0
-- Average performance score: 68/100
-- Total transfer: 741.91 KB
-- Estimated CO2: 0.2910 g
-- Average transfer per page: 741.91 KB
-- Average CO2 per page: 0.2910 g
+- Average performance score: 70/100
+- Total transfer: 741.97 KB
+- Estimated CO2: 0.2911 g
+- Average transfer per page: 741.97 KB
+- Average CO2 per page: 0.2911 g
 - Average redundancy score: 23/100
 - Pages with high redundancy urgency: 0
 - Average modularization score: 37/100
@@ -122,7 +122,7 @@
 - Assessed pages: 1
 - Average optimization score: 100/100
 - High urgency pages: 1
-- Aggregate potential byte savings: 309.35 KB
+- Aggregate potential byte savings: 309.28 KB
 - Aggregate render-blocking reduction potential: 0 ms
 
 ## WSG Offline Access and Caching Support
@@ -160,7 +160,7 @@
 - Assessed pages: 1
 - Average WSG compliance score: 70/100
 
-### [LOW] Missing print style sheet
+### [LOW] [SCRIPT] Missing print style sheet
 Add a @media print stylesheet to ensure the page is optimized for paper-saving printing.
 - Recurs on 1 page(s).
 
@@ -170,7 +170,7 @@ Add a @media print stylesheet to ensure the page is optimized for paper-saving p
 ```
 - [WSG Guideline 17](https://www.w3.org/TR/web-sustainability-guidelines/#reduce-the-impact-of-downloadable-and-physical-documents)
 
-### [LOW] No reduced motion support
+### [LOW] [SCRIPT] No reduced motion support
 Implement prefers-reduced-motion to allow users to disable animations, reducing compute and improving accessibility.
 - Recurs on 1 page(s).
 
@@ -192,7 +192,7 @@ Implement prefers-reduced-motion to allow users to disable animations, reducing 
 ```
 - [WSG Guideline 12](https://www.w3.org/TR/web-sustainability-guidelines/#ensure-animation-is-proportionate-and-easy-to-control)
 
-### [MEDIUM] Incomplete media lazy loading
+### [MEDIUM] [SCRIPT] Incomplete media lazy loading
 Only 0/9 images use loading="lazy". Global lazy loading reduces initial data transfer and energy consumption.
 - Recurs on 1 page(s).
 
@@ -205,6 +205,14 @@ Only 0/9 images use loading="lazy". Global lazy loading reduces initial data tra
 </picture>
 ```
 - [WSG Guideline 11](https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use)
+
+### [INVESTIGATE] [HUMAN] Review User Journey Efficiency
+Have a human evaluate the main user journeys to ensure they require the minimum number of steps. Reducing friction decreases user time and energy expended.
+- Recurs on 1 page(s).
+
+### [INVESTIGATE] [AI] Review Content Conciseness
+Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload and reading time.
+- Recurs on 1 page(s).
 
 ## WSG Third-Party JavaScript Assessment
 
@@ -244,7 +252,7 @@ Only 0/9 images use loading="lazy". Global lazy loading reduces initial data tra
 - Budget max transfer/page: 975.85 KB
 - Budget max CO2/page: 0.1450 g
 - Transfer reduction needed: none (already within target budget)
-- CO2 reduction needed: 0.1460 g (50.2%)
+- CO2 reduction needed: 0.1461 g (50.2%)
 - Stretch budget (rating A): 531.15 KB and 0.0790 g per page
 
 ## WSG SC 3.2 Redundancy Analysis
@@ -306,9 +314,9 @@ Only 0/9 images use loading="lazy". Global lazy loading reduces initial data tra
 ## Priority Improvements
 
 ### https://google.com
-- Performance: 68/100
-- Transfer: 741.91 KB
-- CO2 estimate: 0.2910 g
+- Performance: 70/100
+- Transfer: 741.97 KB
+- CO2 estimate: 0.2911 g
 - Page host green energy status: GREEN (Google Cloud)
 - Redundancy score: 23/100
 - Redundancy urgency: MEDIUM
@@ -340,13 +348,13 @@ Only 0/9 images use loading="lazy". Global lazy loading reduces initial data tra
 - Media hints urgency: MEDIUM
 - Third-party JS risk score: 11/100
 - Third-party JS urgency: LOW
-- Estimated redundant transfer: 309.35 KB (41.7% of transfer)
+- Estimated redundant transfer: 309.28 KB (41.7% of transfer)
 - Redundancy recommendations:
-  - [HIGH] Reduce unused javascript (est. 299.00 KB savings)
-  - [MEDIUM] Reduce unused css (est. 10.36 KB savings)
+  - [HIGH] Reduce unused javascript (est. 298.91 KB savings)
+  - [MEDIUM] Reduce unused css (est. 10.37 KB savings)
 - Heavy initial-load requests: 3 (490.13 KB total)
 - On-demand modularization candidates:
-  - [HIGH] Split JavaScript by route or interaction (est. 299.00 KB)
+  - [HIGH] Split JavaScript by route or interaction (est. 298.91 KB)
     - Move non-critical bundles behind route-level or event-driven imports so they are only fetched on demand.
   - [HIGH] Modularize heavy script asset from www.google.com (est. 336.20 KB)
     - Load this script only on pages or interactions that require it; prefer dynamic import and feature-level bundles.
@@ -359,14 +367,14 @@ Only 0/9 images use loading="lazy". Global lazy loading reduces initial data tra
   - [LOW] Maintain a third-party JavaScript inventory
     - Track 1 third-party script origin(s) and assign an owner plus business justification for each.
 - Dead-code recommendations:
-  - [MEDIUM] Remove unused CSS selectors and component styles (est. 10.36 KB savings)
+  - [MEDIUM] Remove unused CSS selectors and component styles (est. 10.37 KB savings)
     - Trim styles that never match rendered markup and split component CSS so only used styles are shipped.
-  - [HIGH] Remove unused JavaScript and feature bundles (est. 299.00 KB savings)
+  - [HIGH] Remove unused JavaScript and feature bundles (est. 298.91 KB savings)
     - Drop unused packages and feature code, or move them behind route-level or interaction-triggered imports.
 - Non-critical loading candidates:
-  - [HIGH] Defer non-critical JavaScript (est. 299.00 KB deferrable)
+  - [HIGH] Defer non-critical JavaScript (est. 298.91 KB deferrable)
     - Split bundles and load feature code on interaction or route transition.
-  - [MEDIUM] Inline critical CSS and defer remainder (est. 10.36 KB deferrable)
+  - [MEDIUM] Inline critical CSS and defer remainder (est. 10.37 KB deferrable)
     - Ship only above-the-fold CSS in initial render path and defer non-critical styles.
   - [HIGH] Evaluate deferred loading for heavy script from www.google.com (est. 336.20 KB deferrable)
     - Confirm this asset is required for first paint; defer or lazy-load if not critical.
@@ -416,9 +424,9 @@ Only 0/9 images use loading="lazy". Global lazy loading reduces initial data tra
     - Compression signals look healthy in current Lighthouse audits; continue enforcing compression and asset encoding in CI/CD.
 - Optimization recommendations:
   - [HIGH] Remove unused JavaScript
-    - Reduce dead JS and split bundles to avoid shipping non-critical code. Estimated byte savings: 299.00 KB.
+    - Reduce dead JS and split bundles to avoid shipping non-critical code. Estimated byte savings: 298.91 KB.
   - [LOW] Remove unused CSS
-    - Trim unused selectors and split CSS so only needed styles are shipped. Estimated byte savings: 10.36 KB.
+    - Trim unused selectors and split CSS so only needed styles are shipped. Estimated byte savings: 10.37 KB.
 - Offline/caching recommendations:
   - [HIGH] Add service worker support
     - Register a service worker to support resilient caching and offline behavior for key routes.
@@ -432,7 +440,7 @@ Only 0/9 images use loading="lazy". Global lazy loading reduces initial data tra
   - [MEDIUM] Add loading="lazy" to images
     - 9 of 9 image(s) lack an explicit loading="lazy" attribute. Lazy loading defers below-fold images and reduces initial page weight.
 - [HIGH] Largest Contentful Paint
-  - Current value: 7.0 s
+  - Current value: 6.6 s
   - WSG: 1 Set goals based on performance and energy impact (https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact)
 - [HIGH] Reduce unused JavaScript
   - Current value: Est savings of 299 KiB
@@ -441,7 +449,7 @@ Only 0/9 images use loading="lazy". Global lazy loading reduces initial data tra
   - Current value: Est savings of 310 ms
   - WSG: 18 Use the most efficient solution for your service (https://www.w3.org/TR/web-sustainability-guidelines/#use-the-most-efficient-solution-for-your-service)
 - [MEDIUM] Speed Index
-  - Current value: 4.1 s
+  - Current value: 3.5 s
   - WSG: 1 Set goals based on performance and energy impact (https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact)
 - [MEDIUM] Reduce unused CSS
   - Current value: Est savings of 10 KiB
@@ -453,7 +461,7 @@ Only 0/9 images use loading="lazy". Global lazy loading reduces initial data tra
 ## Improve Largest Contentful Paint
 
 - Lighthouse audit: largest-contentful-paint
-- Current value: 7.0 s
+- Current value: 6.6 s
 - WSG guideline: 1 Set goals based on performance and energy impact
 - WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact
 

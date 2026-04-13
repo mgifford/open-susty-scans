@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sustainability Report - Verification: WSG Best Practices</title>
+  <title>Sustainability Report - Verification: Assessor Types</title>
   <style>
     :root {
       color-scheme: light dark;
@@ -46,6 +46,10 @@
     .urgency-high { background: #fee2e2; color: #991b1b; }
     .urgency-medium { background: #fef3c7; color: #92400e; }
     .urgency-low { background: #ecfdf5; color: #065f46; }
+    .assessor-badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-left: 0.5rem; }
+    .assessor-script { background: #e0e7ff; color: #3730a3; }
+    .assessor-ai { background: #fdf4ff; color: #86198f; }
+    .assessor-human { background: #ffedd5; color: #9a3412; }
     @media (max-width: 700px) {
       th:nth-child(3), td:nth-child(3), th:nth-child(6), td:nth-child(6) { display: none; }
       .snippet textarea { min-height: 220px; }
@@ -58,10 +62,10 @@
       <h1>Sustainability Scan Report</h1>
       <p class="muted">Actionable Lighthouse + CO2.js findings mapped to WSG guidance.</p>
       <ul>
-        <li><strong>Scan title:</strong> Verification: WSG Best Practices</li>
-        <li><strong>Generated:</strong> 2026-04-13T15:37:22.273Z</li>
+        <li><strong>Scan title:</strong> Verification: Assessor Types</li>
+        <li><strong>Generated:</strong> 2026-04-13T16:09:15.680Z</li>
         <li><strong>Scanned URLs:</strong> 1 / 1</li>
-        <li><strong>Estimated CO2:</strong> 0.2910 g</li>
+        <li><strong>Estimated CO2:</strong> 0.2911 g</li>
         <li><strong>Green page hosts:</strong> 1 / 1</li>
         <li><strong>Average redundancy score:</strong> 23/100</li>
         <li><strong>Average modularization score:</strong> 37/100</li>
@@ -211,7 +215,7 @@
       
     <h3>Cross-Page Optimization Signals</h3>
     <ul>
-      <li><strong>Aggregate potential byte savings:</strong> 309.35 KB</li>
+      <li><strong>Aggregate potential byte savings:</strong> 309.28 KB</li>
       <li><strong>Aggregate render-blocking reduction potential:</strong> 0 ms</li>
     </ul>
     <p>No recurring optimization opportunities were detected.</p>
@@ -283,6 +287,7 @@
     <div class="wsg-item">
       <h3>
         <span class="urgency-badge urgency-low">low</span>
+        <span class="assessor-badge assessor-script">script</span>
         Missing print style sheet
       </h3>
       <p>Add a @media print stylesheet to ensure the page is optimized for paper-saving printing.</p>
@@ -309,6 +314,7 @@
     <div class="wsg-item">
       <h3>
         <span class="urgency-badge urgency-low">low</span>
+        <span class="assessor-badge assessor-script">script</span>
         No reduced motion support
       </h3>
       <p>Implement prefers-reduced-motion to allow users to disable animations, reducing compute and improving accessibility.</p>
@@ -342,6 +348,7 @@
     <div class="wsg-item">
       <h3>
         <span class="urgency-badge urgency-medium">medium</span>
+        <span class="assessor-badge assessor-script">script</span>
         Incomplete media lazy loading
       </h3>
       <p>Only 0/9 images use loading=&quot;lazy&quot;. Global lazy loading reduces initial data transfer and energy consumption.</p>
@@ -361,6 +368,30 @@
           </p>
           
         </div>
+      
+    </div>
+  
+    <div class="wsg-item">
+      <h3>
+        <span class="urgency-badge urgency-investigate">investigate</span>
+        <span class="assessor-badge assessor-human">human</span>
+        Review User Journey Efficiency
+      </h3>
+      <p>Have a human evaluate the main user journeys to ensure they require the minimum number of steps. Reducing friction decreases user time and energy expended.</p>
+      <p class="muted">Recurs on 1 pages.</p>
+      
+      
+    </div>
+  
+    <div class="wsg-item">
+      <h3>
+        <span class="urgency-badge urgency-investigate">investigate</span>
+        <span class="assessor-badge assessor-ai">ai</span>
+        Review Content Conciseness
+      </h3>
+      <p>Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload and reading time.</p>
+      <p class="muted">Recurs on 1 pages.</p>
+      
       
     </div>
   
@@ -470,13 +501,13 @@
       <ul>
         <li><strong>WSG criterion:</strong> <a href="https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact">3.1 Set goals based on performance and energy impact</a></li>
         <li><strong>Benchmark source:</strong> <a href="https://sustainablewebdesign.org/digital-carbon-ratings/">Sustainable Web Design ratings</a></li>
-        <li><strong>Current average transfer/page:</strong> 741.91 KB (rating B)</li>
-        <li><strong>Current average CO2/page:</strong> 0.2910 g (rating E)</li>
+        <li><strong>Current average transfer/page:</strong> 741.97 KB (rating B)</li>
+        <li><strong>Current average CO2/page:</strong> 0.2911 g (rating E)</li>
         <li><strong>Recommended budget target:</strong> Rating B = max 975.85 KB and 0.1450 g per page</li>
       </ul>
       <p><strong>Reduction needed:</strong>
       Transfer none,
-      CO2 0.1460 g (50.2%).
+      CO2 0.1461 g (50.2%).
       </p>
       <p><strong>Stretch target:</strong> Rating A = 531.15 KB and 0.0790 g per page.</p>
     </section>
@@ -540,9 +571,9 @@
         <tbody>
           <tr>
         <td><a href="https://google.com">https://google.com</a></td>
-        <td>68/100</td>
-        <td>741.91 KB</td>
-        <td>0.2910 g</td>
+        <td>70/100</td>
+        <td>741.97 KB</td>
+        <td>0.2911 g</td>
         <td>5</td>
         <td>Largest Contentful Paint; Reduce unused JavaScript</td>
       </tr>
@@ -573,7 +604,7 @@
         <textarea id="snippet-1" readonly aria-label="Issue snippet 1">## Improve Largest Contentful Paint
 
 - Lighthouse audit: largest-contentful-paint
-- Current value: 7.0 s
+- Current value: 6.6 s
 - WSG guideline: 1 Set goals based on performance and energy impact
 - WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact
 
@@ -630,18 +661,18 @@ Consider adding `preconnect` or `dns-prefetch` resource hints to establish early
       <h2 id="md-heading">Markdown Version</h2>
       <details>
         <summary>Show report markdown</summary>
-        <pre># Sustainability Scan Report: Verification: WSG Best Practices
+        <pre># Sustainability Scan Report: Verification: Assessor Types
 
-- Generated at: 2026-04-13T15:37:22.273Z
+- Generated at: 2026-04-13T16:09:15.680Z
 - URLs requested: 1
 - URLs scanned: 1
 - Distinct sites scanned: 1
 - Scan errors: 0
-- Average performance score: 68/100
-- Total transfer: 741.91 KB
-- Estimated CO2: 0.2910 g
-- Average transfer per page: 741.91 KB
-- Average CO2 per page: 0.2910 g
+- Average performance score: 70/100
+- Total transfer: 741.97 KB
+- Estimated CO2: 0.2911 g
+- Average transfer per page: 741.97 KB
+- Average CO2 per page: 0.2911 g
 - Average redundancy score: 23/100
 - Pages with high redundancy urgency: 0
 - Average modularization score: 37/100
@@ -754,7 +785,7 @@ Consider adding `preconnect` or `dns-prefetch` resource hints to establish early
 - Assessed pages: 1
 - Average optimization score: 100/100
 - High urgency pages: 1
-- Aggregate potential byte savings: 309.35 KB
+- Aggregate potential byte savings: 309.28 KB
 - Aggregate render-blocking reduction potential: 0 ms
 
 ## WSG Offline Access and Caching Support
@@ -792,7 +823,7 @@ Consider adding `preconnect` or `dns-prefetch` resource hints to establish early
 - Assessed pages: 1
 - Average WSG compliance score: 70/100
 
-### [LOW] Missing print style sheet
+### [LOW] [SCRIPT] Missing print style sheet
 Add a @media print stylesheet to ensure the page is optimized for paper-saving printing.
 - Recurs on 1 page(s).
 
@@ -802,7 +833,7 @@ Add a @media print stylesheet to ensure the page is optimized for paper-saving p
 ```
 - [WSG Guideline 17](https://www.w3.org/TR/web-sustainability-guidelines/#reduce-the-impact-of-downloadable-and-physical-documents)
 
-### [LOW] No reduced motion support
+### [LOW] [SCRIPT] No reduced motion support
 Implement prefers-reduced-motion to allow users to disable animations, reducing compute and improving accessibility.
 - Recurs on 1 page(s).
 
@@ -824,7 +855,7 @@ Implement prefers-reduced-motion to allow users to disable animations, reducing 
 ```
 - [WSG Guideline 12](https://www.w3.org/TR/web-sustainability-guidelines/#ensure-animation-is-proportionate-and-easy-to-control)
 
-### [MEDIUM] Incomplete media lazy loading
+### [MEDIUM] [SCRIPT] Incomplete media lazy loading
 Only 0/9 images use loading=&quot;lazy&quot;. Global lazy loading reduces initial data transfer and energy consumption.
 - Recurs on 1 page(s).
 
@@ -837,6 +868,14 @@ Only 0/9 images use loading=&quot;lazy&quot;. Global lazy loading reduces initia
 &lt;/picture&gt;
 ```
 - [WSG Guideline 11](https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use)
+
+### [INVESTIGATE] [HUMAN] Review User Journey Efficiency
+Have a human evaluate the main user journeys to ensure they require the minimum number of steps. Reducing friction decreases user time and energy expended.
+- Recurs on 1 page(s).
+
+### [INVESTIGATE] [AI] Review Content Conciseness
+Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload and reading time.
+- Recurs on 1 page(s).
 
 ## WSG Third-Party JavaScript Assessment
 
@@ -876,7 +915,7 @@ Only 0/9 images use loading=&quot;lazy&quot;. Global lazy loading reduces initia
 - Budget max transfer/page: 975.85 KB
 - Budget max CO2/page: 0.1450 g
 - Transfer reduction needed: none (already within target budget)
-- CO2 reduction needed: 0.1460 g (50.2%)
+- CO2 reduction needed: 0.1461 g (50.2%)
 - Stretch budget (rating A): 531.15 KB and 0.0790 g per page
 
 ## WSG SC 3.2 Redundancy Analysis
@@ -938,9 +977,9 @@ Only 0/9 images use loading=&quot;lazy&quot;. Global lazy loading reduces initia
 ## Priority Improvements
 
 ### https://google.com
-- Performance: 68/100
-- Transfer: 741.91 KB
-- CO2 estimate: 0.2910 g
+- Performance: 70/100
+- Transfer: 741.97 KB
+- CO2 estimate: 0.2911 g
 - Page host green energy status: GREEN (Google Cloud)
 - Redundancy score: 23/100
 - Redundancy urgency: MEDIUM
@@ -972,13 +1011,13 @@ Only 0/9 images use loading=&quot;lazy&quot;. Global lazy loading reduces initia
 - Media hints urgency: MEDIUM
 - Third-party JS risk score: 11/100
 - Third-party JS urgency: LOW
-- Estimated redundant transfer: 309.35 KB (41.7% of transfer)
+- Estimated redundant transfer: 309.28 KB (41.7% of transfer)
 - Redundancy recommendations:
-  - [HIGH] Reduce unused javascript (est. 299.00 KB savings)
-  - [MEDIUM] Reduce unused css (est. 10.36 KB savings)
+  - [HIGH] Reduce unused javascript (est. 298.91 KB savings)
+  - [MEDIUM] Reduce unused css (est. 10.37 KB savings)
 - Heavy initial-load requests: 3 (490.13 KB total)
 - On-demand modularization candidates:
-  - [HIGH] Split JavaScript by route or interaction (est. 299.00 KB)
+  - [HIGH] Split JavaScript by route or interaction (est. 298.91 KB)
     - Move non-critical bundles behind route-level or event-driven imports so they are only fetched on demand.
   - [HIGH] Modularize heavy script asset from www.google.com (est. 336.20 KB)
     - Load this script only on pages or interactions that require it; prefer dynamic import and feature-level bundles.
@@ -991,14 +1030,14 @@ Only 0/9 images use loading=&quot;lazy&quot;. Global lazy loading reduces initia
   - [LOW] Maintain a third-party JavaScript inventory
     - Track 1 third-party script origin(s) and assign an owner plus business justification for each.
 - Dead-code recommendations:
-  - [MEDIUM] Remove unused CSS selectors and component styles (est. 10.36 KB savings)
+  - [MEDIUM] Remove unused CSS selectors and component styles (est. 10.37 KB savings)
     - Trim styles that never match rendered markup and split component CSS so only used styles are shipped.
-  - [HIGH] Remove unused JavaScript and feature bundles (est. 299.00 KB savings)
+  - [HIGH] Remove unused JavaScript and feature bundles (est. 298.91 KB savings)
     - Drop unused packages and feature code, or move them behind route-level or interaction-triggered imports.
 - Non-critical loading candidates:
-  - [HIGH] Defer non-critical JavaScript (est. 299.00 KB deferrable)
+  - [HIGH] Defer non-critical JavaScript (est. 298.91 KB deferrable)
     - Split bundles and load feature code on interaction or route transition.
-  - [MEDIUM] Inline critical CSS and defer remainder (est. 10.36 KB deferrable)
+  - [MEDIUM] Inline critical CSS and defer remainder (est. 10.37 KB deferrable)
     - Ship only above-the-fold CSS in initial render path and defer non-critical styles.
   - [HIGH] Evaluate deferred loading for heavy script from www.google.com (est. 336.20 KB deferrable)
     - Confirm this asset is required for first paint; defer or lazy-load if not critical.
@@ -1048,9 +1087,9 @@ Only 0/9 images use loading=&quot;lazy&quot;. Global lazy loading reduces initia
     - Compression signals look healthy in current Lighthouse audits; continue enforcing compression and asset encoding in CI/CD.
 - Optimization recommendations:
   - [HIGH] Remove unused JavaScript
-    - Reduce dead JS and split bundles to avoid shipping non-critical code. Estimated byte savings: 299.00 KB.
+    - Reduce dead JS and split bundles to avoid shipping non-critical code. Estimated byte savings: 298.91 KB.
   - [LOW] Remove unused CSS
-    - Trim unused selectors and split CSS so only needed styles are shipped. Estimated byte savings: 10.36 KB.
+    - Trim unused selectors and split CSS so only needed styles are shipped. Estimated byte savings: 10.37 KB.
 - Offline/caching recommendations:
   - [HIGH] Add service worker support
     - Register a service worker to support resilient caching and offline behavior for key routes.
@@ -1064,7 +1103,7 @@ Only 0/9 images use loading=&quot;lazy&quot;. Global lazy loading reduces initia
   - [MEDIUM] Add loading=&quot;lazy&quot; to images
     - 9 of 9 image(s) lack an explicit loading=&quot;lazy&quot; attribute. Lazy loading defers below-fold images and reduces initial page weight.
 - [HIGH] Largest Contentful Paint
-  - Current value: 7.0 s
+  - Current value: 6.6 s
   - WSG: 1 Set goals based on performance and energy impact (https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact)
 - [HIGH] Reduce unused JavaScript
   - Current value: Est savings of 299 KiB
@@ -1073,7 +1112,7 @@ Only 0/9 images use loading=&quot;lazy&quot;. Global lazy loading reduces initia
   - Current value: Est savings of 310 ms
   - WSG: 18 Use the most efficient solution for your service (https://www.w3.org/TR/web-sustainability-guidelines/#use-the-most-efficient-solution-for-your-service)
 - [MEDIUM] Speed Index
-  - Current value: 4.1 s
+  - Current value: 3.5 s
   - WSG: 1 Set goals based on performance and energy impact (https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact)
 - [MEDIUM] Reduce unused CSS
   - Current value: Est savings of 10 KiB
@@ -1085,7 +1124,7 @@ Only 0/9 images use loading=&quot;lazy&quot;. Global lazy loading reduces initia
 ## Improve Largest Contentful Paint
 
 - Lighthouse audit: largest-contentful-paint
-- Current value: 7.0 s
+- Current value: 6.6 s
 - WSG guideline: 1 Set goals based on performance and energy impact
 - WSG link: https://www.w3.org/TR/web-sustainability-guidelines/#set-goals-based-on-performance-and-energy-impact
 
