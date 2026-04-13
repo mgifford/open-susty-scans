@@ -2368,8 +2368,9 @@ export function renderMarkdown(report) {
   lines.push(`- Average WSG compliance score: ${formatPercentScore(report.wsgHighlightsSummary.averageScore)}`);
 
   for (const h of report.wsgHighlightsSummary.highlights) {
+    const assessorLabel = (h.criteria?.assessor || h.assessor || "script").toUpperCase();
     lines.push("");
-    lines.push(`### [${h.urgency.toUpperCase()}] ${h.title}`);
+    lines.push(`### [${h.urgency.toUpperCase()}] [${assessorLabel}] ${h.title}`);
     lines.push(h.detail);
     lines.push(`- Recurs on ${h.pageCount} page(s).`);
     if (h.criteria) {
@@ -2919,6 +2920,10 @@ export function renderHtml(report, markdownText) {
     .urgency-high { background: #fee2e2; color: #991b1b; }
     .urgency-medium { background: #fef3c7; color: #92400e; }
     .urgency-low { background: #ecfdf5; color: #065f46; }
+    .assessor-badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-left: 0.5rem; }
+    .assessor-script { background: #e0e7ff; color: #3730a3; }
+    .assessor-ai { background: #fdf4ff; color: #86198f; }
+    .assessor-human { background: #ffedd5; color: #9a3412; }
     @media (max-width: 700px) {
       th:nth-child(3), td:nth-child(3), th:nth-child(6), td:nth-child(6) { display: none; }
       .snippet textarea { min-height: 220px; }
@@ -3392,10 +3397,13 @@ function renderWsgHighlights(highlights) {
     return "<p>No recurring WSG criteria failures detected in this sample.</p>";
   }
 
-  return highlights.map(h => `
+  return highlights.map(h => {
+    const assessorType = (h.criteria?.assessor || h.assessor || "script").toLowerCase();
+    return `
     <div class="wsg-item">
       <h3>
         <span class="urgency-badge urgency-${h.urgency}">${h.urgency}</span>
+        <span class="assessor-badge assessor-${assessorType}">${assessorType}</span>
         ${escapeHtml(h.title)}
       </h3>
       <p>${escapeHtml(h.detail)}</p>
@@ -3413,7 +3421,7 @@ function renderWsgHighlights(highlights) {
         </div>
       ` : ""}
     </div>
-  `).join("");
+  `;}).join("");
 }
 
 function renderFormValidationSummary(summary) {

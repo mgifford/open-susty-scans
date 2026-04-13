@@ -82,6 +82,7 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
         urgency: "low",
         detail: "Add a @media print stylesheet to ensure the page is optimized for paper-saving printing.",
         wsid: "17.printed documents",
+        assessor: "script",
         example: "@media print {\n  /* Hide non-critical navigation and backgrounds */\n  nav, .ads, header, footer { display: none; }\n  body { font-size: 12pt; color: #000; background: #fff; }\n  a::after { content: \" (\" attr(href) \") \"; } /* Show URLs */\n}"
       });
     }
@@ -94,6 +95,7 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
         urgency: "low",
         detail: "Implement prefers-reduced-motion to allow users to disable animations, reducing compute and improving accessibility.",
         wsid: "12.control animation",
+        assessor: "script",
         example: "@media (prefers-reduced-motion: reduce) {\n  *, ::before, ::after {\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n    transition-duration: 0.01ms !important;\n    scroll-behavior: auto !important;\n  }\n}"
       });
     }
@@ -106,6 +108,7 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
         urgency: "medium",
         detail: `Only ${wsgData.media.lazyImages}/${wsgData.media.totalImages} images use loading="lazy". Global lazy loading reduces initial data transfer and energy consumption.`,
         wsid: "11.lazy loading",
+        assessor: "script",
         example: "<img src=\"image.webp\" alt=\"Description\" loading=\"lazy\" width=\"800\" height=\"600\">\n<!-- Works for iframes too -->\n<iframe src=\"video.html\" loading=\"lazy\"></iframe>"
       });
     }
@@ -118,6 +121,7 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
         urgency: "medium",
         detail: `Primary font "${wsgData.typography.primaryFont}" does not appear to use a system font stack fallback. System fonts reduce network requests and improve rendering performance.`,
         wsid: "13.pre-installed typefaces",
+        assessor: "script",
         example: "body {\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\";\n}"
       });
     }
@@ -130,11 +134,31 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
         urgency: "medium",
         detail: `Found ${wsgData.tracking.count} commercial tracking scripts. Consider lightweight, privacy-focused alternatives like Plausible or Fathom to reduce JS weight and energy footprint.`,
         wsid: "7.analytics and tracking",
+        assessor: "script",
         example: "<!-- Replace heavy trackers with lightweight alternatives -->\n<script defer data-domain=\"yourdomain.com\" src=\"https://plausible.io/js/script.js\"></script>"
       });
     }
 
+    recommendations.push({
+      guideline: "2.15",
+      title: "Review User Journey Efficiency",
+      urgency: "investigate",
+      detail: "Have a human evaluate the main user journeys to ensure they require the minimum number of steps. Reducing friction decreases user time and energy expended.",
+      wsid: "2.user experience",
+      assessor: "human"
+    });
+
+    recommendations.push({
+      guideline: "2.1",
+      title: "Review Content Conciseness",
+      urgency: "investigate",
+      detail: "Use a Large Language Model to evaluate page text for conciseness and clarity. Removing superfluous text reduces payload and reading time.",
+      wsid: "2.content strategy",
+      assessor: "ai"
+    });
+
     return {
+
       score: Math.max(0, score),
       urgency: score <= 60 ? "high" : (score <= 85 ? "medium" : "low"),
       data: wsgData,
