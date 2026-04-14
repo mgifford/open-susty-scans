@@ -1519,6 +1519,9 @@ function buildLayoutSupportSummary(perUrl) {
   let totalMobileSmallTapTargets = 0;
   let totalTabletSmallTapTargets = 0;
   let totalFixedWidthOffenders = 0;
+  let pagesWithGridOverflow = 0;
+  let totalGridOverflowContainers = 0;
+  let totalGridContainersDetected = 0;
 
   for (const entry of okEntries) {
     const checks = entry.layoutAdaptation?.checks || {};
@@ -1527,6 +1530,9 @@ function buildLayoutSupportSummary(perUrl) {
     totalMobileSmallTapTargets += checks.mobileSmallTapTargets || 0;
     totalTabletSmallTapTargets += checks.tabletSmallTapTargets || 0;
     totalFixedWidthOffenders += checks.fixedWidthOffenders || 0;
+    totalGridOverflowContainers += checks.gridOverflowContainers || 0;
+    totalGridContainersDetected += checks.gridContainersDetected || 0;
+    if ((checks.gridOverflowContainers || 0) > 0) pagesWithGridOverflow += 1;
   }
 
   return {
@@ -1541,7 +1547,10 @@ function buildLayoutSupportSummary(perUrl) {
     tabletOverflowPages,
     totalMobileSmallTapTargets,
     totalTabletSmallTapTargets,
-    totalFixedWidthOffenders
+    totalFixedWidthOffenders,
+    pagesWithGridOverflow,
+    totalGridOverflowContainers,
+    totalGridContainersDetected
   };
 }
 
@@ -2236,6 +2245,9 @@ export function renderMarkdown(report) {
   lines.push(`- Total small tap targets on mobile: ${report.layoutSupportSummary.totalMobileSmallTapTargets}`);
   lines.push(`- Total small tap targets on tablet: ${report.layoutSupportSummary.totalTabletSmallTapTargets}`);
   lines.push(`- Total fixed-width offenders: ${report.layoutSupportSummary.totalFixedWidthOffenders}`);
+  lines.push(`- Pages with grid overflow containers: ${report.layoutSupportSummary.pagesWithGridOverflow}`);
+  lines.push(`- Total overflowing grid containers: ${report.layoutSupportSummary.totalGridOverflowContainers}`);
+  lines.push(`- Total grid containers detected: ${report.layoutSupportSummary.totalGridContainersDetected}`);
 
   lines.push("");
   lines.push("## WSG Lightweight Security Review");
@@ -2990,7 +3002,7 @@ export function renderHtml(report, markdownText) {
 
     <section class="card" aria-labelledby="layout-support-heading">
       <h2 id="layout-support-heading">WSG Multi-Device Layout Support</h2>
-      <p class="muted">Assesses whether page layouts adapt cleanly on mobile and tablet viewports, with emphasis on overflow and touch target usability.</p>
+      <p class="muted">Assesses whether page layouts adapt cleanly on mobile and tablet viewports, with emphasis on overflow, grid behavior, and touch target usability.</p>
       <ul>
         <li><strong>WSG criterion:</strong> <a href="${escapeAttr(report.layoutSupportSummary.wsgReference.url)}">${escapeHtml(report.layoutSupportSummary.wsgReference.title)}</a></li>
         <li><strong>Assessed pages:</strong> ${report.layoutSupportSummary.assessedPages}</li>
@@ -3486,6 +3498,9 @@ function renderLayoutSupportSummary(summary) {
       <li><strong>Total small tap targets on mobile:</strong> ${summary?.totalMobileSmallTapTargets || 0}</li>
       <li><strong>Total small tap targets on tablet:</strong> ${summary?.totalTabletSmallTapTargets || 0}</li>
       <li><strong>Total fixed-width offenders:</strong> ${summary?.totalFixedWidthOffenders || 0}</li>
+      <li><strong>Pages with grid overflow containers:</strong> ${summary?.pagesWithGridOverflow || 0}</li>
+      <li><strong>Total overflowing grid containers:</strong> ${summary?.totalGridOverflowContainers || 0}</li>
+      <li><strong>Total grid containers detected:</strong> ${summary?.totalGridContainersDetected || 0}</li>
     </ul>
   `;
 }
