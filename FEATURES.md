@@ -23,6 +23,7 @@ A comprehensive reference for all capabilities, checks, and measurements include
    - 4.11 [Expected & Beneficial Files](#411-expected--beneficial-files)
    - 4.12 [Third-Party JavaScript Analysis](#412-third-party-javascript-analysis)
    - 4.13 [Media Sustainability Hints](#413-media-sustainability-hints)
+   - 4.14 [Grid-Aware Websites Detection](#414-grid-aware-websites-detection)
 5. [Lighthouse Integration](#5-lighthouse-integration)
 6. [Cross-Page Pattern Analysis](#6-cross-page-pattern-analysis)
 7. [Report Generation](#7-report-generation)
@@ -384,6 +385,28 @@ Per device:
 **Inspiration:** [Web Sustainability Index](https://websustainabilityindex.com/about)
 
 **Summary output:** Cross-page counts for pages with autoplay, unmuted autoplay, missing dark mode, and lazy loading gaps.
+
+---
+
+### 4.14 Grid-Aware Websites Detection
+
+**What it checks:**
+
+Grid-aware websites adapt their content or behaviour based on the carbon intensity of the visitor's local electricity grid — serving lighter experiences when the grid runs on more carbon-intensive energy sources. This check looks for evidence that a site has implemented this approach using the [Green Web Foundation's grid-aware websites library](https://www.thegreenwebfoundation.org/tools/grid-aware-websites/).
+
+Detected signals include:
+
+- **`data-grid-aware` attribute on `<html>`** — the primary DOM signal set by the HTMLRewriter in the Cloudflare Workers and Netlify Edge plugins when grid-aware changes are applied
+- **GAW info bar element** — elements with `id="gaw-info-bar"` or matching `[id*='grid-aware']`, `[class*='gaw-']`, or `[data-gaw]`
+- **Script references** — inline scripts or `<script src>` attributes referencing `grid-aware-websites`, `@greenweb/gaw`, `gaw-plugin-cloudflare`, or `gaw-plugin-netlify`
+- **Response headers** — response headers containing `gaw`, `grid-aware`, or `x-grid`
+- **Electricity Maps API requests** — network requests to `electricitymaps.com` visible in the Lighthouse network log
+
+**Reference demos:**
+- [Cloudflare Workers demo](https://gaw.greenweb.org) — source: [github.com/thegreenwebfoundation/grid-aware-websites-demo-cloudflare](https://github.com/thegreenwebfoundation/grid-aware-websites-demo-cloudflare)
+- [Netlify Edge Functions demo](https://grid-aware-demo.netlify.app/) — source: [github.com/thegreenwebfoundation/grid-aware-websites-demo-netlify](https://github.com/thegreenwebfoundation/grid-aware-websites-demo-netlify)
+
+**Output:** Per-page detection status with signal breakdown; summary count of pages where grid-aware signals are found. Pages with no signals receive an "investigate" recommendation pointing to the library and demos.
 
 ---
 
