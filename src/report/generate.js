@@ -13,6 +13,7 @@ const WSG_REDUCE_DATA_TRANSFER_COMPRESSION_URL = "https://www.w3.org/TR/web-sust
 const WSG_LATEST_STABLE_LANGUAGE_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#use-the-latest-stable-language-version";
 const WSG_OFFLINE_ACCESS_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#optimize-caching-and-support-offline-access";
 const WSG_MEDIA_HINTS_URL = "https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use";
+const GRID_AWARE_WEBSITES_URL = "https://www.thegreenwebfoundation.org/tools/grid-aware-websites/";
 const SWD_RATING_SOURCE_URL = "https://sustainablewebdesign.org/digital-carbon-ratings/";
 
 const SWD_RATINGS = [
@@ -2399,7 +2400,7 @@ export function renderMarkdown(report) {
       lines.push(`  - ${url}`);
     }
   } else {
-    lines.push("- No grid-aware website signals detected. Consider implementing grid-aware adaptation: https://www.thegreenwebfoundation.org/tools/grid-aware-websites/");
+    lines.push(`- No grid-aware website signals detected. Consider implementing grid-aware adaptation: ${GRID_AWARE_WEBSITES_URL}`);
   }
 
   lines.push("");
@@ -3142,7 +3143,7 @@ export function renderHtml(report, markdownText) {
 
     <section class="card" aria-labelledby="grid-aware-heading">
       <h2 id="grid-aware-heading">Grid-Aware Websites Detection</h2>
-      <p class="muted">Checks for signals of the Green Web Foundation's <a href="https://www.thegreenwebfoundation.org/tools/grid-aware-websites/">grid-aware websites</a> approach, which adapts page content based on the carbon intensity of the visitor's local electricity grid.</p>
+      <p class="muted">Checks for signals of the Green Web Foundation's <a href="${escapeAttr(GRID_AWARE_WEBSITES_URL)}">grid-aware websites</a> approach, which adapts page content based on the carbon intensity of the visitor's local electricity grid.</p>
       <ul>
         <li><strong>Assessed pages:</strong> ${report.gridAwareSummary.assessedPages}</li>
         <li><strong>Pages with grid-aware signals:</strong> ${report.gridAwareSummary.pagesWithDetection}</li>

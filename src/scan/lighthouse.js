@@ -5,6 +5,7 @@ import { checkGreenWebHostnames } from "../greenweb/client.js";
 import { buildWsgCustomAssessment } from "./wsg.js";
 
 const co2Model = new co2Factory({ model: "swd" });
+const GRID_AWARE_WEBSITES_URL = "https://www.thegreenwebfoundation.org/tools/grid-aware-websites/";
 
 export async function scanUrls(urls) {
   const browser = await puppeteer.launch({
@@ -1364,9 +1365,13 @@ async function buildGridAwareAssessment({ browser, pageUrl, networkRequests = []
     );
 
     // Electricity Maps API calls visible in the Lighthouse network log
-    const electricityMapsRequests = networkRequests.filter(
-      (r) => typeof r.url === "string" && r.url.includes("electricitymaps.com")
-    ).length;
+    const electricityMapsRequests = networkRequests.filter((r) => {
+      try {
+        return new URL(r.url).hostname.endsWith("electricitymaps.com");
+      } catch {
+        return false;
+      }
+    }).length;
 
     const detected =
       domSignals.hasGridAwareAttr ||
@@ -1397,14 +1402,14 @@ async function buildGridAwareAssessment({ browser, pageUrl, networkRequests = []
         title: "Grid-aware website signals detected",
         urgency: "low",
         detail: `This page shows evidence of the Green Web Foundation's grid-aware websites approach, which adapts content based on the carbon intensity of the visitor's local electricity grid. Signals found: ${details.join("; ")}.`,
-        wsgUrl: "https://www.thegreenwebfoundation.org/tools/grid-aware-websites/"
+        wsgUrl: GRID_AWARE_WEBSITES_URL
       });
     } else {
       recommendations.push({
         title: "Consider implementing grid-aware website adaptation",
         urgency: "investigate",
-        detail: "Grid-aware websites reduce their environmental footprint by serving lighter experiences when the local electricity grid runs on more carbon-intensive energy sources. The Green Web Foundation provides a JavaScript library and edge-function plugins (Cloudflare Workers, Netlify Edge Functions) to implement this with minimal code. See the project at https://www.thegreenwebfoundation.org/tools/grid-aware-websites/ and the reference demos at https://gaw.greenweb.org (Cloudflare) and https://grid-aware-demo.netlify.app/ (Netlify).",
-        wsgUrl: "https://www.thegreenwebfoundation.org/tools/grid-aware-websites/",
+        detail: "Grid-aware websites serve lighter experiences when the local grid runs on carbon-intensive energy. The Green Web Foundation provides a JS library and edge-function plugins (Cloudflare Workers, Netlify Edge) to implement this with minimal code.",
+        wsgUrl: GRID_AWARE_WEBSITES_URL,
         assessor: "human"
       });
     }
