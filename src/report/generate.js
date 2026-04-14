@@ -71,6 +71,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
       expectedFiles: result.sustainability.expectedFiles,
       mediaHints: result.sustainability.mediaHints,
       wsgCustom: result.sustainability.wsgCustom,
+      gridAware: result.sustainability.gridAware,
       compressionOpportunities,
       optimizationOpportunities,
       dependencyMaintenance,
@@ -101,6 +102,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
   const offlineSupportSummary = buildOfflineSupportSummary(perUrl);
   const languageVersionSummary = buildLanguageVersionSummary(perUrl);
   const mediaHintsSummary = buildMediaHintsSummary(perUrl);
+  const gridAwareSummary = buildGridAwareSummary(perUrl);
   const wsgHighlightsSummary = buildWsgHighlightsSummary(perUrl, wsgIndex);
   const siteGuidance = buildSiteGuidance(perUrl);
 
@@ -125,6 +127,7 @@ export function buildReportBundle({ scanTitle, issueNumber, urls, results, wsgIn
     offlineSupportSummary,
     languageVersionSummary,
     mediaHintsSummary,
+    gridAwareSummary,
     wsgHighlightsSummary,
     siteGuidance,
     crossPagePatterns,
@@ -1445,6 +1448,18 @@ function buildMediaHintsSummary(perUrl) {
   };
 }
 
+function buildGridAwareSummary(perUrl) {
+  const okEntries = perUrl.filter((item) => item.status === "ok");
+  const detectedEntries = okEntries.filter((item) => item.gridAware?.detected === true);
+  const detectedUrls = detectedEntries.map((item) => item.url);
+
+  return {
+    assessedPages: okEntries.length,
+    pagesWithDetection: detectedEntries.length,
+    detectedUrls
+  };
+}
+
 function buildWsgHighlightsSummary(perUrl, wsgIndex) {
   const okEntries = perUrl.filter((item) => item.status === "ok");
   const recurringMap = new Map();
@@ -2374,6 +2389,20 @@ export function renderMarkdown(report) {
   lines.push(`- Pages with lazy loading gap (< 50% of images lazy): ${report.mediaHintsSummary.pagesWithLazyLoadingGap}`);
 
   lines.push("");
+  lines.push("## Grid-Aware Websites Detection");
+  lines.push("");
+  lines.push(`- Assessed pages: ${report.gridAwareSummary.assessedPages}`);
+  lines.push(`- Pages with grid-aware signals detected: ${report.gridAwareSummary.pagesWithDetection}`);
+  if (report.gridAwareSummary.detectedUrls.length > 0) {
+    lines.push("- Detected on:");
+    for (const url of report.gridAwareSummary.detectedUrls) {
+      lines.push(`  - ${url}`);
+    }
+  } else {
+    lines.push("- No grid-aware website signals detected. Consider implementing grid-aware adaptation: https://www.thegreenwebfoundation.org/tools/grid-aware-websites/");
+  }
+
+  lines.push("");
   lines.push("## WSG Success Criteria & Best Practices");
   lines.push("");
   lines.push(`- Assessed pages: ${report.wsgHighlightsSummary.assessedPages}`);
@@ -2821,6 +2850,18 @@ export function renderMarkdown(report) {
       }
     }
 
+    if (entry.gridAware) {
+      lines.push(`- Grid-aware websites: ${entry.gridAware.detected ? "signals detected" : "not detected"}`);
+      if (entry.gridAware.detected) {
+        const s = entry.gridAware.signals || {};
+        if (s.hasGridAwareAttr) lines.push(`  - data-grid-aware="${s.gridAwareValue}" on html element`);
+        if (s.hasInfoBar) lines.push("  - GAW info bar element present");
+        if ((s.scriptSignals || []).length > 0) lines.push(`  - GAW script reference(s): ${s.scriptSignals.join(", ")}`);
+        if ((s.headerSignals || []).length > 0) lines.push(`  - GAW response header(s): ${s.headerSignals.join(", ")}`);
+        if (s.electricityMapsRequests > 0) lines.push(`  - Electricity Maps API requests: ${s.electricityMapsRequests}`);
+      }
+    }
+
     if (entry.findings.length === 0) {
       lines.push("- No high-priority issues flagged by current mapping.");
       lines.push("");
@@ -3096,6 +3137,18 @@ export function renderHtml(report, markdownText) {
         <li><strong>Pages with unmuted autoplay:</strong> ${report.mediaHintsSummary.pagesWithUnmutedAutoplay}</li>
         <li><strong>Pages without dark mode support:</strong> ${report.mediaHintsSummary.pagesWithoutDarkMode}</li>
         <li><strong>Pages with lazy loading gap (&lt;50% of images lazy):</strong> ${report.mediaHintsSummary.pagesWithLazyLoadingGap}</li>
+      </ul>
+    </section>
+
+    <section class="card" aria-labelledby="grid-aware-heading">
+      <h2 id="grid-aware-heading">Grid-Aware Websites Detection</h2>
+      <p class="muted">Checks for signals of the Green Web Foundation's <a href="https://www.thegreenwebfoundation.org/tools/grid-aware-websites/">grid-aware websites</a> approach, which adapts page content based on the carbon intensity of the visitor's local electricity grid.</p>
+      <ul>
+        <li><strong>Assessed pages:</strong> ${report.gridAwareSummary.assessedPages}</li>
+        <li><strong>Pages with grid-aware signals:</strong> ${report.gridAwareSummary.pagesWithDetection}</li>
+        ${report.gridAwareSummary.pagesWithDetection === 0
+          ? `<li>No grid-aware signals detected. Consider implementing grid-aware adaptation — reference demos: <a href="https://gaw.greenweb.org">Cloudflare demo</a>, <a href="https://grid-aware-demo.netlify.app/">Netlify demo</a>.</li>`
+          : report.gridAwareSummary.detectedUrls.map((u) => `<li>Detected: ${escapeHtml(u)}</li>`).join("")}
       </ul>
     </section>
 

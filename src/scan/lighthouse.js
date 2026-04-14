@@ -70,6 +70,11 @@ export async function scanUrls(urls) {
           pageUrl: lhr.finalDisplayedUrl || lhr.finalUrl || url,
           lighthouseAudits: lhr.audits
         });
+        const gridAware = await buildGridAwareAssessment({
+          browser,
+          pageUrl: lhr.finalDisplayedUrl || lhr.finalUrl || url,
+          networkRequests
+        });
 
         results.push({
           url,
@@ -98,7 +103,8 @@ export async function scanUrls(urls) {
             securityLight,
             expectedFiles,
             mediaHints,
-            wsgCustom
+            wsgCustom,
+            gridAware
           }
         });
       } catch (error) {
@@ -1304,4 +1310,118 @@ function scoreMediaHints(hints) {
     checks: hints,
     recommendations
   };
+}
+
+async function buildGridAwareAssessment({ browser, pageUrl, networkRequests = [] }) {
+  let page;
+  try {
+    page = await browser.newPage();
+    const response = await page.goto(pageUrl, { waitUntil: "domcontentloaded", timeout: 45000 });
+    const headers = normalizeHeaders(response?.headers() || {});
+
+    const domSignals = await page.evaluate(() => {
+      const html = document.documentElement;
+
+      // Primary signal: data-grid-aware attribute set by HTMLRewriter on the html element
+      const hasGridAwareAttr = html.hasAttribute("data-grid-aware");
+      const gridAwareValue = html.getAttribute("data-grid-aware");
+
+      // GAW info bar element (injected by the gridAwareAuto infoBar option)
+      const hasInfoBar = !!(
+        document.querySelector("#gaw-info-bar") ||
+        document.querySelector("[id*='grid-aware']") ||
+        document.querySelector("[class*='gaw-']") ||
+        document.querySelector("[data-gaw]")
+      );
+
+      // Scripts or inline code referencing the grid-aware-websites packages
+      const gawPatterns = [
+        "grid-aware-websites",
+        "@greenweb/gaw",
+        "gaw-plugin-cloudflare",
+        "gaw-plugin-netlify"
+      ];
+      const scriptSignals = [];
+      for (const el of document.querySelectorAll("script")) {
+        const src = el.getAttribute("src") || "";
+        const inline = el.textContent || "";
+        if (gawPatterns.some((p) => src.includes(p) || inline.includes(p))) {
+          scriptSignals.push(src || "(inline)");
+        }
+      }
+
+      return {
+        hasGridAwareAttr,
+        gridAwareValue,
+        hasInfoBar,
+        scriptSignals
+      };
+    });
+
+    // Response headers that suggest grid-aware infrastructure
+    const headerSignals = Object.keys(headers).filter(
+      (h) => h.includes("gaw") || h.includes("grid-aware") || h.includes("x-grid")
+    );
+
+    // Electricity Maps API calls visible in the Lighthouse network log
+    const electricityMapsRequests = networkRequests.filter(
+      (r) => typeof r.url === "string" && r.url.includes("electricitymaps.com")
+    ).length;
+
+    const detected =
+      domSignals.hasGridAwareAttr ||
+      domSignals.hasInfoBar ||
+      domSignals.scriptSignals.length > 0 ||
+      headerSignals.length > 0 ||
+      electricityMapsRequests > 0;
+
+    const signals = {
+      hasGridAwareAttr: domSignals.hasGridAwareAttr,
+      gridAwareValue: domSignals.gridAwareValue,
+      hasInfoBar: domSignals.hasInfoBar,
+      scriptSignals: domSignals.scriptSignals,
+      headerSignals,
+      electricityMapsRequests
+    };
+
+    const recommendations = [];
+
+    if (detected) {
+      const details = [];
+      if (domSignals.hasGridAwareAttr) details.push(`html[data-grid-aware="${domSignals.gridAwareValue}"] present`);
+      if (domSignals.hasInfoBar) details.push("GAW info bar element found");
+      if (domSignals.scriptSignals.length > 0) details.push(`GAW script reference(s): ${domSignals.scriptSignals.join(", ")}`);
+      if (headerSignals.length > 0) details.push(`GAW response header(s): ${headerSignals.join(", ")}`);
+      if (electricityMapsRequests > 0) details.push(`${electricityMapsRequests} Electricity Maps API request(s) detected`);
+      recommendations.push({
+        title: "Grid-aware website signals detected",
+        urgency: "low",
+        detail: `This page shows evidence of the Green Web Foundation's grid-aware websites approach, which adapts content based on the carbon intensity of the visitor's local electricity grid. Signals found: ${details.join("; ")}.`,
+        wsgUrl: "https://www.thegreenwebfoundation.org/tools/grid-aware-websites/"
+      });
+    } else {
+      recommendations.push({
+        title: "Consider implementing grid-aware website adaptation",
+        urgency: "investigate",
+        detail: "Grid-aware websites reduce their environmental footprint by serving lighter experiences when the local electricity grid runs on more carbon-intensive energy sources. The Green Web Foundation provides a JavaScript library and edge-function plugins (Cloudflare Workers, Netlify Edge Functions) to implement this with minimal code. See the project at https://www.thegreenwebfoundation.org/tools/grid-aware-websites/ and the reference demos at https://gaw.greenweb.org (Cloudflare) and https://grid-aware-demo.netlify.app/ (Netlify).",
+        wsgUrl: "https://www.thegreenwebfoundation.org/tools/grid-aware-websites/",
+        assessor: "human"
+      });
+    }
+
+    return {
+      detected,
+      signals,
+      recommendations
+    };
+  } catch (error) {
+    return {
+      detected: false,
+      signals: {},
+      error: error instanceof Error ? error.message : String(error),
+      recommendations: []
+    };
+  } finally {
+    if (page) await page.close();
+  }
 }
