@@ -619,11 +619,22 @@ async function buildLayoutAssessment({ browser, pageUrl }) {
         const hasHorizontalOverflow = horizontalOverflowPx > 1;
 
         let fixedWidthOffenders = 0;
+        let gridContainersDetected = 0;
+        let gridOverflowContainers = 0;
         for (const el of document.querySelectorAll("body *")) {
           if (!isVisible(el)) continue;
           const rect = el.getBoundingClientRect();
           if (rect.width > viewportWidth + 1) {
             fixedWidthOffenders += 1;
+          }
+          const style = window.getComputedStyle(el);
+          const display = String(style.display || "");
+          if (display !== "grid" && display !== "inline-grid") continue;
+          gridContainersDetected += 1;
+
+          const internalOverflowPx = Math.max(0, (el.scrollWidth || 0) - (el.clientWidth || 0));
+          if (rect.width > viewportWidth + 1 || internalOverflowPx > 1) {
+            gridOverflowContainers += 1;
           }
         }
 
@@ -643,22 +654,6 @@ async function buildLayoutAssessment({ browser, pageUrl }) {
           const rect = el.getBoundingClientRect();
           if (rect.width > viewportWidth + 1) {
             oversizedMedia += 1;
-          }
-        }
-
-        let gridContainersDetected = 0;
-        let gridOverflowContainers = 0;
-        for (const el of document.querySelectorAll("body *")) {
-          if (!isVisible(el)) continue;
-          const style = window.getComputedStyle(el);
-          const display = String(style.display || "");
-          if (display !== "grid" && display !== "inline-grid") continue;
-          gridContainersDetected += 1;
-
-          const rect = el.getBoundingClientRect();
-          const internalOverflowPx = Math.max(0, (el.scrollWidth || 0) - (el.clientWidth || 0));
-          if (rect.width > viewportWidth + 1 || internalOverflowPx > 1) {
-            gridOverflowContainers += 1;
           }
         }
 
