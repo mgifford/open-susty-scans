@@ -646,6 +646,22 @@ async function buildLayoutAssessment({ browser, pageUrl }) {
           }
         }
 
+        let gridContainersDetected = 0;
+        let gridOverflowContainers = 0;
+        for (const el of document.querySelectorAll("body *")) {
+          if (!isVisible(el)) continue;
+          const style = window.getComputedStyle(el);
+          const display = String(style.display || "");
+          if (display !== "grid" && display !== "inline-grid") continue;
+          gridContainersDetected += 1;
+
+          const rect = el.getBoundingClientRect();
+          const internalOverflowPx = Math.max(0, (el.scrollWidth || 0) - (el.clientWidth || 0));
+          if (rect.width > viewportWidth + 1 || internalOverflowPx > 1) {
+            gridOverflowContainers += 1;
+          }
+        }
+
         return {
           device: deviceName,
           viewportWidth,
@@ -655,7 +671,9 @@ async function buildLayoutAssessment({ browser, pageUrl }) {
           hasHorizontalOverflow,
           fixedWidthOffenders,
           smallTapTargets,
-          oversizedMedia
+          oversizedMedia,
+          gridContainersDetected,
+          gridOverflowContainers
         };
       }, device.name);
 
@@ -685,6 +703,10 @@ function scoreLayoutAssessment(outcomes) {
     tabletSmallTapTargets: 0,
     fixedWidthOffenders: 0,
     oversizedMedia: 0,
+    gridContainersDetected: 0,
+    mobileGridOverflowContainers: 0,
+    tabletGridOverflowContainers: 0,
+    gridOverflowContainers: 0,
     scanErrors: outcomes.filter((item) => item.error).length
   };
 
@@ -712,8 +734,13 @@ function scoreLayoutAssessment(outcomes) {
 
     score += Math.min(15, outcome.fixedWidthOffenders * 2);
     score += Math.min(10, outcome.oversizedMedia * 2);
+    score += Math.min(20, outcome.gridOverflowContainers * 5);
     checks.fixedWidthOffenders += outcome.fixedWidthOffenders;
     checks.oversizedMedia += outcome.oversizedMedia;
+    checks.gridContainersDetected += outcome.gridContainersDetected || 0;
+    checks.gridOverflowContainers += outcome.gridOverflowContainers || 0;
+    if (isMobile) checks.mobileGridOverflowContainers = outcome.gridOverflowContainers || 0;
+    if (isTablet) checks.tabletGridOverflowContainers = outcome.gridOverflowContainers || 0;
   }
 
   score = Math.min(100, score);
@@ -760,6 +787,14 @@ function buildLayoutRecommendations({ checks, score }) {
       title: "Constrain media dimensions",
       urgency: "medium",
       detail: `${checks.oversizedMedia} media element(s) exceeded viewport width. Apply max-width: 100% and responsive media patterns.`
+    });
+  }
+
+  if (checks.gridOverflowContainers > 0) {
+    recommendations.push({
+      title: "Make grid layouts breakpoint-aware",
+      urgency: checks.gridOverflowContainers > 4 ? "high" : "medium",
+      detail: `${checks.gridOverflowContainers} grid container(s) overflowed across tested viewports (${checks.mobileGridOverflowContainers} on mobile, ${checks.tabletGridOverflowContainers} on tablet). Use intrinsic tracks (minmax(), fr), wrapping, and breakpoint-aware grid templates.`
     });
   }
 

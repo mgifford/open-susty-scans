@@ -164,7 +164,7 @@ Reports also include metadata machine-readability analysis aligned with WSG guid
 Reports also include multi-device layout support analysis aligned with WSG guidance:
 - WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#ensure-layouts-work-for-different-devices-and-requirements
 - Per-page layout adaptation score and urgency for mobile and tablet viewports
-- Detects horizontal overflow, fixed-width components, undersized tap targets, and oversized media
+- Detects horizontal overflow, fixed-width components, undersized tap targets, oversized media, and overflowing CSS Grid containers
 - Cross-page totals to prioritize responsive template and component fixes
 
 Reports also include a lightweight security review aligned with WSG guidance:
@@ -472,6 +472,7 @@ All features, bug fixes, documentation, and workflow changes in this repository 
 | AI / LLM | Role | Context |
 |---|---|---|
 | GitHub Copilot Coding Agent (Claude / Anthropic) | Code authoring, refactoring, documentation, CI workflow design | Development only — used interactively via GitHub Copilot to implement all feature PRs and fixes |
+| GitHub Copilot Task Agent (OpenAI GPT-5) | Code authoring and repository-scoped maintenance updates | Development only — used interactively via GitHub Copilot Task sessions for targeted implementation tasks |
 | Antigravity (Gemini 2.0 Pro) | WSG Success Criteria automation, premium HTML reporting, and best practice education modules | Development only — used interactively to implement custom WSG audits and educational reporting features |
 
 ### Used at runtime
