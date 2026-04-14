@@ -629,12 +629,13 @@ async function buildLayoutAssessment({ browser, pageUrl }) {
           }
           const style = window.getComputedStyle(el);
           const display = String(style.display || "");
-          if (display !== "grid" && display !== "inline-grid") continue;
-          gridContainersDetected += 1;
-
-          const internalOverflowPx = Math.max(0, (el.scrollWidth || 0) - (el.clientWidth || 0));
-          if (rect.width > viewportWidth + 1 || internalOverflowPx > 1) {
-            gridOverflowContainers += 1;
+          const isGridContainer = display === "grid" || display === "inline-grid";
+          if (isGridContainer) {
+            gridContainersDetected += 1;
+            const internalOverflowPx = Math.max(0, (el.scrollWidth || 0) - (el.clientWidth || 0));
+            if (rect.width > viewportWidth + 1 || internalOverflowPx > 1) {
+              gridOverflowContainers += 1;
+            }
           }
         }
 
