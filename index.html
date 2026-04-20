@@ -184,14 +184,14 @@
 
     <form id="scan-form" novalidate>
       <div class="form-group">
-        <label for="scan-title">Scan title</label>
-        <p class="help-text">Give this scan a short descriptive name (e.g. "NH.gov").</p>
-        <input type="text" id="scan-title" name="scan-title" placeholder="e.g. NH.gov" autocomplete="off" />
+        <label for="scan-title">Scan site</label>
+        <p class="help-text" id="scan-title-help">Enter the site URL (e.g. <code>https://example.gov</code>) or a short name. This becomes the GitHub issue title: <strong>SCAN: [your entry]</strong>. If you enter a site URL here, pages will be discovered automatically; otherwise, add URLs in the field below.</p>
+        <input type="text" id="scan-title" name="scan-title" autocomplete="off" required aria-required="true" aria-describedby="scan-title-help" />
       </div>
       <div class="form-group">
         <label for="urls">URLs to scan</label>
-        <p class="help-text">Paste one URL per line (or comma-separated). HTTP and HTTPS only. Up to 500 URLs.</p>
-        <textarea id="urls" name="urls" placeholder="https://example.com&#10;https://another-site.org"></textarea>
+        <p class="help-text" id="urls-help">Paste one URL per line (or comma-separated). HTTP and HTTPS only. Up to 500 URLs. Not sure which pages to include? Use <a href="https://mgifford.github.io/top-task-finder/" target="_blank" rel="noopener noreferrer">Top Task Finder</a> to identify a good set of pages.</p>
+        <textarea id="urls" name="urls" aria-describedby="urls-help" placeholder="https://example.com&#10;https://example.com/accessibility&#10;https://example.com/contact&#10;https://example.com/about"></textarea>
       </div>
 
       <div class="preview" id="preview" aria-live="polite">
