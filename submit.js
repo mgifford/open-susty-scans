@@ -236,6 +236,14 @@ function initForm() {
     successDiv.classList.remove("visible");
 
     const scanTitle = document.getElementById("scan-title").value.trim();
+
+    if (!scanTitle) {
+      errorDiv.textContent = "Scan site is required. Enter a site URL (e.g. https://example.gov) or a short descriptive name.";
+      errorDiv.classList.add("visible");
+      document.getElementById("scan-title").focus();
+      return;
+    }
+
     const rawText = urlsTextarea.value;
     const urls = parseUrls(rawText);
     const { accepted: validUrls } = validateUrls(urls);
@@ -250,7 +258,7 @@ function initForm() {
       // the scanner will discover pages automatically via sitemap / crawl.
       const titleHasUrl = /https?:\/\/\S+/.test(scanTitle);
       if (!titleHasUrl) {
-        errorDiv.textContent = "No valid URLs to scan. Enter at least one URL, or include a site URL in the title for auto-discovery (e.g. https://www.example.gov/).";
+        errorDiv.textContent = "No valid URLs to scan. Enter at least one URL in the \"URLs to scan\" field, or enter a site URL in the \"Scan site\" field for automatic page discovery (e.g. https://www.example.gov/).";
         errorDiv.classList.add("visible");
         return;
       }
