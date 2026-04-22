@@ -30,7 +30,7 @@ Agent-facing instructions for working in this repository.
 
 ## Build and report commands
 
-- Build/update pages artifacts from a report run: `npm run pages:build -- --site-dir ./.tmp/site --report-dir ./.tmp/current-report --issue-number 1 --run-id local --repo mgifford/open-susty-scans`
+- Build/update pages artifacts from a report run: `npm run pages:build -- --site-dir ./.tmp/site --report-dir ./.tmp/current-report --issue-number 1 --run-id local --repo mgifford/open-susty-scans --metadata-out ./.tmp/report-metadata.json`
 - Post or update report issue comment (requires env vars in workflow): `npm run issue:comment`
 
 ## Testing and validation

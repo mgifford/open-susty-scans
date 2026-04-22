@@ -28,6 +28,30 @@ async function ghRequest({ method, path, token, body }) {
   return response.status === 204 ? null : response.json();
 }
 
+async function listIssueComments({ owner, repo, issueNumber, token }) {
+  const comments = [];
+
+  for (let page = 1; ; page += 1) {
+    const pageComments = await ghRequest({
+      method: "GET",
+      path: `/repos/${owner}/${repo}/issues/${issueNumber}/comments?per_page=100&page=${page}`,
+      token
+    });
+
+    if (!Array.isArray(pageComments) || pageComments.length === 0) {
+      break;
+    }
+
+    comments.push(...pageComments);
+
+    if (pageComments.length < 100) {
+      break;
+    }
+  }
+
+  return comments;
+}
+
 function formatBytes(bytes) {
   if (typeof bytes !== "number" || Number.isNaN(bytes)) return "n/a";
   const units = ["B", "KB", "MB", "GB"];
@@ -82,11 +106,7 @@ async function main() {
   const body = buildComment(metadata);
   const marker = "<!-- open-susty-scans-report -->";
 
-  const comments = await ghRequest({
-    method: "GET",
-    path: `/repos/${owner}/${repo}/issues/${issueNumber}/comments?per_page=100`,
-    token
-  });
+  const comments = await listIssueComments({ owner, repo, issueNumber, token });
 
   const existing = (comments || []).find((comment) =>
     typeof comment.body === "string" && comment.body.includes(marker)
