@@ -476,6 +476,7 @@ All features, bug fixes, documentation, and workflow changes in this repository 
 | GitHub Copilot Task Agent (Claude Sonnet / Anthropic) | Grid-aware websites detection feature — added `buildGridAwareAssessment`, report integration, FEATURES.md update; home page UX improvements (label, validation, placeholder, help-text updates) | Development only — used via GitHub Copilot Task session |
 | Codex (OpenAI GPT-5) | Code review remediation for issue-comment pagination and contributor documentation accuracy | Development only — used interactively in the local workspace to implement and verify fixes |
 | Antigravity (Gemini 2.0 Pro) | WSG Success Criteria automation, premium HTML reporting, and best practice education modules | Development only — used interactively to implement custom WSG audits and educational reporting features |
+| GitHub Copilot Task Agent (Claude Sonnet / Anthropic) | CI workflow fixes: upgraded `actions/github-script` from v7 to v9 (Node.js 24) and guarded eco-ci display step to prevent false exit-code-1 errors | Development only — used via GitHub Copilot Task session |
 
 ### Used at runtime
 
