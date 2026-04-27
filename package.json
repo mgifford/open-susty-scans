@@ -8,7 +8,9 @@
     "scan": "node src/cli.js",
     "scan:issue": "node src/cli.js --issue-file ./.tmp/issue.md --title \"SCAN: Example\"",
     "pages:build": "node src/report/build-pages-site.js",
-    "issue:comment": "node src/report/post-issue-comment.js"
+    "issue:comment": "node src/report/post-issue-comment.js",
+    "if:cli": "node src/impact-framework/cli.js",
+    "impact:build": "node src/report/build-impact-framework-site.js"
   },
   "engines": {
     "node": ">=24"
@@ -16,6 +18,7 @@
   "dependencies": {
     "@tgwf/co2": "^0.16.8",
     "chrome-launcher": "^1.1.1",
+    "js-yaml": "^4.1.1",
     "lighthouse": "^12.8.2",
     "puppeteer": "^24.7.1"
   }

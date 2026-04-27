@@ -1,0 +1,234 @@
+name: Impact Framework Scan
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: impact-framework-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  scan-with-impact-framework:
+    if: >
+      (github.event.action == 'opened' && startsWith(github.event.issue.title, 'SCAN:')) ||
+      (github.event.action == 'labeled' && github.event.label.name == 'scan-me')
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install repository dependencies
+        run: npm ci
+
+      - name: Install Impact Framework CLI
+        run: npm install -g @grnsft/if
+
+      - name: Install Impact Framework plugins
+        run: npm install --no-save @grnsft/if-plugins @tngtech/if-webpage-plugins js-yaml
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Extract issue scan context
+        id: ctx
+        run: |
+          mkdir -p ./.tmp/impact-framework
+          node src/impact-framework/cli.js extract-context \
+            --event-path "$GITHUB_EVENT_PATH" \
+            --output ./.tmp/impact-framework/context.json \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Handle missing URL
+        if: steps.ctx.outputs.scan_url == ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const body = [
+              "## Impact Framework Scan Failed",
+              "",
+              "No public HTTP/HTTPS URL was found in the issue body.",
+              "Add a URL to the issue body and re-open or relabel the issue with `scan-me` to retry."
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body
+            });
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              labels: ["failed-scan"]
+            }).catch(() => null);
+
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              state: "closed"
+            });
+
+      - name: Stop when URL is missing
+        if: steps.ctx.outputs.scan_url == ''
+        run: exit 0
+
+      - name: Generate IF manifest
+        if: steps.ctx.outputs.scan_url != ''
+        run: |
+          node src/impact-framework/cli.js write-manifest \
+            --url "${{ steps.ctx.outputs.scan_url }}" \
+            --output ./.tmp/impact-framework/manifest.yml
+
+      - name: Run Impact Framework
+        if: steps.ctx.outputs.scan_url != ''
+        id: ifrun
+        continue-on-error: true
+        run: |
+          if-run --manifest ./.tmp/impact-framework/manifest.yml --output ./.tmp/impact-framework/result.yml
+
+      - name: Handle IF execution failure
+        if: steps.ifrun.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const body = [
+              "## Impact Framework Scan Failed",
+              "",
+              `The Impact Framework scan could not be completed for ${process.env.SCAN_URL}.`,
+              "Check that the URL is publicly reachable and try again."
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body
+            });
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              labels: ["failed-scan"]
+            }).catch(() => null);
+
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              state: "closed"
+            });
+        env:
+          SCAN_URL: ${{ steps.ctx.outputs.scan_url }}
+
+      - name: Publish IF artifacts into reports tree
+        if: steps.ifrun.outcome == 'success'
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          RUN_DIR="./reports/impact-framework/issue-${ISSUE_NUMBER}/${RUN_ID}"
+          LATEST_DIR="./reports/impact-framework/issue-${ISSUE_NUMBER}/latest"
+          mkdir -p "$RUN_DIR" "$LATEST_DIR"
+          cp ./.tmp/impact-framework/manifest.yml "$RUN_DIR/manifest.yml"
+          cp ./.tmp/impact-framework/result.yml "$RUN_DIR/result.yml"
+          cp ./.tmp/impact-framework/manifest.yml "$LATEST_DIR/manifest.yml"
+          cp ./.tmp/impact-framework/result.yml "$LATEST_DIR/result.yml"
+
+      - name: Parse IF result and update feed
+        if: steps.ifrun.outcome == 'success'
+        env:
+          OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          RUN_ID: ${{ github.run_id }}
+          SCAN_URL: ${{ steps.ctx.outputs.scan_url }}
+        run: |
+          BASE_URL="https://${OWNER}.github.io/${REPO_NAME}/reports/impact-framework/issue-${ISSUE_NUMBER}/${RUN_ID}"
+          FEED_URL="https://${OWNER}.github.io/${REPO_NAME}/reports/impact-framework/data.json"
+
+          node src/impact-framework/cli.js parse-result \
+            --result ./.tmp/impact-framework/result.yml \
+            --url "$SCAN_URL" \
+            --issue-number "$ISSUE_NUMBER" \
+            --issue-title "$ISSUE_TITLE" \
+            --issue-url "$ISSUE_URL" \
+            --run-id "$RUN_ID" \
+            --feed ./reports/impact-framework/data.json \
+            --summary-out ./.tmp/impact-framework/summary.json \
+            --comment-out ./.tmp/impact-framework/comment.md \
+            --manifest-url "${BASE_URL}/manifest.yml" \
+            --result-url "${BASE_URL}/result.yml" \
+            --summary-url "${BASE_URL}/summary.json" \
+            --feed-url "$FEED_URL"
+
+          cp ./.tmp/impact-framework/summary.json "./reports/impact-framework/issue-${ISSUE_NUMBER}/${RUN_ID}/summary.json"
+          cp ./.tmp/impact-framework/summary.json "./reports/impact-framework/issue-${ISSUE_NUMBER}/latest/summary.json"
+
+      - name: Build IF reports index page
+        if: steps.ifrun.outcome == 'success'
+        run: |
+          npm run impact:build -- \
+            --feed ./reports/impact-framework/data.json \
+            --output ./reports/impact-framework/index.html \
+            --repo "${{ github.repository }}"
+
+      - name: Commit IF reports and feed
+        if: steps.ifrun.outcome == 'success'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/impact-framework
+
+          if git diff --cached --quiet; then
+            echo "No IF report changes to commit"
+          else
+            git commit -m "Publish Impact Framework scan for issue #${{ github.event.issue.number }}"
+            git pull --rebase origin main
+            git push origin main
+          fi
+
+      - name: Upload IF artifacts
+        if: always() && steps.ctx.outputs.scan_url != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: impact-framework-issue-${{ github.event.issue.number }}-${{ github.run_id }}
+          path: |
+            ./.tmp/impact-framework/manifest.yml
+            ./.tmp/impact-framework/result.yml
+            ./.tmp/impact-framework/summary.json
+          if-no-files-found: ignore
+
+      - name: Comment IF summary on issue
+        if: steps.ifrun.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("node:fs");
+            const body = fs.readFileSync("./.tmp/impact-framework/comment.md", "utf8");
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });

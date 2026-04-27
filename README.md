@@ -108,6 +108,27 @@ Automated publishing is available through GitHub Actions:
 - A repository-wide index page is published at both `reports.html` and `reports/index.html` (similar to open-scans style listing)
 - The source issue gets an updated bot comment with report links (HTML, Markdown, JSON, and index)
 
+## Impact Framework Integration
+
+The repository also includes a dedicated GitHub Actions workflow at `.github/workflows/impact-framework-scan.yml` for Green Software Foundation Impact Framework runs.
+
+- Trigger: issues opened with `SCAN:` titles, or issues relabeled with `scan-me`
+- Extraction: the first public HTTP/HTTPS URL in the issue body is used as the target
+- Engine: `@grnsft/if` with `@tngtech/if-webpage-plugins`
+- Output: committed reproducibility artifacts under `reports/impact-framework/issue-<number>/<run-id>/`
+- Feed: normalized IF summaries in `reports/impact-framework/data.json`
+
+Local helper commands:
+
+```bash
+npm run if:cli -- write-manifest --url https://example.gov --output ./manifest.yml
+if-run --manifest ./manifest.yml --output ./result.yml
+npm run if:cli -- parse-result --result ./result.yml --feed ./reports/impact-framework/data.json --summary-out ./summary.json
+npm run impact:build -- --feed ./reports/impact-framework/data.json --output ./reports/impact-framework/index.html --repo mgifford/open-susty-scans
+```
+
+The IF integration normalizes output to `gCO2e` per page load. When IF output does not include a direct SCI value, the repo records operational carbon per page load as the normalized SCI-compatible value and notes that embodied carbon is treated as `0` for this webpage scan.
+
 Reports now separate guidance into:
 - Site-wide guidance grouped by origin (shared recommendations that can often be fixed once at template/platform level)
 - Page-specific guidance (exceptions and page-level follow-up items)
@@ -475,6 +496,7 @@ All features, bug fixes, documentation, and workflow changes in this repository 
 | GitHub Copilot Task Agent (OpenAI GPT-5) | Code authoring and repository-scoped maintenance updates | Development only — used interactively via GitHub Copilot Task sessions for targeted implementation tasks |
 | GitHub Copilot Task Agent (Claude Sonnet / Anthropic) | Grid-aware websites detection feature — added `buildGridAwareAssessment`, report integration, FEATURES.md update; home page UX improvements (label, validation, placeholder, help-text updates) | Development only — used via GitHub Copilot Task session |
 | Codex (OpenAI GPT-5) | Code review remediation for issue-comment pagination and contributor documentation accuracy | Development only — used interactively in the local workspace to implement and verify fixes |
+| Codex (OpenAI GPT-5) | Impact Framework integration planning, helper scripts, workflow automation, and documentation updates | Development only — used interactively in the local workspace to implement and verify IF issue-ops support |
 | Antigravity (Gemini 2.0 Pro) | WSG Success Criteria automation, premium HTML reporting, and best practice education modules | Development only — used interactively to implement custom WSG audits and educational reporting features |
 
 ### Used at runtime
