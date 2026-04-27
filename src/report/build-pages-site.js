@@ -189,6 +189,7 @@ function buildReportsHtml(rows, baseUrl) {
     <nav class="topnav" aria-label="Site navigation">
       <a href="${htmlEscape(baseUrl)}">Submit Scan</a>
       <a href="${htmlEscape(baseUrl)}reports/">All Reports</a>
+      <a href="${htmlEscape(baseUrl)}reports/impact-framework/">Impact Framework</a>
     </nav>
     <h1>Sustainability Scan Reports</h1>
     <p class="subtitle">Published scan reports for this repository.</p>
