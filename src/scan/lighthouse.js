@@ -17,6 +17,9 @@ export async function scanUrls(urls) {
   const port = Number(browserEndpoint.port);
   const results = [];
   const formValidationCache = new Map();
+  // Shared caches to avoid redundant external calls across scanned URLs
+  const greenWebCache = new Map();
+  const expectedFilesCache = new Map();
 
   try {
     for (const url of urls) {
@@ -39,7 +42,8 @@ export async function scanUrls(urls) {
         const grams = co2Model.perByte(transferBytes);
         const greenWeb = await buildGreenWebAssessment({
           pageUrl: lhr.finalDisplayedUrl || lhr.finalUrl || url,
-          networkRequests
+          networkRequests,
+          cache: greenWebCache
         });
         const formValidation = await buildFormValidationAssessment({
           browser,
@@ -60,7 +64,8 @@ export async function scanUrls(urls) {
           audits: lhr.audits
         });
         const expectedFiles = await buildExpectedFilesAssessment({
-          pageUrl: lhr.finalDisplayedUrl || lhr.finalUrl || url
+          pageUrl: lhr.finalDisplayedUrl || lhr.finalUrl || url,
+          cache: expectedFilesCache
         });
         const mediaHints = await buildMediaHintsAssessment({
           browser,
@@ -383,11 +388,11 @@ function average(values) {
   return values.reduce((sum, value) => sum + (typeof value === "number" ? value : 0), 0) / values.length;
 }
 
-async function buildGreenWebAssessment({ pageUrl, networkRequests }) {
+async function buildGreenWebAssessment({ pageUrl, networkRequests, cache = null }) {
   const pageHostname = safeHostname(pageUrl);
   const externalAssets = collectExternalCssAndJs({ pageHostname, networkRequests });
   const hostnamesToCheck = [pageHostname, ...externalAssets.map((asset) => asset.hostname)].filter(Boolean);
-  const checks = await checkGreenWebHostnames(hostnamesToCheck);
+  const checks = await checkGreenWebHostnames(hostnamesToCheck, cache);
 
   const page = checks.get(pageHostname) || null;
   const externalOriginDetails = externalAssets.map((asset) => ({
@@ -1034,7 +1039,7 @@ function securityUrgency(score) {
   return "low";
 }
 
-async function buildExpectedFilesAssessment({ pageUrl }) {
+async function buildExpectedFilesAssessment({ pageUrl, cache = null }) {
   const origin = safeOrigin(pageUrl);
   if (!origin) {
     return {
@@ -1052,6 +1057,11 @@ async function buildExpectedFilesAssessment({ pageUrl }) {
     };
   }
 
+  // Return cached result for this origin to avoid redundant requests
+  if (cache && cache.has(origin)) {
+    return cache.get(origin);
+  }
+
   const candidates = [
     { path: "/robots.txt", kind: "expected", weight: 30 },
     { path: "/sitemap.xml", kind: "beneficial", weight: 20 },
@@ -1060,18 +1070,22 @@ async function buildExpectedFilesAssessment({ pageUrl }) {
     { path: "/favicon.ico", kind: "beneficial", weight: 5 }
   ];
 
-  const checks = [];
+  // Run all file availability checks in parallel (they are independent)
+  const fileResults = await Promise.all(
+    candidates.map(async (candidate) => {
+      const target = `${origin}${candidate.path}`;
+      const result = await checkFileAvailability(target);
+      const found = result.ok && result.status >= 200 && result.status < 400;
+      return { candidate, found, result, target };
+    })
+  );
+
   let score = 0;
-
-  for (const candidate of candidates) {
-    const target = `${origin}${candidate.path}`;
-    const result = await checkFileAvailability(target);
-    const found = result.ok && result.status >= 200 && result.status < 400;
-
+  const checks = [];
+  for (const { candidate, found, result, target } of fileResults) {
     if (!found) {
       score += candidate.weight;
     }
-
     checks.push({
       path: candidate.path,
       kind: candidate.kind,
@@ -1112,13 +1126,19 @@ async function buildExpectedFilesAssessment({ pageUrl }) {
     });
   }
 
-  return {
+  const result = {
     score,
     urgency: expectedFilesUrgency(score),
     origin,
     checks,
     recommendations
   };
+
+  if (cache) {
+    cache.set(origin, result);
+  }
+
+  return result;
 }
 
 async function checkFileAvailability(url) {

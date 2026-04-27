@@ -1,7 +1,10 @@
 const WSG_JSON_URL = "https://w3c.github.io/sustainableweb-wsg/guidelines.json";
+const FETCH_TIMEOUT_MS = 15000;
 
 export async function fetchWsgGuidelines() {
-  const response = await fetch(WSG_JSON_URL);
+  const response = await fetch(WSG_JSON_URL, {
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS)
+  });
   if (!response.ok) {
     throw new Error(`Failed to fetch WSG JSON: ${response.status} ${response.statusText}`);
   }
