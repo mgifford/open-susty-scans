@@ -499,6 +499,7 @@ All features, bug fixes, documentation, and workflow changes in this repository 
 | Codex (OpenAI GPT-5) | Impact Framework integration planning, helper scripts, workflow automation, and documentation updates | Development only — used interactively in the local workspace to implement and verify IF issue-ops support |
 | Antigravity (Gemini 2.0 Pro) | WSG Success Criteria automation, premium HTML reporting, and best practice education modules | Development only — used interactively to implement custom WSG audits and educational reporting features |
 | GitHub Copilot Task Agent (Claude Sonnet / Anthropic) | CI workflow fixes: upgraded `actions/github-script` from v7 to v9 (Node.js 24) and guarded eco-ci display step to prevent false exit-code-1 errors | Development only — used via GitHub Copilot Task session |
+| GitHub Copilot Coding Agent (Claude / Anthropic) | Efficiency improvements: added `AbortSignal.timeout` to WSG guidelines fetch, cross-URL Green Web hostname cache, origin-level expected-files cache, and parallelized file availability checks | Development only — used via GitHub Copilot Coding Agent session |
 
 ### Used at runtime
 

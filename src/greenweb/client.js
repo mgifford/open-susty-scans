@@ -1,8 +1,20 @@
 const GREEN_WEB_API_BASE = "https://api.thegreenwebfoundation.org/api/v3/greencheck";
 
-export async function checkGreenWebHostnames(hostnames) {
+export async function checkGreenWebHostnames(hostnames, sharedCache = null) {
   const unique = dedupeHostnames(hostnames);
-  const results = await Promise.all(unique.map((hostname) => lookupHostname(hostname)));
+  const results = await Promise.all(
+    unique.map((hostname) => {
+      if (sharedCache && sharedCache.has(hostname)) {
+        return Promise.resolve(sharedCache.get(hostname));
+      }
+      return lookupHostname(hostname).then((result) => {
+        if (sharedCache && result.hostname) {
+          sharedCache.set(result.hostname, result);
+        }
+        return result;
+      });
+    })
+  );
   return new Map(results.map((result) => [result.hostname, result]));
 }
 
