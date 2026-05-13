@@ -1420,6 +1420,7 @@ function buildMediaHintsSummary(perUrl) {
   let pagesWithAutoplay = 0;
   let pagesWithUnmutedAutoplay = 0;
   let pagesWithoutDarkMode = 0;
+  let pagesWithPartialDarkMode = 0;
   let pagesWithLazyLoadingGap = 0;
 
   for (const entry of okEntries) {
@@ -1428,6 +1429,7 @@ function buildMediaHintsSummary(perUrl) {
     if ((checks.autoplayCount || 0) > 0) pagesWithAutoplay += 1;
     if ((checks.unmutedAutoplayCount || 0) > 0) pagesWithUnmutedAutoplay += 1;
     if (!checks.hasDarkMode) pagesWithoutDarkMode += 1;
+    if (checks.darkModeLikelyPartial) pagesWithPartialDarkMode += 1;
     if (checks.totalImages > 0) {
       const lazyRatio = (checks.imagesWithLazy || 0) / checks.totalImages;
       if (lazyRatio < 0.5) pagesWithLazyLoadingGap += 1;
@@ -1445,6 +1447,7 @@ function buildMediaHintsSummary(perUrl) {
     pagesWithAutoplay,
     pagesWithUnmutedAutoplay,
     pagesWithoutDarkMode,
+    pagesWithPartialDarkMode,
     pagesWithLazyLoadingGap
   };
 }
@@ -2387,6 +2390,7 @@ export function renderMarkdown(report) {
   lines.push(`- Pages with autoplay media: ${report.mediaHintsSummary.pagesWithAutoplay}`);
   lines.push(`- Pages with unmuted autoplay: ${report.mediaHintsSummary.pagesWithUnmutedAutoplay}`);
   lines.push(`- Pages without dark mode support: ${report.mediaHintsSummary.pagesWithoutDarkMode}`);
+  lines.push(`- Pages with likely partial dark mode support: ${report.mediaHintsSummary.pagesWithPartialDarkMode}`);
   lines.push(`- Pages with lazy loading gap (< 50% of images lazy): ${report.mediaHintsSummary.pagesWithLazyLoadingGap}`);
 
   lines.push("");
@@ -3137,6 +3141,7 @@ export function renderHtml(report, markdownText) {
         <li><strong>Pages with autoplay media:</strong> ${report.mediaHintsSummary.pagesWithAutoplay}</li>
         <li><strong>Pages with unmuted autoplay:</strong> ${report.mediaHintsSummary.pagesWithUnmutedAutoplay}</li>
         <li><strong>Pages without dark mode support:</strong> ${report.mediaHintsSummary.pagesWithoutDarkMode}</li>
+        <li><strong>Pages with likely partial dark mode support:</strong> ${report.mediaHintsSummary.pagesWithPartialDarkMode}</li>
         <li><strong>Pages with lazy loading gap (&lt;50% of images lazy):</strong> ${report.mediaHintsSummary.pagesWithLazyLoadingGap}</li>
       </ul>
     </section>

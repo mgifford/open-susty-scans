@@ -11,14 +11,60 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
 
     const wsgData = await page.evaluate(() => {
       // 1. Check for Print Styles
-      const hasPrintStyles = Array.from(document.styleSheets).some(sheet => {
+      let printMediaRuleCount = 0;
+      let printStyleRuleCount = 0;
+      let printDeclarationCount = 0;
+      let hasPrintOptimizationRule = false;
+      let hasPrintColorAdjustRule = false;
+
+      Array.from(document.styleSheets).forEach(sheet => {
         try {
-          return Array.from(sheet.cssRules).some(rule => rule.media && rule.media.mediaText.includes("print"));
+          Array.from(sheet.cssRules || []).forEach(rule => {
+            if (rule.constructor.name !== "CSSMediaRule") return;
+            const mediaText = String(rule.conditionText || rule.media?.mediaText || "").toLowerCase();
+            if (!mediaText.includes("print")) return;
+            printMediaRuleCount += 1;
+
+            Array.from(rule.cssRules || []).forEach(nestedRule => {
+              if (nestedRule.constructor.name !== "CSSStyleRule") return;
+              printStyleRuleCount += 1;
+              const style = nestedRule.style;
+              if (!style) return;
+
+              printDeclarationCount += style.length || 0;
+              const displayValue = String(style.getPropertyValue("display") || "").toLowerCase();
+              const backgroundValue = String(style.getPropertyValue("background") || style.getPropertyValue("background-color") || "").toLowerCase();
+              const colorValue = String(style.getPropertyValue("color") || "").toLowerCase();
+              const printColorAdjust = String(
+                style.getPropertyValue("print-color-adjust")
+                || style.getPropertyValue("-webkit-print-color-adjust")
+                || ""
+              ).toLowerCase();
+
+              if (displayValue.includes("none") || backgroundValue.includes("none") || colorValue === "#000" || colorValue === "black") {
+                hasPrintOptimizationRule = true;
+              }
+              if (printColorAdjust.length > 0) {
+                hasPrintColorAdjustRule = true;
+              }
+            });
+          });
         } catch {
           // Cross-origin stylesheets might throw security errors
-          return false;
+          return;
         }
-      }) || !!document.querySelector("link[media='print']");
+      });
+
+      const hasPrintStylesheetLink = !!document.querySelector("link[media='print']");
+      const hasPrintStyles = printMediaRuleCount > 0 || hasPrintStylesheetLink;
+      const hasMeaningfulPrintStyles = (
+        printStyleRuleCount >= 2
+        || printDeclarationCount >= 4
+        || hasPrintOptimizationRule
+        || hasPrintColorAdjustRule
+      );
+      const printCoverageUnknown = hasPrintStylesheetLink && printMediaRuleCount === 0;
+      const hasPartialPrintStyles = hasPrintStyles && !printCoverageUnknown && !hasMeaningfulPrintStyles;
 
       // 2. Check for Reduced Motion support in CSS
       const hasReducedMotion = Array.from(document.styleSheets).some(sheet => {
@@ -59,6 +105,13 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
 
       return {
         hasPrintStyles,
+        hasPartialPrintStyles,
+        printCoverageUnknown,
+        printMediaRuleCount,
+        printStyleRuleCount,
+        printDeclarationCount,
+        hasPrintOptimizationRule,
+        hasPrintColorAdjustRule,
         hasReducedMotion,
         media: {
           totalImages: images.length,
@@ -94,6 +147,17 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
         wsid: "17.printed documents",
         assessor: "script",
         example: "@media print {\n  /* Hide non-critical navigation and backgrounds */\n  nav, .ads, header, footer { display: none; }\n  body { font-size: 12pt; color: #000; background: #fff; }\n  a::after { content: \" (\" attr(href) \") \"; } /* Show URLs */\n}"
+      });
+    } else if (wsgData.hasPartialPrintStyles) {
+      score -= 5;
+      recommendations.push({
+        guideline: "17.1",
+        title: "Print stylesheet likely incomplete",
+        urgency: "low",
+        detail: "Print CSS was detected, but only minimal print-specific rules were found. Add practical print overrides (for example hiding non-essential UI and improving contrast/ink usage) so printing is consistently lightweight.",
+        wsid: "17.printed documents",
+        assessor: "script",
+        example: "@media print {\n  nav, header, footer, .ads { display: none !important; }\n  body { background: #fff !important; color: #000 !important; }\n  img, svg { max-width: 100% !important; }\n}"
       });
     }
 

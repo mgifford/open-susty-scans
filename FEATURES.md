@@ -377,14 +377,14 @@ Per device:
 
 **What it checks:**
 - **Autoplay media** — detects `<video autoplay>` and `<audio autoplay>` elements; flags unmuted autoplay separately as it consumes bandwidth without user consent
-- **Dark mode support** — checks for a `prefers-color-scheme: dark` CSS media query in same-origin stylesheets and a `<meta name="color-scheme">` tag; dark mode reduces energy use on OLED screens
+- **Dark mode support** — checks for `prefers-color-scheme: dark` CSS media rules plus `color-scheme` signals; also flags likely partial dark mode implementations when dark-mode signals exist but style overrides are sparse
 - **Image lazy loading** — counts images with and without an explicit `loading="lazy"` attribute; pages where fewer than 50% of images are lazy-loaded are flagged
 
 **WSG reference:** [Optimize media to reduce resource use](https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use)
 
 **Inspiration:** [Web Sustainability Index](https://websustainabilityindex.com/about)
 
-**Summary output:** Cross-page counts for pages with autoplay, unmuted autoplay, missing dark mode, and lazy loading gaps.
+**Summary output:** Cross-page counts for pages with autoplay, unmuted autoplay, missing dark mode, likely partial dark mode, and lazy loading gaps.
 
 ---
 

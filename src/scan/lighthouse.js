@@ -1186,29 +1186,49 @@ async function buildMediaHintsAssessment({ browser, pageUrl }) {
     const hints = await page.evaluate(() => {
       // Dark mode: check meta color-scheme and same-origin CSS media queries
       const metaColorScheme = document.querySelector("meta[name='color-scheme']");
+      const metaColorSchemeValue = String(metaColorScheme?.getAttribute("content") || "").toLowerCase();
+      const hasMetaLight = metaColorSchemeValue.includes("light");
       const hasMetaColorScheme = Boolean(
-        String(metaColorScheme?.getAttribute("content") || "").toLowerCase().includes("dark")
+        metaColorSchemeValue.includes("dark")
       );
 
       let hasDarkModeQuery = false;
+      let darkModeMediaRuleCount = 0;
+      let darkModeStyleRuleCount = 0;
+      let hasColorSchemePropertyWithDark = false;
       try {
-        hasDarkModeQuery = Array.from(document.styleSheets).some((sheet) => {
+        Array.from(document.styleSheets).forEach((sheet) => {
           try {
-            return Array.from(sheet.cssRules || []).some((rule) => {
+            Array.from(sheet.cssRules || []).forEach((rule) => {
               if (rule.constructor.name === "CSSMediaRule") {
-                return String(rule.conditionText || "").includes("prefers-color-scheme");
+                const mediaQuery = String(rule.conditionText || "").toLowerCase();
+                if (mediaQuery.includes("prefers-color-scheme") && mediaQuery.includes("dark")) {
+                  darkModeMediaRuleCount += 1;
+                  darkModeStyleRuleCount += Array.from(rule.cssRules || []).filter(
+                    (nestedRule) => nestedRule.constructor.name === "CSSStyleRule"
+                  ).length;
+                }
+              } else if (rule.constructor.name === "CSSStyleRule") {
+                const colorScheme = String(rule.style?.getPropertyValue("color-scheme") || "").toLowerCase();
+                if (colorScheme.includes("dark")) {
+                  hasColorSchemePropertyWithDark = true;
+                }
               }
-              return false;
             });
           } catch {
-            return false;
+            return;
           }
         });
       } catch {
         hasDarkModeQuery = false;
       }
 
-      const hasDarkMode = hasMetaColorScheme || hasDarkModeQuery;
+      hasDarkModeQuery = darkModeMediaRuleCount > 0;
+      const hasDarkMode = hasMetaColorScheme || hasDarkModeQuery || hasColorSchemePropertyWithDark;
+      const darkModeLikelyPartial = hasDarkMode && (
+        darkModeStyleRuleCount === 0
+        || (hasMetaColorScheme && !hasMetaLight && !hasDarkModeQuery)
+      );
 
       // Autoplay media
       const autoplayingMedia = [];
@@ -1229,6 +1249,10 @@ async function buildMediaHintsAssessment({ browser, pageUrl }) {
         hasDarkMode,
         hasMetaColorScheme,
         hasDarkModeQuery,
+        hasColorSchemePropertyWithDark,
+        darkModeMediaRuleCount,
+        darkModeStyleRuleCount,
+        darkModeLikelyPartial,
         autoplayingMedia,
         autoplayCount: autoplayingMedia.length,
         unmutedAutoplayCount: autoplayingMedia.filter((m) => !m.muted).length,
@@ -1270,6 +1294,8 @@ function scoreMediaHints(hints) {
 
   if (!hints.hasDarkMode) {
     score += 20;
+  } else if (hints.darkModeLikelyPartial) {
+    score += 10;
   }
 
   if (hints.totalImages > 0) {
@@ -1303,6 +1329,12 @@ function scoreMediaHints(hints) {
       title: "Add dark mode support",
       urgency: "medium",
       detail: "No prefers-color-scheme: dark media query or color-scheme meta tag was found. Dark mode reduces energy use on OLED screens and improves user choice."
+    });
+  } else if (hints.darkModeLikelyPartial) {
+    recommendations.push({
+      title: "Dark mode support may be incomplete",
+      urgency: "medium",
+      detail: "Dark mode signals were detected, but robust dark-theme style overrides were not. Add explicit prefers-color-scheme: dark styling for key UI regions (backgrounds, text, controls) instead of relying on metadata alone."
     });
   }
 
