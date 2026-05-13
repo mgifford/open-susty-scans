@@ -1227,7 +1227,7 @@ async function buildMediaHintsAssessment({ browser, pageUrl }) {
 
       hasDarkModeQuery = darkModeMediaRuleCount > 0;
       const hasDarkMode = hasMetaColorScheme || hasDarkModeQuery || hasColorSchemePropertyWithDark;
-      const MIN_DARK_MODE_STYLE_RULES = 1;
+      const MIN_DARK_MODE_STYLE_RULES = 2;
       const MIN_DARK_MODE_DECLARATIONS = 4;
       const hasMeaningfulDarkModeStyles = hasColorSchemePropertyWithDark || (
         darkModeStyleRuleCount >= MIN_DARK_MODE_STYLE_RULES
