@@ -235,9 +235,10 @@ Reports also include media sustainability hints aligned with WSG guidance (inspi
 - WSG reference: https://www.w3.org/TR/web-sustainability-guidelines/#optimize-media-to-reduce-resource-use
 - Per-page media hints score and urgency
 - Checks for unmuted autoplay video/audio (unnecessary bandwidth consumption)
-- Detects missing dark mode support via `prefers-color-scheme: dark` media query or `color-scheme` meta tag
+- Detects missing dark mode support via `prefers-color-scheme: dark` media query or `color-scheme` signal
+- Flags likely partial dark mode support when signals exist but robust dark-mode style overrides appear limited
 - Reports image lazy loading adoption (proportion of images with `loading="lazy"`)
-- Cross-page summary of pages with autoplay, dark mode gaps, and lazy loading gaps
+- Cross-page summary of pages with autoplay, dark mode gaps (missing + likely partial), and lazy loading gaps
 
 ## Actionable Triage Flow
 
