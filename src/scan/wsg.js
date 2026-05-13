@@ -16,6 +16,9 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
       let printDeclarationCount = 0;
       let hasPrintOptimizationRule = false;
       let hasPrintColorAdjustRule = false;
+      const MIN_MEANINGFUL_PRINT_RULES = 2;
+      const MIN_MEANINGFUL_PRINT_DECLARATIONS = 4;
+      const blackInkPattern = /^(black|#000|#000000|rgb\(0,0,0\)|rgba\(0,0,0,1(?:\.0)?\))$/;
 
       Array.from(document.styleSheets).forEach(sheet => {
         try {
@@ -34,14 +37,14 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
               printDeclarationCount += style.length || 0;
               const displayValue = String(style.getPropertyValue("display") || "").toLowerCase();
               const backgroundValue = String(style.getPropertyValue("background") || style.getPropertyValue("background-color") || "").toLowerCase();
-              const colorValue = String(style.getPropertyValue("color") || "").toLowerCase();
+              const colorValue = String(style.getPropertyValue("color") || "").toLowerCase().replace(/\s+/g, "");
               const printColorAdjust = String(
                 style.getPropertyValue("print-color-adjust")
                 || style.getPropertyValue("-webkit-print-color-adjust")
                 || ""
               ).toLowerCase();
 
-              if (displayValue.includes("none") || backgroundValue.includes("none") || colorValue === "#000" || colorValue === "black") {
+              if (displayValue.includes("none") || backgroundValue.includes("none") || blackInkPattern.test(colorValue)) {
                 hasPrintOptimizationRule = true;
               }
               if (printColorAdjust.length > 0) {
@@ -58,8 +61,8 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
       const hasPrintStylesheetLink = !!document.querySelector("link[media='print']");
       const hasPrintStyles = printMediaRuleCount > 0 || hasPrintStylesheetLink;
       const hasMeaningfulPrintStyles = (
-        printStyleRuleCount >= 2
-        || printDeclarationCount >= 4
+        printStyleRuleCount >= MIN_MEANINGFUL_PRINT_RULES
+        || printDeclarationCount >= MIN_MEANINGFUL_PRINT_DECLARATIONS
         || hasPrintOptimizationRule
         || hasPrintColorAdjustRule
       );

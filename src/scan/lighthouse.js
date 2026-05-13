@@ -1187,7 +1187,6 @@ async function buildMediaHintsAssessment({ browser, pageUrl }) {
       // Dark mode: check meta color-scheme and same-origin CSS media queries
       const metaColorScheme = document.querySelector("meta[name='color-scheme']");
       const metaColorSchemeValue = String(metaColorScheme?.getAttribute("content") || "").toLowerCase();
-      const hasMetaLight = metaColorSchemeValue.includes("light");
       const hasMetaColorScheme = Boolean(
         metaColorSchemeValue.includes("dark")
       );
@@ -1195,6 +1194,7 @@ async function buildMediaHintsAssessment({ browser, pageUrl }) {
       let hasDarkModeQuery = false;
       let darkModeMediaRuleCount = 0;
       let darkModeStyleRuleCount = 0;
+      let darkModeDeclarationCount = 0;
       let hasColorSchemePropertyWithDark = false;
       try {
         Array.from(document.styleSheets).forEach((sheet) => {
@@ -1204,9 +1204,11 @@ async function buildMediaHintsAssessment({ browser, pageUrl }) {
                 const mediaQuery = String(rule.conditionText || "").toLowerCase();
                 if (mediaQuery.includes("prefers-color-scheme") && mediaQuery.includes("dark")) {
                   darkModeMediaRuleCount += 1;
-                  darkModeStyleRuleCount += Array.from(rule.cssRules || []).filter(
-                    (nestedRule) => nestedRule.constructor.name === "CSSStyleRule"
-                  ).length;
+                  Array.from(rule.cssRules || []).forEach((nestedRule) => {
+                    if (nestedRule.constructor.name !== "CSSStyleRule") return;
+                    darkModeStyleRuleCount += 1;
+                    darkModeDeclarationCount += nestedRule.style?.length || 0;
+                  });
                 }
               } else if (rule.constructor.name === "CSSStyleRule") {
                 const colorScheme = String(rule.style?.getPropertyValue("color-scheme") || "").toLowerCase();
@@ -1225,10 +1227,14 @@ async function buildMediaHintsAssessment({ browser, pageUrl }) {
 
       hasDarkModeQuery = darkModeMediaRuleCount > 0;
       const hasDarkMode = hasMetaColorScheme || hasDarkModeQuery || hasColorSchemePropertyWithDark;
-      const darkModeLikelyPartial = hasDarkMode && (
-        darkModeStyleRuleCount === 0
-        || (hasMetaColorScheme && !hasMetaLight && !hasDarkModeQuery)
+      const MIN_DARK_MODE_STYLE_RULES = 1;
+      const MIN_DARK_MODE_DECLARATIONS = 3;
+      const hasMeaningfulDarkModeStyles = hasColorSchemePropertyWithDark || (
+        darkModeStyleRuleCount >= MIN_DARK_MODE_STYLE_RULES
+        && darkModeDeclarationCount >= MIN_DARK_MODE_DECLARATIONS
       );
+      const darkModeCoverageUnknown = hasMetaColorScheme && !hasDarkModeQuery && !hasColorSchemePropertyWithDark;
+      const darkModeLikelyPartial = hasDarkModeQuery && !hasMeaningfulDarkModeStyles && !darkModeCoverageUnknown;
 
       // Autoplay media
       const autoplayingMedia = [];
@@ -1252,6 +1258,7 @@ async function buildMediaHintsAssessment({ browser, pageUrl }) {
         hasColorSchemePropertyWithDark,
         darkModeMediaRuleCount,
         darkModeStyleRuleCount,
+        darkModeDeclarationCount,
         darkModeLikelyPartial,
         autoplayingMedia,
         autoplayCount: autoplayingMedia.length,
