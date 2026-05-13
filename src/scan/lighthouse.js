@@ -1233,8 +1233,8 @@ async function buildMediaHintsAssessment({ browser, pageUrl }) {
         darkModeStyleRuleCount >= MIN_DARK_MODE_STYLE_RULES
         && darkModeDeclarationCount >= MIN_DARK_MODE_DECLARATIONS
       );
-      const darkModeCoverageUnknown = hasMetaColorScheme && !hasDarkModeQuery && !hasColorSchemePropertyWithDark;
-      const darkModeLikelyPartial = hasDarkModeQuery && !hasMeaningfulDarkModeStyles && !darkModeCoverageUnknown;
+      const hasDarkModeMetaOnly = hasMetaColorScheme && !hasDarkModeQuery && !hasColorSchemePropertyWithDark;
+      const darkModeLikelyPartial = hasDarkModeQuery && !hasMeaningfulDarkModeStyles && !hasDarkModeMetaOnly;
 
       // Autoplay media
       const autoplayingMedia = [];

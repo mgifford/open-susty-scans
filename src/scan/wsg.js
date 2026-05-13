@@ -18,6 +18,7 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
       let hasPrintColorAdjustRule = false;
       const MIN_MEANINGFUL_PRINT_RULES = 2;
       const MIN_MEANINGFUL_PRINT_DECLARATIONS = 4;
+      // Accept common "black ink" values used in print styles.
       const blackInkPattern = /^(black|#000|#000000|rgb\(0,0,0\)|rgba\(0,0,0,1(?:\.0+)?\))$/;
 
       Array.from(document.styleSheets).forEach(sheet => {
@@ -71,8 +72,8 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
         || hasPrintOptimizationRule
         || hasPrintColorAdjustRule
       );
-      const printCoverageUnknown = hasPrintStylesheetLink && printMediaRuleCount === 0;
-      const hasPartialPrintStyles = hasPrintStyles && !printCoverageUnknown && !hasMeaningfulPrintStyles;
+      const hasPrintStylesheetLinkOnly = hasPrintStylesheetLink && printMediaRuleCount === 0;
+      const hasPartialPrintStyles = hasPrintStyles && !hasPrintStylesheetLinkOnly && !hasMeaningfulPrintStyles;
 
       // 2. Check for Reduced Motion support in CSS
       const hasReducedMotion = Array.from(document.styleSheets).some(sheet => {
@@ -114,7 +115,7 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
       return {
         hasPrintStyles,
         hasPartialPrintStyles,
-        printCoverageUnknown,
+        hasPrintStylesheetLinkOnly,
         printMediaRuleCount,
         printStyleRuleCount,
         printDeclarationCount,
