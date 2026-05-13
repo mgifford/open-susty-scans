@@ -18,7 +18,7 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
       let hasPrintColorAdjustRule = false;
       const MIN_MEANINGFUL_PRINT_RULES = 2;
       const MIN_MEANINGFUL_PRINT_DECLARATIONS = 4;
-      const blackInkPattern = /^(black|#000|#000000|rgb\(0,0,0\)|rgba\(0,0,0,1(?:\.0)?\))$/;
+      const blackInkPattern = /^(black|#000|#000000|rgb\(0,0,0\)|rgba\(0,0,0,1(?:\.0+)?\))$/;
 
       Array.from(document.styleSheets).forEach(sheet => {
         try {
@@ -36,7 +36,7 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
 
               printDeclarationCount += style.length || 0;
               const displayValue = String(style.getPropertyValue("display") || "").toLowerCase();
-              const backgroundValue = String(style.getPropertyValue("background") || style.getPropertyValue("background-color") || "").toLowerCase();
+              const backgroundValue = String(style.getPropertyValue("background") || style.getPropertyValue("background-color") || "").toLowerCase().replace(/\s+/g, "");
               const colorValue = String(style.getPropertyValue("color") || "").toLowerCase().replace(/\s+/g, "");
               const printColorAdjust = String(
                 style.getPropertyValue("print-color-adjust")
@@ -44,7 +44,12 @@ export async function buildWsgCustomAssessment({ browser, pageUrl, lighthouseAud
                 || ""
               ).toLowerCase();
 
-              if (displayValue.includes("none") || backgroundValue.includes("none") || blackInkPattern.test(colorValue)) {
+              if (
+                displayValue.includes("none")
+                || backgroundValue.includes("none")
+                || blackInkPattern.test(backgroundValue)
+                || blackInkPattern.test(colorValue)
+              ) {
                 hasPrintOptimizationRule = true;
               }
               if (printColorAdjust.length > 0) {
